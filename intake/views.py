@@ -1,0 +1,87 @@
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .forms import IntakeStep1Form, IntakeStep2Form, IntakeStep3Form, IntakeStep4Form
+from .models import IntakeProfile
+
+
+def _get_or_create_profile(user):
+    profile, _ = IntakeProfile.objects.get_or_create(
+        user=user,
+        defaults={
+            'age': 0, 'sex': 'male', 'height_cm': 0, 'weight_kg': 0,
+            'primary_goal': 'general_fitness', 'body_part_priority': 'balanced',
+            'training_experience_level': 'complete_novice', 'years_of_training': '0',
+            'currently_training': 'no', 'days_per_week_available': 3,
+            'max_session_minutes': 60, 'current_activity_level': 'not_active',
+            'job_activity_level': 'sedentary', 'average_sleep': '7_to_8h',
+            'average_stress': 'medium', 'current_steps': '5k_to_8k',
+            'injury_history': 'no', 'current_pain_flags': 'no',
+        }
+    )
+    return profile
+
+
+@login_required
+def step1(request):
+    profile = _get_or_create_profile(request.user)
+    form = IntakeStep1Form(instance=profile)
+
+    if request.method == 'POST':
+        form = IntakeStep1Form(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('intake:step2')
+
+    return render(request, 'intake/step1.html', {'form': form, 'step': 1})
+
+
+@login_required
+def step2(request):
+    profile = _get_or_create_profile(request.user)
+    form = IntakeStep2Form(instance=profile)
+
+    if request.method == 'POST':
+        form = IntakeStep2Form(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('intake:step3')
+
+    return render(request, 'intake/step2.html', {'form': form, 'step': 2})
+
+
+@login_required
+def step3(request):
+    profile = _get_or_create_profile(request.user)
+    form = IntakeStep3Form(instance=profile)
+
+    if request.method == 'POST':
+        form = IntakeStep3Form(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('intake:step4')
+
+    return render(request, 'intake/step3.html', {'form': form, 'step': 3})
+
+
+@login_required
+def step4(request):
+    profile = _get_or_create_profile(request.user)
+    form = IntakeStep4Form(instance=profile)
+
+    if request.method == 'POST':
+        form = IntakeStep4Form(request.POST, instance=profile)
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.completed = True
+            profile.save()
+            return redirect('core:home')
+
+    show_exercise_prefs = profile.training_experience_level != 'complete_novice'
+    show_limitations = profile.injury_history != 'no' or profile.current_pain_flags != 'no'
+
+    return render(request, 'intake/step4.html', {
+        'form': form,
+        'step': 4,
+        'show_exercise_prefs': show_exercise_prefs,
+        'show_limitations': show_limitations,
+    })

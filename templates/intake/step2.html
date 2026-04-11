@@ -1,0 +1,113 @@
+{% extends 'intake/base_intake.html' %}
+
+{% block intake_content %}
+<h2>Training Experience</h2>
+<p class="subtitle">Help us understand your background.</p>
+
+<form method="post" id="intake-form">
+  {% csrf_token %}
+  {{ form.training_experience_level }}
+  {{ form.previous_sports }}
+
+  <div class="form-group">
+    <label class="form-label">Experience Level</label>
+    <div class="option-cards" style="grid-template-columns:repeat(4,1fr);">
+      <label class="option-card {% if form.training_experience_level.value == 'complete_novice' %}selected{% endif %}" onclick="pickOption(this, 'id_training_experience_level', 'complete_novice')">
+        <span class="material-symbols-outlined" style="display:block;font-size:24px;margin-bottom:4px;">kid_star</span>
+        Complete Novice
+      </label>
+      <label class="option-card {% if form.training_experience_level.value == 'novice' %}selected{% endif %}" onclick="pickOption(this, 'id_training_experience_level', 'novice')">
+        <span class="material-symbols-outlined" style="display:block;font-size:24px;margin-bottom:4px;">star_half</span>
+        Novice
+      </label>
+      <label class="option-card {% if form.training_experience_level.value == 'intermediate' %}selected{% endif %}" onclick="pickOption(this, 'id_training_experience_level', 'intermediate')">
+        <span class="material-symbols-outlined" style="display:block;font-size:24px;margin-bottom:4px;">star</span>
+        Intermediate
+      </label>
+      <label class="option-card {% if form.training_experience_level.value == 'advanced' %}selected{% endif %}" onclick="pickOption(this, 'id_training_experience_level', 'advanced')">
+        <span class="material-symbols-outlined" style="display:block;font-size:24px;margin-bottom:4px;">military_tech</span>
+        Advanced
+      </label>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:0;">
+    <div class="form-group">
+      <label class="form-label">Years of Training</label>
+      {{ form.years_of_training }}
+    </div>
+    <div class="form-group">
+      <label class="form-label">Currently Training?</label>
+      {{ form.currently_training }}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Previous Sports</label>
+    <div class="option-cards" style="grid-template-columns:repeat(4,1fr);">
+      {% with sports_val=form.previous_sports.value|default:"" %}
+      <label class="option-card {% if 'football' in sports_val %}selected{% endif %}" onclick="toggleSport(this, 'football')">Football</label>
+      <label class="option-card {% if 'basketball' in sports_val %}selected{% endif %}" onclick="toggleSport(this, 'basketball')">Basketball</label>
+      <label class="option-card {% if 'martial_arts' in sports_val %}selected{% endif %}" onclick="toggleSport(this, 'martial_arts')">Martial Arts</label>
+      <label class="option-card {% if 'swimming' in sports_val %}selected{% endif %}" onclick="toggleSport(this, 'swimming')">Swimming</label>
+      <label class="option-card {% if 'athletics' in sports_val %}selected{% endif %}" onclick="toggleSport(this, 'athletics')">Athletics</label>
+      <label class="option-card {% if 'cycling' in sports_val %}selected{% endif %}" onclick="toggleSport(this, 'cycling')">Cycling</label>
+      <label class="option-card {% if 'none' in sports_val %}selected{% endif %}" onclick="toggleSport(this, 'none')">None</label>
+      <label class="option-card {% if 'other' in sports_val %}selected{% endif %}" onclick="toggleSport(this, 'other')">Other</label>
+      {% endwith %}
+    </div>
+  </div>
+
+  <div class="separator"></div>
+
+  <label class="form-label" style="margin-bottom:16px;">Current Strength (to failure)</label>
+  <div class="grid-3" style="margin-bottom:0;">
+    <div class="form-group">
+      <label class="form-label" style="font-size:10px;">Push-ups</label>
+      {{ form.pushups_to_failure }}
+    </div>
+    <div class="form-group">
+      <label class="form-label" style="font-size:10px;">Pull-ups</label>
+      {{ form.pullups_to_failure }}
+    </div>
+    <div class="form-group">
+      <label class="form-label" style="font-size:10px;">BW Squats</label>
+      {{ form.bodyweight_squats_to_failure }}
+    </div>
+  </div>
+
+  <div class="intake-footer">
+    <a href="{% url 'intake:step1' %}" class="btn btn-ghost">
+      <span class="material-symbols-outlined">arrow_back</span> Back
+    </a>
+    <button type="submit" class="btn btn-primary">
+      Next <span class="material-symbols-outlined">arrow_forward</span>
+    </button>
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function pickOption(el, hiddenId, value) {
+  document.getElementById(hiddenId).value = value;
+  el.closest('.option-cards').querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+const selectedSports = new Set(
+  (document.getElementById('id_previous_sports').value || '').split(',').filter(Boolean)
+);
+
+function toggleSport(el, sport) {
+  if (selectedSports.has(sport)) {
+    selectedSports.delete(sport);
+    el.classList.remove('selected');
+  } else {
+    selectedSports.add(sport);
+    el.classList.add('selected');
+  }
+  document.getElementById('id_previous_sports').value = Array.from(selectedSports).join(',');
+}
+</script>
+{% endblock %}

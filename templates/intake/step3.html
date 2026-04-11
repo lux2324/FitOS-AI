@@ -1,0 +1,81 @@
+{% extends 'intake/base_intake.html' %}
+
+{% block intake_content %}
+<h2>Recovery & Logistics</h2>
+<p class="subtitle">Help us plan around your schedule and recovery capacity.</p>
+
+<form method="post" id="intake-form">
+  {% csrf_token %}
+  {{ form.days_per_week_available }}
+  {{ form.max_session_minutes }}
+
+  <div class="form-group">
+    <label class="form-label">Days per Week</label>
+    <div class="option-cards" style="grid-template-columns:repeat(5,1fr);">
+      {% for val, label in form.fields.days_per_week_available.choices %}
+        <label class="option-card {% if form.days_per_week_available.value|stringformat:'s' == val|stringformat:'s' %}selected{% endif %}"
+               onclick="pickOption(this, 'id_days_per_week_available', '{{ val }}')">
+          {{ val }}x
+        </label>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Session Duration</label>
+    <div class="option-cards" style="grid-template-columns:repeat(5,1fr);">
+      {% for val, label in form.fields.max_session_minutes.choices %}
+        <label class="option-card {% if form.max_session_minutes.value|stringformat:'s' == val|stringformat:'s' %}selected{% endif %}"
+               onclick="pickOption(this, 'id_max_session_minutes', '{{ val }}')">
+          {{ val }}min
+        </label>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:0;">
+    <div class="form-group">
+      <label class="form-label">Activity Level</label>
+      {{ form.current_activity_level }}
+    </div>
+    <div class="form-group">
+      <label class="form-label">Job Activity</label>
+      {{ form.job_activity_level }}
+    </div>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:0;">
+    <div class="form-group">
+      <label class="form-label">Average Sleep</label>
+      {{ form.average_sleep }}
+    </div>
+    <div class="form-group">
+      <label class="form-label">Average Stress</label>
+      {{ form.average_stress }}
+    </div>
+    <div class="form-group">
+      <label class="form-label">Daily Steps</label>
+      {{ form.current_steps }}
+    </div>
+  </div>
+
+  <div class="intake-footer">
+    <a href="{% url 'intake:step2' %}" class="btn btn-ghost">
+      <span class="material-symbols-outlined">arrow_back</span> Back
+    </a>
+    <button type="submit" class="btn btn-primary">
+      Next <span class="material-symbols-outlined">arrow_forward</span>
+    </button>
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function pickOption(el, hiddenId, value) {
+  document.getElementById(hiddenId).value = value;
+  el.closest('.option-cards').querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+</script>
+{% endblock %}

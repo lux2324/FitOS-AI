@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Intake — Step {{ step }}{% endblock %}
+
+{% block body %}
+<div class="fullscreen" style="flex-direction:column; gap:0;">
+
+  <!-- Top bar -->
+  <div style="position:fixed; top:0; left:0; right:0; padding:20px 40px; display:flex; justify-content:space-between; align-items:center; z-index:10;">
+    <div style="font-family:var(--font-head); font-size:22px; font-weight:900; font-style:italic; color:var(--cyan);">FitOS</div>
+    <div style="font-size:12px; color:var(--text-muted);">Step <span style="color:var(--cyan);">{{ step }}</span> of 4</div>
+  </div>
+
+  <div class="intake-container">
+
+    <!-- Steps indicator -->
+    <div class="steps">
+      {% for s in "1234" %}
+        {% with s_int=s|add:"0" %}
+          {% if s_int < step %}
+            <div class="step done">
+              <div class="step-circle"><span class="material-symbols-outlined" style="font-size:18px;">check</span></div>
+              <span class="step-label">{% if s == '1' %}Basic{% elif s == '2' %}Experience{% elif s == '3' %}Recovery{% else %}Safety{% endif %}</span>
+            </div>
+          {% elif s_int == step %}
+            <div class="step active">
+              <div class="step-circle">{{ s }}</div>
+              <span class="step-label">{% if s == '1' %}Basic{% elif s == '2' %}Experience{% elif s == '3' %}Recovery{% else %}Safety{% endif %}</span>
+            </div>
+          {% else %}
+            <div class="step">
+              <div class="step-circle">{{ s }}</div>
+              <span class="step-label">{% if s == '1' %}Basic{% elif s == '2' %}Experience{% elif s == '3' %}Recovery{% else %}Safety{% endif %}</span>
+            </div>
+          {% endif %}
+          {% if s != '4' %}
+            <div class="step-line {% if s_int < step %}done{% endif %}"></div>
+          {% endif %}
+        {% endwith %}
+      {% endfor %}
+    </div>
+
+    <!-- Card content -->
+    <div class="intake-card">
+      {% block intake_content %}{% endblock %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

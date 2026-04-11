@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h1>FitOS</h1>
+      <p>AI Coach</p>
+    </div>
+    <nav>
+      <a class="nav-item active" href="{% url 'core:home' %}">
+        <span class="material-symbols-outlined">dashboard</span> Dashboard
+      </a>
+      <a class="nav-item" href="#">
+        <span class="material-symbols-outlined">calendar_month</span> Tjedni Plan
+      </a>
+      <a class="nav-item" href="#">
+        <span class="material-symbols-outlined">fitness_center</span> Unesi Trening
+      </a>
+      <a class="nav-item" href="#">
+        <span class="material-symbols-outlined">chat_bubble</span> Tjedni Feedback
+      </a>
+      <a class="nav-item" href="#">
+        <span class="material-symbols-outlined">compare_arrows</span> Plan Diff
+      </a>
+      <a class="nav-item" href="#">
+        <span class="material-symbols-outlined">leaderboard</span> Statistika
+      </a>
+      <div class="nav-spacer"></div>
+      <a class="nav-item" href="{% url 'users:logout' %}">
+        <span class="material-symbols-outlined">logout</span> Logout
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
+      <div>
+        <p class="label" style="margin-bottom:4px;">Welcome back</p>
+        <h1>Hi, {{ request.user.first_name }}</h1>
+        <p style="color:var(--text-muted); font-size:13px; margin-top:4px;">Your intake is complete. Dashboard coming soon.</p>
+      </div>
+      <div style="width:40px;height:40px;border-radius:50%;background:var(--cyan-bg-strong);border:2px solid var(--cyan);display:flex;align-items:center;justify-content:center;">
+        <span class="material-symbols-outlined" style="font-size:20px;color:var(--cyan);">person</span>
+      </div>
+    </div>
+
+    <div class="card" style="max-width:600px;">
+      <div class="card-header">
+        <span class="card-title">Intake Summary</span>
+        <a href="{% url 'intake:step1' %}" class="btn btn-outline btn-sm">
+          <span class="material-symbols-outlined">edit</span> Edit
+        </a>
+      </div>
+      {% with p=request.user.intake_profile %}
+      <div class="grid-2" style="font-size:13px;">
+        <div>
+          <p class="text-muted" style="margin-bottom:4px;">Age / Sex</p>
+          <p>{{ p.age }} / {{ p.get_sex_display }}</p>
+        </div>
+        <div>
+          <p class="text-muted" style="margin-bottom:4px;">Height / Weight</p>
+          <p>{{ p.height_cm }} cm / {{ p.weight_kg }} kg</p>
+        </div>
+        <div>
+          <p class="text-muted" style="margin-bottom:4px;">Goal</p>
+          <p>{{ p.get_primary_goal_display }}</p>
+        </div>
+        <div>
+          <p class="text-muted" style="margin-bottom:4px;">Experience</p>
+          <p>{{ p.get_training_experience_level_display }}</p>
+        </div>
+        <div>
+          <p class="text-muted" style="margin-bottom:4px;">Days / Session</p>
+          <p>{{ p.days_per_week_available }}x / {{ p.max_session_minutes }} min</p>
+        </div>
+        <div>
+          <p class="text-muted" style="margin-bottom:4px;">Priority</p>
+          <p>{{ p.get_body_part_priority_display }}</p>
+        </div>
+      </div>
+      {% endwith %}
+    </div>
+  </main>
+</div>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'intake/base_intake.html' %}
+
+{% block intake_content %}
+<h2>Safety & Preferences</h2>
+<p class="subtitle">Almost done. Let us know about any limitations or preferences.</p>
+
+<form method="post" id="intake-form">
+  {% csrf_token %}
+  {{ form.injury_history }}
+  {{ form.current_pain_flags }}
+
+  <div class="grid-2" style="margin-bottom:0;">
+    <div class="form-group">
+      <label class="form-label">Injury History</label>
+      <div class="option-cards" style="grid-template-columns:repeat(3,1fr);">
+        <label class="option-card {% if form.injury_history.value == 'no' %}selected{% endif %}" onclick="pickOption(this, 'id_injury_history', 'no')">No</label>
+        <label class="option-card {% if form.injury_history.value == 'yes_minor' %}selected{% endif %}" onclick="pickOption(this, 'id_injury_history', 'yes_minor')">Minor</label>
+        <label class="option-card {% if form.injury_history.value == 'yes_major' %}selected{% endif %}" onclick="pickOption(this, 'id_injury_history', 'yes_major')">Major</label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Current Pain</label>
+      <div class="option-cards" style="grid-template-columns:repeat(3,1fr);">
+        <label class="option-card {% if form.current_pain_flags.value == 'no' %}selected{% endif %}" onclick="pickOption(this, 'id_current_pain_flags', 'no')">No</label>
+        <label class="option-card {% if form.current_pain_flags.value == 'yes_mild' %}selected{% endif %}" onclick="pickOption(this, 'id_current_pain_flags', 'yes_mild')">Mild</label>
+        <label class="option-card {% if form.current_pain_flags.value == 'yes_significant' %}selected{% endif %}" onclick="pickOption(this, 'id_current_pain_flags', 'yes_significant')">Significant</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group" id="body-part-affected" style="display:none;">
+    <label class="form-label">Affected Body Part(s)</label>
+    {{ form.body_part_affected }}
+  </div>
+
+  {% if show_exercise_prefs %}
+  <div class="separator"></div>
+  <div class="form-group">
+    <label class="form-label">Preferred Exercises</label>
+    {{ form.preferred_exercises }}
+  </div>
+  <div class="form-group">
+    <label class="form-label">Disliked Exercises</label>
+    {{ form.disliked_exercises }}
+  </div>
+  {% endif %}
+
+  <div class="separator"></div>
+
+  <div class="form-group">
+    <label class="form-label">Training Story</label>
+    {{ form.training_story }}
+  </div>
+
+  <div class="form-group" id="limitations-group" {% if not show_limitations %}style="display:none;"{% endif %}>
+    <label class="form-label">Limitations & Injuries Detail</label>
+    {{ form.limitations_story }}
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Extra Notes <span style="color:var(--text-muted);font-weight:400;text-transform:none;">(optional)</span></label>
+    {{ form.extra_notes }}
+  </div>
+
+  <div class="intake-footer">
+    <a href="{% url 'intake:step3' %}" class="btn btn-ghost">
+      <span class="material-symbols-outlined">arrow_back</span> Back
+    </a>
+    <button type="submit" class="btn btn-primary btn-lg">
+      <span class="material-symbols-outlined">check_circle</span>
+      Complete Setup
+    </button>
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function pickOption(el, hiddenId, value) {
+  document.getElementById(hiddenId).value = value;
+  el.closest('.option-cards').querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+
+  // Show/hide conditional fields
+  const injury = document.getElementById('id_injury_history').value;
+  const pain = document.getElementById('id_current_pain_flags').value;
+  const hasIssue = (injury !== 'no') || (pain !== 'no');
+  document.getElementById('body-part-affected').style.display = (injury !== 'no') ? '' : 'none';
+  document.getElementById('limitations-group').style.display = hasIssue ? '' : 'none';
+}
+</script>
+{% endblock %}
