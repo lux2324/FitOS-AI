@@ -1,0 +1,79 @@
+{
+  "_meta": {
+    "label": "Muskarac, 3 dana, balanced, 60min, intermediate — clean PPL",
+    "purpose": "Reference good-practice plan. Inputs and expected output for the plan_maker. Useful as a few-shot example or as a regression check.",
+    "first_plan": true,
+    "rep_rule": "first plan = (reps_min, reps_min + 2)"
+  },
+
+  "inputs": {
+    "sex": "male",
+    "age": 28,
+    "days_per_week_available": 3,
+    "max_session_minutes": 60,
+    "primary_goal": "muscle_gain",
+    "body_part_priority": "balanced",
+    "training_experience_level": "intermediate",
+    "limitations": {
+      "avoid_movements": [],
+      "avoid_body_parts": [],
+      "severity": "none"
+    }
+  },
+
+  "expected_skeleton": {
+    "split_id": "ppl_3x",
+    "max_slots": 5
+  },
+
+  "expected_plan": {
+    "sessions": [
+      {
+        "order": 1,
+        "name": "Push",
+        "template_key": "push",
+        "exercises": [
+          {"name": "Bench press",                    "role": "main_compound",      "category": "horizontal_push",   "sets": 3, "reps_min": 5, "reps_max": 7,  "rpe": 8},
+          {"name": "Kosi potisak bucicama",          "role": "main_compound",      "category": "horizontal_push",   "sets": 3, "reps_min": 6, "reps_max": 8,  "rpe": 8},
+          {"name": "Razvlacenje za prsa na sajli",   "role": "isolation",          "category": "chest_isolation",   "sets": 3, "reps_min": 8, "reps_max": 10, "rpe": 9},
+          {"name": "Triceps ekstenzija sajla",       "role": "isolation",          "category": "triceps_isolation", "sets": 3, "reps_min": 8, "reps_max": 10, "rpe": 9},
+          {"name": "Lateral raises",                 "role": "isolation",          "category": "shoulder_isolation","sets": 2, "reps_min": 9, "reps_max": 11, "rpe": 9}
+        ]
+      },
+      {
+        "order": 2,
+        "name": "Pull",
+        "template_key": "pull",
+        "exercises": [
+          {"name": "Veslanje na sajli",              "role": "secondary_compound", "category": "horizontal_pull",   "sets": 3, "reps_min": 6, "reps_max": 8,  "rpe": 8},
+          {"name": "Pullups",                        "role": "main_compound",      "category": "vertical_pull",     "sets": 3, "reps_min": 5, "reps_max": 7,  "rpe": 8},
+          {"name": "Veslanje bucicom",               "role": "main_compound",      "category": "horizontal_pull",   "sets": 3, "reps_min": 8, "reps_max": 10, "rpe": 8},
+          {"name": "Biceps pregib sa sipkom",        "role": "isolation",          "category": "biceps_isolation",  "sets": 2, "reps_min": 6, "reps_max": 8,  "rpe": 9},
+          {"name": "Jednoručni preacher curl",       "role": "isolation",          "category": "biceps_isolation",  "sets": 2, "reps_min": 9, "reps_max": 11, "rpe": 9}
+        ]
+      },
+      {
+        "order": 3,
+        "name": "Legs",
+        "template_key": "legs",
+        "exercises": [
+          {"name": "Rumunjsko mrtvo dizanje",        "role": "main_compound",      "category": "hip_hinge",          "sets": 3, "reps_min": 5, "reps_max": 7,  "rpe": 8},
+          {"name": "Leg press",                      "role": "main_compound",      "category": "squat_knee_dominant","sets": 3, "reps_min": 5, "reps_max": 7,  "rpe": 8},
+          {"name": "Nozna ekstenzija",               "role": "isolation",          "category": "quad_isolation",     "sets": 3, "reps_min": 8, "reps_max": 10, "rpe": 9},
+          {"name": "Lezeca fleksija",                "role": "isolation",          "category": "hamstring_isolation","sets": 3, "reps_min": 8, "reps_max": 10, "rpe": 9},
+          {"name": "Podizanje na prste",             "role": "isolation",          "category": "calf",               "sets": 3, "reps_min": 8, "reps_max": 10, "rpe": 9}
+        ]
+      }
+    ]
+  },
+
+  "rules_demonstrated": [
+    "First plan uses narrowed rep range: (reps_min, reps_min + 2)",
+    "Push slot 2 picks Kosi potisak bucicama (incline) instead of a flat secondary — angle variation, not flat-flat redundancy",
+    "Never less than 2 sets per exercise",
+    "Biceps pairing: preacher curl is paired with the barbell variant, NOT with dumbbell curls — equipment variation across paired isolation slots",
+    "Exercise role and category match the slot exactly",
+    "No duplicate exercise within the same session",
+    "Session time budget is a soft cap — exceeding by ~10-15min is acceptable to keep all exercises at >=2 sets"
+  ]
+}

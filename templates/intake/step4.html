@@ -2,7 +2,7 @@
 
 {% block intake_content %}
 <h2>Safety & Preferences</h2>
-<p class="subtitle">Almost done. Let us know about any limitations or preferences.</p>
+<p class="subtitle">Almost done. Let us know about any limitations.</p>
 
 <form method="post" id="intake-form">
   {% csrf_token %}
@@ -32,20 +32,6 @@
     <label class="form-label">Affected Body Part(s)</label>
     {{ form.body_part_affected }}
   </div>
-
-  {% if show_exercise_prefs %}
-  <div class="separator"></div>
-  <div class="form-group">
-    <label class="form-label">Preferred Exercises</label>
-    {{ form.preferred_exercises }}
-  </div>
-  <div class="form-group">
-    <label class="form-label">Disliked Exercises</label>
-    {{ form.disliked_exercises }}
-  </div>
-  {% endif %}
-
-  <div class="separator"></div>
 
   <div class="form-group">
     <label class="form-label">Training Story</label>
@@ -81,7 +67,6 @@ function pickOption(el, hiddenId, value) {
   el.closest('.option-cards').querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
 
-  // Show/hide conditional fields
   const injury = document.getElementById('id_injury_history').value;
   const pain = document.getElementById('id_current_pain_flags').value;
   const hasIssue = (injury !== 'no') || (pain !== 'no');

@@ -9,13 +9,31 @@ class IntakeStep1Form(forms.ModelForm):
         model = IntakeProfile
         fields = ['age', 'sex', 'height_cm', 'weight_kg', 'primary_goal', 'body_part_priority']
         widgets = {
-            'age': forms.NumberInput(attrs={'class': 'form-input', 'placeholder': '25'}),
-            'height_cm': forms.NumberInput(attrs={'class': 'form-input', 'placeholder': '180'}),
-            'weight_kg': forms.NumberInput(attrs={'class': 'form-input', 'placeholder': '80', 'step': '0.1'}),
+            'age': forms.NumberInput(attrs={'class': 'form-input', 'placeholder': '25', 'min': 16, 'max': 100}),
+            'height_cm': forms.NumberInput(attrs={'class': 'form-input', 'placeholder': '180', 'min': 140, 'max': 230}),
+            'weight_kg': forms.NumberInput(attrs={'class': 'form-input', 'placeholder': '80', 'step': '0.1', 'min': 40, 'max': 240}),
             'sex': forms.HiddenInput(),
             'primary_goal': forms.HiddenInput(),
             'body_part_priority': forms.Select(attrs={'class': 'form-input'}),
         }
+
+    def clean_age(self):
+        age = self.cleaned_data.get('age')
+        if age and (age < 16 or age > 100):
+            raise forms.ValidationError('Age must be between 16 and 100.')
+        return age
+
+    def clean_height_cm(self):
+        h = self.cleaned_data.get('height_cm')
+        if h and (h < 140 or h > 230):
+            raise forms.ValidationError('Height must be between 140 and 230 cm.')
+        return h
+
+    def clean_weight_kg(self):
+        w = self.cleaned_data.get('weight_kg')
+        if w and (w < 40 or w > 240):
+            raise forms.ValidationError('Weight must be between 40 and 240 kg.')
+        return w
 
 
 class IntakeStep2Form(forms.ModelForm):
@@ -67,15 +85,12 @@ class IntakeStep4Form(forms.ModelForm):
         model = IntakeProfile
         fields = [
             'injury_history', 'body_part_affected', 'current_pain_flags',
-            'preferred_exercises', 'disliked_exercises',
             'training_story', 'limitations_story', 'extra_notes',
         ]
         widgets = {
             'injury_history': forms.HiddenInput(),
             'current_pain_flags': forms.HiddenInput(),
             'body_part_affected': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'e.g. left shoulder, lower back'}),
-            'preferred_exercises': forms.Textarea(attrs={'class': 'form-input', 'rows': 3, 'placeholder': 'Exercises you enjoy...'}),
-            'disliked_exercises': forms.Textarea(attrs={'class': 'form-input', 'rows': 3, 'placeholder': 'Exercises you want to avoid...'}),
             'training_story': forms.Textarea(attrs={'class': 'form-input', 'rows': 3, 'placeholder': 'Briefly describe your training history...'}),
             'limitations_story': forms.Textarea(attrs={'class': 'form-input', 'rows': 3, 'placeholder': 'Describe any injuries or limitations...'}),
             'extra_notes': forms.Textarea(attrs={'class': 'form-input', 'rows': 3, 'placeholder': 'Anything else we should know?'}),

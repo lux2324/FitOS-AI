@@ -27,12 +27,9 @@ class IntakeProfile(models.Model):
     primary_goal = models.CharField(max_length=20, choices=GOAL_CHOICES)
 
     BODY_PRIORITY_CHOICES = [
+        ('balanced', 'Balanced'),
         ('upper_priority', 'Upper Body Priority'),
         ('lower_priority', 'Lower Body Priority'),
-        ('balanced', 'Balanced'),
-        ('chest_back_legs', 'Chest + Back + Legs'),
-        ('legs_glutes_focus', 'Legs & Glutes Focus'),
-        ('custom', 'Custom'),
     ]
     body_part_priority = models.CharField(max_length=20, choices=BODY_PRIORITY_CHOICES)
 
@@ -130,11 +127,12 @@ class IntakeProfile(models.Model):
     ]
     current_pain_flags = models.CharField(max_length=20, choices=PAIN_CHOICES)
 
-    preferred_exercises = models.TextField(blank=True)
-    disliked_exercises = models.TextField(blank=True)
     training_story = models.TextField(blank=True)
     limitations_story = models.TextField(blank=True)
     extra_notes = models.TextField(blank=True)
+
+    # AI analysis output
+    ai_analysis = models.JSONField(null=True, blank=True)
 
     # Meta
     completed = models.BooleanField(default=False)

@@ -8,6 +8,9 @@ urlpatterns = [
     path('', include('core.urls')),
     path('accounts/', include('users.urls')),
     path('intake/', include('intake.urls')),
+    path('plan/', include('plans.urls')),
+    path('log/', include('logs.urls', namespace='logs')),
+    path('feedback/', include('feedback.urls', namespace='feedback')),
 ]
 
 if settings.DEBUG:

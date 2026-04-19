@@ -1,0 +1,921 @@
+{% extends 'base_tw.html' %}
+{% block title %}{{ log.planned_session.name|default:"Trening" }} — Aktivan{% endblock %}
+
+{% block sidebar_logs %}text-[#71ffe8] border-r-2 border-[#71ffe8] bg-[#71ffe8]/5{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── Set input & ghost overlay ─────────────────────────────────────── */
+.set-cell { position: relative; }
+
+/* Faded previous value shown behind the empty input */
+.ghost-val {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  color: rgba(113,255,232,0.30);
+  pointer-events: none;
+  transition: opacity 0.15s;
+  user-select: none;
+}
+/* Clickable transparent overlay sitting on top of the ghost text */
+.ghost-click {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+/* Once input has a real value, both ghost layers disappear */
+.set-input.has-value ~ .ghost-val  { opacity: 0; pointer-events: none; }
+.set-input.has-value ~ .ghost-click { display: none; }
+
+.set-input {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid rgba(59,74,70,0.6);
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  text-align: center;
+  padding: 6px 2px;
+  outline: none;
+  transition: border-color 0.2s;
+  -moz-appearance: textfield;
+}
+.set-input:focus { border-bottom-color: #71ffe8; }
+.set-input::placeholder { color: rgba(255,255,255,0.18); }
+
+/* Completed set row */
+.set-row.completed { background: rgba(113,255,232,0.04); }
+.set-row.completed .set-input {
+  color: rgba(113,255,232,0.85);
+  border-bottom-color: rgba(113,255,232,0.2);
+}
+
+/* Check button */
+.check-btn {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  border: 1px solid rgba(59,74,70,0.7);
+  background: transparent;
+  color: #4a5568;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.check-btn:hover { border-color: #71ffe8; color: #71ffe8; background: rgba(113,255,232,0.08); }
+.check-btn.done {
+  background: rgba(113,255,232,0.15);
+  border-color: #71ffe8;
+  color: #71ffe8;
+  box-shadow: 0 0 10px rgba(113,255,232,0.2);
+}
+
+/* Live pulse dot */
+@keyframes pulse-dot {
+  0%,100% { opacity:1; transform:scale(1); }
+  50%      { opacity:.35; transform:scale(.65); }
+}
+.live-dot {
+  width:7px; height:7px; border-radius:50%;
+  background: #ff5f5f;
+  animation: pulse-dot 1.2s ease-in-out infinite;
+  display: inline-block;
+}
+
+/* RPE colour classes */
+.rpe-easy   { color: #71ffe8; }
+.rpe-medium { color: #f9bc48; }
+.rpe-hard   { color: #ff5f5f; }
+
+/* Role badges */
+.role-main { background:rgba(113,255,232,0.12); color:#71ffe8; border:1px solid rgba(113,255,232,0.25); }
+.role-sec  { background:rgba(95,140,255,0.12);  color:#5f8cff; border:1px solid rgba(95,140,255,0.25); }
+.role-iso  { background:rgba(255,255,255,0.06); color:#6b7280; border:1px solid rgba(255,255,255,0.10); }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="flex flex-col min-h-screen">
+
+  <!-- ── Sticky HUD top bar ──────────────────────────────────────────── -->
+  <header class="sticky top-0 z-40 bg-[#0a0e1a]/90 backdrop-blur-xl border-b border-[#71ffe8]/10
+                 px-10 py-3 flex items-center justify-between gap-6">
+    <!-- Back + session title -->
+    <div class="flex items-center gap-4">
+      <a href="{% url 'logs:session_picker' %}"
+         class="w-9 h-9 rounded-lg border border-white/10 flex items-center justify-center
+                text-slate-500 hover:text-white hover:border-white/25 transition-all">
+        <span class="material-symbols-outlined text-lg">arrow_back</span>
+      </a>
+      <div>
+        <p class="text-[9px] font-['Space_Grotesk'] uppercase tracking-[0.25em] text-slate-500">Aktivan Trening</p>
+        <h2 class="text-base font-bold font-['Space_Grotesk'] text-white tracking-tight leading-none mt-0.5">
+          {{ log.planned_session.name|default:"Trening" }}
+        </h2>
+      </div>
+    </div>
+
+    <!-- HUD stats row -->
+    <div class="flex items-center gap-6">
+      <div class="text-center">
+        <p class="text-[9px] font-['Space_Grotesk'] uppercase tracking-widest text-slate-500 mb-0.5">Trajanje</p>
+        <p class="text-xl font-black font-['Space_Grotesk'] text-[#71ffe8] tabular-nums" id="hud-timer">00:00:00</p>
+      </div>
+      <div class="w-px h-8 bg-white/10"></div>
+
+      <div class="text-center">
+        <p class="text-[9px] font-['Space_Grotesk'] uppercase tracking-widest text-slate-500 mb-0.5">Volumen</p>
+        <p class="text-xl font-black font-['Space_Grotesk'] text-white tabular-nums">
+          <span id="hud-volume">0</span><span class="text-xs text-slate-500 font-normal ml-0.5">kg</span>
+        </p>
+      </div>
+      <div class="w-px h-8 bg-white/10"></div>
+
+      <div class="text-center">
+        <p class="text-[9px] font-['Space_Grotesk'] uppercase tracking-widest text-slate-500 mb-0.5">Setovi</p>
+        <p class="text-xl font-black font-['Space_Grotesk'] text-white tabular-nums" id="hud-sets">0</p>
+      </div>
+      <div class="w-px h-8 bg-white/10"></div>
+
+      <!-- Rest timer -->
+      <div class="flex items-center gap-3">
+        <div>
+          <p class="text-[9px] font-['Space_Grotesk'] uppercase tracking-widest text-[#71ffe8] mb-0.5">Odmor</p>
+          <p class="text-xl font-black font-['Space_Grotesk'] text-white tabular-nums" id="rest-display">01:30</p>
+        </div>
+        <div class="flex flex-col gap-1">
+          <div class="w-20 h-1.5 bg-[#313442] rounded-full overflow-hidden">
+            <div class="h-full bg-[#71ffe8] rounded-full transition-none" id="rest-bar" style="width:0%"></div>
+          </div>
+          <div class="flex justify-between">
+            <button id="rest-add-btn"
+              class="text-[9px] font-bold uppercase tracking-widest text-[#71ffe8] hover:text-white transition-colors">+15s</button>
+            <button id="rest-skip-btn"
+              class="text-[9px] font-bold uppercase tracking-widest text-[#71ffe8] hover:text-white transition-colors">Skip</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live badge -->
+      <div class="flex items-center gap-2 bg-red-500/10 border border-red-500/25 px-3 py-1.5 rounded-full">
+        <span class="live-dot"></span>
+        <span class="text-[10px] font-bold font-['Space_Grotesk'] text-red-400 uppercase tracking-widest">Live</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Main content grid ───────────────────────────────────────────── -->
+  <div class="flex-1 px-10 py-8 grid grid-cols-12 gap-8 items-start">
+
+    <!-- Left: exercise cards (col 1–8) -->
+    <div class="col-span-8 space-y-6">
+
+      {% for ex in exercises %}
+      <div class="hud-glass rounded-xl overflow-hidden
+        {% if ex.planned_exercise.role == 'main_compound' %}border-l-4 border-l-[#71ffe8]
+        {% elif ex.planned_exercise.role == 'secondary_compound' %}border-l-4 border-l-[#5f8cff]/60
+        {% else %}border-l-4 border-l-white/10{% endif %}">
+
+        <!-- Exercise header -->
+        <div class="bg-[#262a37]/50 px-6 py-4 flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <span class="text-2xl font-black font-['Space_Grotesk'] text-[#71ffe8]/20">{{ ex.order|stringformat:"02d" }}</span>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-base font-bold font-['Space_Grotesk'] text-white uppercase tracking-tight log-ex-name-{{ ex.id }}">{{ ex.name }}</h3>
+                {% if ex.planned_exercise %}
+                <button type="button"
+                        class="log-swap-btn w-6 h-6 rounded flex items-center justify-center text-slate-600
+                               hover:text-[#71ffe8] hover:bg-[#71ffe8]/10 transition-all flex-shrink-0"
+                        data-ex-id="{{ ex.planned_exercise.id }}"
+                        data-log-ex-id="{{ ex.id }}"
+                        data-ex-name="{{ ex.name }}"
+                        title="Zamijeni vježbu"
+                        style="font-size:14px;border:1px solid rgba(255,255,255,0.08);">⇄</button>
+                {% endif %}
+              </div>
+              <div class="flex items-center gap-3 mt-1">
+                {% if ex.planned_exercise.role == 'main_compound' %}
+                  <span class="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full role-main">Glavni</span>
+                {% elif ex.planned_exercise.role == 'secondary_compound' %}
+                  <span class="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full role-sec">Sekundarni</span>
+                {% else %}
+                  <span class="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full role-iso">Izolacija</span>
+                {% endif %}
+                <span class="text-[10px] text-slate-500">
+                  {{ ex.target.sets }} &times; {{ ex.target.reps_min }}–{{ ex.target.reps_max }}
+                  {% if ex.target.rpe %}<span class="text-white/25">@</span> RPE {{ ex.target.rpe }}{% endif %}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sets table -->
+        <div class="p-6">
+          <!-- Column headers -->
+          <div class="grid grid-cols-[40px_1fr_1fr_1fr_44px] gap-3 mb-3 px-3">
+            <div class="text-[9px] font-bold uppercase tracking-widest text-slate-500">Set</div>
+            <div class="text-[9px] font-bold uppercase tracking-widest text-slate-500 text-center">Prethodni</div>
+            <div class="text-[9px] font-bold uppercase tracking-widest text-slate-500 text-center">Kilaža</div>
+            <div class="text-[9px] font-bold uppercase tracking-widest text-slate-500 text-center">Ponavljanja</div>
+            <div class="text-[9px] font-bold uppercase tracking-widest text-slate-500 text-center">✓</div>
+          </div>
+
+          <!-- Set rows: each s.prev is pre-attached by the view -->
+          <div class="space-y-2" id="sets-ex-{{ ex.id }}">
+            {% for s in ex.sets.all %}
+
+              <div class="grid grid-cols-[40px_1fr_1fr_1fr_44px] gap-3 items-center
+                          bg-[#171b28]/40 hover:bg-[#171b28]/70 rounded-lg px-3 py-2.5
+                          transition-colors set-row {% if s.completed %}completed{% endif %}"
+                   data-set-row data-ex="{{ ex.id }}" data-set="{{ s.set_number }}">
+
+                <div class="text-sm font-bold font-['Space_Grotesk'] text-[#71ffe8]">{{ s.set_number }}</div>
+
+                <!-- Previous label — single click fills both inputs -->
+                <div class="text-center">
+                  {% if s.prev and s.prev.weight_kg and s.prev.reps_done %}
+                    <span class="text-xs text-slate-400 hover:text-[#71ffe8] cursor-pointer prev-fill-btn transition-colors"
+                          data-prev-w="{{ s.prev.weight_kg }}" data-prev-r="{{ s.prev.reps_done }}"
+                          title="Klikni za prihvati prethodni rezultat">
+                      {{ s.prev.weight_kg }}kg &times; {{ s.prev.reps_done }}
+                    </span>
+                  {% else %}
+                    <span class="text-xs text-slate-600">--</span>
+                  {% endif %}
+                </div>
+
+                <!-- KG input with ghost overlay -->
+                <div class="set-cell">
+                  <input type="number" step="0.5" min="0"
+                         class="set-input{% if s.weight_kg %} has-value{% endif %}"
+                         data-field="weight_kg"
+                         data-ex="{{ ex.id }}" data-set="{{ s.set_number }}"
+                         data-prev="{% if s.prev %}{{ s.prev.weight_kg|default:'' }}{% endif %}"
+                         value="{{ s.weight_kg|default:'' }}"
+                         placeholder="--" autocomplete="off">
+                  {% if s.prev and s.prev.weight_kg and not s.weight_kg %}
+                    <span class="ghost-val">{{ s.prev.weight_kg }}</span>
+                    <span class="ghost-click"
+                          data-ghost-w="{{ s.prev.weight_kg }}"
+                          data-ghost-r="{{ s.prev.reps_done|default:'' }}"></span>
+                  {% endif %}
+                </div>
+
+                <!-- Reps input with ghost overlay -->
+                <div class="set-cell">
+                  <input type="number" step="1" min="0"
+                         class="set-input{% if s.reps_done %} has-value{% endif %}"
+                         data-field="reps_done"
+                         data-ex="{{ ex.id }}" data-set="{{ s.set_number }}"
+                         data-prev="{% if s.prev %}{{ s.prev.reps_done|default:'' }}{% endif %}"
+                         value="{{ s.reps_done|default:'' }}"
+                         placeholder="{% if not s.prev %}{{ ex.target.reps_min }}–{{ ex.target.reps_max }}{% else %}--{% endif %}" autocomplete="off">
+                  {% if s.prev and s.prev.reps_done and not s.reps_done %}
+                    <span class="ghost-val">{{ s.prev.reps_done }}</span>
+                    <span class="ghost-click"
+                          data-ghost-w="{{ s.prev.weight_kg|default:'' }}"
+                          data-ghost-r="{{ s.prev.reps_done }}"></span>
+                  {% endif %}
+                </div>
+
+                <!-- Check button -->
+                <div class="flex justify-center">
+                  <button class="check-btn {% if s.completed %}done{% endif %}"
+                          data-ex="{{ ex.id }}" data-set="{{ s.set_number }}"
+                          title="Označi set kao završen">
+                    <span class="material-symbols-outlined text-base"
+                          {% if s.completed %}style="font-variation-settings:'FILL' 1"{% endif %}>check</span>
+                  </button>
+                </div>
+              </div>
+
+            {% endfor %}
+          </div>
+
+          <!-- Add set -->
+          <button class="add-set-btn w-full mt-4 py-2 border border-dashed border-[#3b4a46] rounded-lg
+                         text-slate-500 hover:text-[#71ffe8] hover:border-[#71ffe8] transition-all
+                         text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2"
+                  data-ex="{{ ex.id }}" data-next-set="{{ ex.sets.count|add:1 }}">
+            <span class="material-symbols-outlined text-sm">add</span>
+            Dodaj set
+          </button>
+        </div>
+
+      </div>
+      {% empty %}
+      <div class="hud-glass rounded-xl p-10 text-center text-slate-500">
+        Nema vježbi u ovoj sesiji.
+      </div>
+      {% endfor %}
+
+    </div><!-- /col-span-8 -->
+
+    <!-- Right panel (col 9–12) -->
+    <div class="col-span-4 space-y-5 sticky top-[80px]">
+
+      <!-- RPE slider -->
+      <div class="hud-glass rounded-xl p-6">
+        <h4 class="text-[10px] font-bold font-['Space_Grotesk'] text-[#71ffe8] tracking-[0.2em] uppercase mb-5">
+          Subjektivni Napor (RPE)
+        </h4>
+        <div class="flex justify-between mb-2 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
+          <span>Lako</span><span>Maksimalno</span>
+        </div>
+        <input type="range" id="rpe-slider" class="w-full cursor-pointer mb-4" min="1" max="10" step="0.5" value="7">
+        <div class="flex items-center justify-between mt-1">
+          <span class="text-5xl font-black font-['Space_Grotesk'] text-white" id="rpe-value">7.0</span>
+          <div class="text-right">
+            <p class="text-[10px] font-bold uppercase tracking-widest rpe-easy" id="rpe-label">Teško</p>
+            <p class="text-[9px] text-slate-500 uppercase mt-0.5" id="rpe-sub">~3 ponavljanja u rezervi</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="hud-glass rounded-xl p-6">
+        <h4 class="text-[10px] font-bold font-['Space_Grotesk'] text-[#71ffe8] tracking-[0.2em] uppercase mb-4">Bilješka</h4>
+        <textarea id="session-notes" rows="4"
+          class="w-full bg-[#171b28] border-none rounded-xl text-sm p-4 text-white
+                 focus:ring-1 focus:ring-[#71ffe8]/50 resize-none placeholder-slate-600 outline-none leading-relaxed"
+          placeholder="Kako se osjećaš? Imaš li kakve bolove ili napomene...">{{ log.notes }}</textarea>
+        <p class="text-[9px] text-slate-600 mt-2 uppercase tracking-widest">Auto-sprema na blur</p>
+      </div>
+
+      <!-- Mini stats -->
+      <div class="grid grid-cols-2 gap-4">
+        <div class="hud-glass rounded-xl p-5">
+          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2">Ukupno setova</p>
+          <p class="text-3xl font-black text-white font-['Space_Grotesk']" id="stat-sets">0</p>
+        </div>
+        <div class="hud-glass rounded-xl p-5">
+          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2">Ukupan volumen</p>
+          <p class="text-2xl font-black text-white font-['Space_Grotesk']">
+            <span id="stat-volume">0</span><span class="text-xs font-normal text-slate-500 ml-0.5">kg</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Finish button -->
+      <button id="finish-btn"
+        class="w-full py-5 bg-gradient-to-r from-[#71ffe8] to-[#00e5cc] text-[#003730]
+               font-black font-['Space_Grotesk'] uppercase tracking-[0.25em] text-sm
+               rounded-xl flex items-center justify-center gap-3
+               hover:scale-[1.02] transition-transform glow-primary">
+        <span class="material-symbols-outlined">check_circle</span>
+        Završi Trening
+      </button>
+
+      <!-- Abort link -->
+      <a href="{% url 'logs:session_picker' %}"
+         onclick="return confirm('Odustati od treninga? Uneseni podaci ostaju spremljeni, ali trening neće biti označen kao završen.')"
+         class="w-full py-3 border border-red-500/30 text-red-400/60 font-bold uppercase tracking-widest
+                text-[10px] hover:bg-red-500/5 hover:text-red-400 transition-all rounded-xl
+                flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-sm">close</span>
+        Odustani od treninga
+      </a>
+
+    </div><!-- /col-span-4 -->
+  </div><!-- /grid -->
+</div>
+
+<!-- ══ ZAMJENA VJEŽBE MODAL ════════════════════════════════════════════ -->
+<div id="log-swap-modal-overlay"
+     style="display:none"
+     class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-6">
+  <div class="w-full max-w-md rounded-2xl p-8 shadow-2xl"
+       style="background:rgba(10,14,26,0.95);border:1px solid rgba(113,255,232,0.2);">
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full flex items-center justify-center"
+             style="background:rgba(113,255,232,0.1);border:1px solid rgba(113,255,232,0.25);">
+          <span style="color:#71ffe8;font-size:16px;">⇄</span>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold font-['Space_Grotesk'] text-white uppercase tracking-wide">Zamijeni vježbu</h3>
+          <p class="text-[11px] text-slate-500 mt-0.5" id="log-swap-modal-ex-name"></p>
+        </div>
+      </div>
+      <button type="button" id="log-swap-modal-close"
+              class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-white transition-colors"
+              style="border:1px solid rgba(255,255,255,0.08);">✕</button>
+    </div>
+
+    <label class="block text-[10px] font-bold font-['Space_Grotesk'] uppercase tracking-widest mb-2"
+           style="color:#71ffe8;">
+      Zašto ne odgovara?
+    </label>
+    <textarea id="log-swap-reason" rows="3"
+      class="w-full rounded-xl text-sm p-4 text-white outline-none resize-none leading-relaxed transition-colors"
+      style="background:#171b28;border:1px solid rgba(59,74,70,0.8);"
+      onfocus="this.style.borderColor='rgba(113,255,232,0.5)'"
+      onblur="this.style.borderColor='rgba(59,74,70,0.8)'"
+      placeholder="Npr. 'nema te sprave u teretani', 'htio bih nešto s bučicama', 'boli me koljeno pri tom pokretu'..."></textarea>
+
+    <div id="log-swap-error" class="mt-3 text-xs text-red-400" style="display:none;"></div>
+
+    <div class="flex gap-3 mt-6">
+      <button type="button" id="log-swap-modal-cancel"
+        class="flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all"
+        style="border:1px solid rgba(255,255,255,0.1);color:#94a3b8;"
+        onmouseover="this.style.borderColor='rgba(255,255,255,0.25)';this.style.color='#fff'"
+        onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='#94a3b8'">
+        Odustani
+      </button>
+      <button type="button" id="log-swap-confirm-btn"
+        class="flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all"
+        style="background:linear-gradient(135deg,#71ffe8 0%,#00e5cc 100%);color:#003730;">
+        Zamijeni
+      </button>
+    </div>
+  </div>
+</div>
+<!-- ══ END ZAMJENA MODAL ═══════════════════════════════════════════════ -->
+
+<!-- ══ IMPRESSION MODAL ═══════════════════════════════════════════════ -->
+<div id="impression-modal"
+     class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-6"
+     style="display:none!important">
+  <div class="hud-glass rounded-2xl w-full max-w-lg p-8 shadow-2xl border border-[#71ffe8]/20">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-10 h-10 rounded-full bg-[#71ffe8]/15 border border-[#71ffe8]/30 flex items-center justify-center">
+        <span class="material-symbols-outlined text-[#71ffe8]" style="font-variation-settings:'FILL' 1">sentiment_satisfied</span>
+      </div>
+      <div>
+        <h3 class="text-lg font-black font-['Space_Grotesk'] text-white">Trening završen!</h3>
+        <p class="text-slate-500 text-xs mt-0.5">{{ log.planned_session.name|default:"" }}</p>
+      </div>
+    </div>
+
+    <label class="block text-[10px] font-bold font-['Space_Grotesk'] uppercase tracking-widest text-[#71ffe8] mb-3">
+      Kako je bio trening? <span class="text-slate-600 normal-case tracking-normal">(opcionalno)</span>
+    </label>
+    <textarea id="impression-notes" rows="4"
+      class="w-full bg-[#171b28] border border-[#3b4a46] focus:border-[#71ffe8] rounded-xl
+             text-sm p-4 text-white outline-none resize-none placeholder-slate-600 leading-relaxed
+             focus:ring-1 focus:ring-[#71ffe8]/30 transition-colors"
+      placeholder="Npr. Sjajan trening, podigao novi PR na benchu. Ramena su bila malo ukočena..."></textarea>
+
+    <div class="flex gap-3 mt-6">
+      <button id="modal-cancel-btn"
+        class="flex-1 py-3 border border-white/10 text-slate-400 hover:text-white hover:border-white/25
+               rounded-xl text-xs font-bold uppercase tracking-widest transition-all">
+        Nazad
+      </button>
+      <form id="finish-form" method="post" action="{% url 'logs:finish_session' log.id %}" class="flex-1">
+        {% csrf_token %}
+        <input type="hidden" name="notes" id="finish-notes-input">
+        <button type="submit"
+          class="w-full py-3 bg-gradient-to-r from-[#71ffe8] to-[#00e5cc] text-[#003730]
+                 font-black font-['Space_Grotesk'] uppercase tracking-widest text-xs
+                 rounded-xl hover:scale-[1.02] transition-transform glow-primary">
+          Spremi i Završi
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- ══ END MODAL ══════════════════════════════════════════════════════ -->
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  'use strict';
+
+  // ── Formatting helpers ────────────────────────────────────────────
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function fmtHMS(s) {
+    return pad(Math.floor(s / 3600)) + ':' + pad(Math.floor((s % 3600) / 60)) + ':' + pad(s % 60);
+  }
+  function fmtMS(s) {
+    return pad(Math.floor(Math.abs(s) / 60)) + ':' + pad(Math.abs(s) % 60);
+  }
+
+  // ── Session timer ─────────────────────────────────────────────────
+  var startTime = Date.now();
+  setInterval(function () {
+    var el = document.getElementById('hud-timer');
+    if (el) el.textContent = fmtHMS(Math.floor((Date.now() - startTime) / 1000));
+  }, 1000);
+
+  // ── Rest timer ────────────────────────────────────────────────────
+  var REST_DEFAULT = 90;
+  var restSec = 0, restTotal = REST_DEFAULT, restTick = null;
+
+  function updateRestUI() {
+    var disp = document.getElementById('rest-display');
+    var bar  = document.getElementById('rest-bar');
+    if (!disp || !bar) return;
+    disp.textContent = fmtMS(restSec);
+    bar.style.width  = Math.max(0, restSec > 0 ? (restSec / restTotal) * 100 : 0) + '%';
+    if (restSec <= 0) { disp.style.color = '#ff5f5f'; bar.style.background = '#ff5f5f'; }
+    else              { disp.style.color = '';         bar.style.background = '#71ffe8'; }
+  }
+
+  function startRest(secs) {
+    clearInterval(restTick);
+    restTotal = secs || REST_DEFAULT;
+    restSec   = restTotal;
+    updateRestUI();
+    restTick = setInterval(function () {
+      restSec--;
+      updateRestUI();
+      if (restSec <= -60) clearInterval(restTick);
+    }, 1000);
+  }
+
+  var restAddBtn  = document.getElementById('rest-add-btn');
+  var restSkipBtn = document.getElementById('rest-skip-btn');
+  if (restAddBtn)  restAddBtn.addEventListener('click',  function () { restSec += 15; updateRestUI(); });
+  if (restSkipBtn) restSkipBtn.addEventListener('click', function () { clearInterval(restTick); restSec = 0; updateRestUI(); });
+
+  // ── CSRF + API URLs ───────────────────────────────────────────────
+  var CSRF     = '{{ csrf_token }}';
+  var SAVE_URL = '{% url "logs:save_set" log.id %}';
+  var NOTE_URL = '{% url "logs:save_note" log.id %}';
+
+  // ── Stats ─────────────────────────────────────────────────────────
+  var completedSets = document.querySelectorAll('.check-btn.done').length;
+  refreshStats(0);
+
+  function refreshStats(volume) {
+    ['hud-volume', 'stat-volume'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = volume;
+    });
+    ['hud-sets', 'stat-sets'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = completedSets;
+    });
+  }
+
+  // ── Ghost / has-value helpers ─────────────────────────────────────
+  function syncGhost(inp) {
+    inp.value !== '' ? inp.classList.add('has-value') : inp.classList.remove('has-value');
+  }
+
+  document.querySelectorAll('.set-input').forEach(function (inp) {
+    syncGhost(inp);
+    inp.addEventListener('input', function () { syncGhost(this); });
+  });
+
+  // ── Ghost overlay interactions ────────────────────────────────────
+  //   Single click on ghost → accept prev value for BOTH kg and reps
+  //   Double click on ghost → focus the input for manual entry
+  document.querySelectorAll('.ghost-click').forEach(function (overlay) {
+    var cell = overlay.parentElement;          // .set-cell
+    var inp  = cell.querySelector('.set-input');
+    var row  = cell.closest('[data-set-row]');
+    var prevW = overlay.dataset.ghostW;
+    var prevR = overlay.dataset.ghostR;
+
+    overlay.addEventListener('click', function () {
+      // Accept prev value for this input
+      if (inp) {
+        if (inp.dataset.field === 'weight_kg' && prevW) { inp.value = prevW; syncGhost(inp); }
+        if (inp.dataset.field === 'reps_done'  && prevR) { inp.value = prevR; syncGhost(inp); }
+      }
+      // Also fill the sibling input if it is still empty
+      if (row) {
+        row.querySelectorAll('.set-input').forEach(function (sib) {
+          if (sib.value === '') {
+            if (sib.dataset.field === 'weight_kg' && prevW) { sib.value = prevW; syncGhost(sib); }
+            if (sib.dataset.field === 'reps_done'  && prevR) { sib.value = prevR; syncGhost(sib); }
+          }
+        });
+      }
+    });
+
+    overlay.addEventListener('dblclick', function () {
+      // Remove overlay, focus input for custom entry
+      overlay.style.display = 'none';
+      var ghostVal = cell.querySelector('.ghost-val');
+      if (ghostVal) ghostVal.style.opacity = '0';
+      if (inp) { inp.focus(); inp.select(); }
+    });
+  });
+
+  // Single click on the "Previous" text label also fills both fields
+  document.querySelectorAll('.prev-fill-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var row  = btn.closest('[data-set-row]');
+      var prevW = btn.dataset.prevW;
+      var prevR = btn.dataset.prevR;
+      if (!row) return;
+      row.querySelectorAll('.set-input').forEach(function (inp) {
+        if (inp.value === '') {
+          if (inp.dataset.field === 'weight_kg' && prevW) { inp.value = prevW; syncGhost(inp); }
+          if (inp.dataset.field === 'reps_done'  && prevR) { inp.value = prevR; syncGhost(inp); }
+        }
+      });
+    });
+  });
+
+  // ── AJAX save set ─────────────────────────────────────────────────
+  function saveSet(exId, setNum, completed, row) {
+    var fd = new FormData();
+    fd.append('exercise_id', exId);
+    fd.append('set_number',  setNum);
+    fd.append('completed',   completed ? 'true' : 'false');
+    fd.append('rpe_done',    document.getElementById('rpe-slider').value);
+    row.querySelectorAll('.set-input').forEach(function (inp) {
+      fd.append(inp.dataset.field, inp.value || '');
+    });
+    fd.append('csrfmiddlewaretoken', CSRF);
+    return fetch(SAVE_URL, { method: 'POST', body: fd }).then(function (r) { return r.json(); });
+  }
+
+  // ── Check button ──────────────────────────────────────────────────
+  function wireCheckBtn(btn) {
+    btn.addEventListener('click', function () {
+      var exId   = this.dataset.ex;
+      var setNum = this.dataset.set;
+      var row    = this.closest('[data-set-row]');
+      var nowDone = !this.classList.contains('done');
+      var btnEl  = this;
+      var iconEl = this.querySelector('.material-symbols-outlined');
+
+      if (nowDone) {
+        // Fill any still-empty inputs from their prev value
+        row.querySelectorAll('.set-input').forEach(function (inp) {
+          if (inp.value === '' && inp.dataset.prev) { inp.value = inp.dataset.prev; syncGhost(inp); }
+        });
+      }
+
+      saveSet(exId, setNum, nowDone, row).then(function (d) {
+        if (!d.ok) return;
+        if (nowDone) {
+          btnEl.classList.add('done');
+          if (iconEl) iconEl.style.fontVariationSettings = "'FILL' 1";
+          row.classList.add('completed');
+          completedSets++;
+          startRest(REST_DEFAULT);
+        } else {
+          btnEl.classList.remove('done');
+          if (iconEl) iconEl.style.fontVariationSettings = '';
+          row.classList.remove('completed');
+          completedSets = Math.max(0, completedSets - 1);
+        }
+        refreshStats(d.volume);
+      }).catch(function (err) { console.error('save_set error:', err); });
+    });
+  }
+  document.querySelectorAll('.check-btn').forEach(wireCheckBtn);
+
+  // ── Auto-save on input blur ───────────────────────────────────────
+  function wireInputBlur(inp) {
+    inp.addEventListener('blur', function () {
+      var row = this.closest('[data-set-row]');
+      if (!row) return;
+      var done = !!row.querySelector('.check-btn.done');
+      saveSet(row.dataset.ex, row.dataset.set, done, row).then(function (d) {
+        if (d.ok) refreshStats(d.volume);
+      });
+    });
+  }
+  document.querySelectorAll('.set-input').forEach(wireInputBlur);
+
+  // ── Notes auto-save on blur ───────────────────────────────────────
+  var notesEl = document.getElementById('session-notes');
+  if (notesEl) {
+    notesEl.addEventListener('blur', function () {
+      var fd = new FormData();
+      fd.append('notes', this.value);
+      fd.append('csrfmiddlewaretoken', CSRF);
+      fetch(NOTE_URL, { method: 'POST', body: fd });
+    });
+  }
+
+  // ── RPE slider ────────────────────────────────────────────────────
+  var RPE_DATA = {
+    1:  ['Trivijalno',       'Bez napora'],
+    2:  ['Jako lako',        'Višestruki sati bez zamora'],
+    3:  ['Lako',             'Ugodna aktivnost'],
+    4:  ['Umjereno',         'Lako za razgovor'],
+    5:  ['Umjereno teško',   '~5 ponavljanja u rezervi'],
+    6:  ['Teže',             '~4 ponavljanja u rezervi'],
+    7:  ['Teško',            '~3 ponavljanja u rezervi'],
+    8:  ['Jako teško',       '~2 ponavljanja u rezervi'],
+    9:  ['Skoro maksimalno', '~1 ponavljanje u rezervi'],
+    10: ['Maksimum',         'Sve iz sebe']
+  };
+
+  var rpeSlider  = document.getElementById('rpe-slider');
+  var rpeValueEl = document.getElementById('rpe-value');
+  var rpeLabelEl = document.getElementById('rpe-label');
+  var rpeSubEl   = document.getElementById('rpe-sub');
+
+  function updateRPE() {
+    var v   = parseFloat(rpeSlider.value);
+    var key = Math.round(v);
+    rpeValueEl.textContent = v.toFixed(1);
+    if (RPE_DATA[key]) {
+      rpeLabelEl.textContent = RPE_DATA[key][0];
+      rpeSubEl.textContent   = RPE_DATA[key][1];
+    }
+    rpeLabelEl.className = 'text-[10px] font-bold uppercase tracking-widest ' +
+      (v <= 5 ? 'rpe-easy' : v <= 7.5 ? 'rpe-medium' : 'rpe-hard');
+  }
+
+  if (rpeSlider) { rpeSlider.addEventListener('input', updateRPE); updateRPE(); }
+
+  // ── Add set button ────────────────────────────────────────────────
+  function wireAddSetBtn(btn) {
+    btn.addEventListener('click', function () {
+      var exId    = this.dataset.ex;
+      var nextSet = parseInt(this.dataset.nextSet, 10);
+      var addBtn  = this;
+
+      var fd = new FormData();
+      fd.append('exercise_id', exId);
+      fd.append('set_number',  nextSet);
+      fd.append('completed',   'false');
+      fd.append('weight_kg',   '');
+      fd.append('reps_done',   '');
+      fd.append('rpe_done',    document.getElementById('rpe-slider').value);
+      fd.append('csrfmiddlewaretoken', CSRF);
+
+      fetch(SAVE_URL, { method: 'POST', body: fd })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d.ok) return;
+          var container = document.getElementById('sets-ex-' + exId);
+          var row = document.createElement('div');
+          row.className = [
+            'grid grid-cols-[40px_1fr_1fr_1fr_44px] gap-3 items-center',
+            'bg-[#171b28]/40 hover:bg-[#171b28]/70 rounded-lg px-3 py-2.5',
+            'transition-colors set-row'
+          ].join(' ');
+          row.setAttribute('data-set-row', '');
+          row.dataset.ex  = exId;
+          row.dataset.set = nextSet;
+
+          row.innerHTML =
+            '<div class="text-sm font-bold font-[\'Space_Grotesk\'] text-[#71ffe8]">' + nextSet + '</div>' +
+            '<div class="text-center"><span class="text-xs text-slate-600">--</span></div>' +
+            '<div class="set-cell">' +
+              '<input type="number" step="0.5" min="0" class="set-input"' +
+              ' data-field="weight_kg" data-ex="' + exId + '" data-set="' + nextSet + '" data-prev=""' +
+              ' value="" placeholder="--" autocomplete="off">' +
+            '</div>' +
+            '<div class="set-cell">' +
+              '<input type="number" step="1" min="0" class="set-input"' +
+              ' data-field="reps_done" data-ex="' + exId + '" data-set="' + nextSet + '" data-prev=""' +
+              ' value="" placeholder="--" autocomplete="off">' +
+            '</div>' +
+            '<div class="flex justify-center">' +
+              '<button class="check-btn" data-ex="' + exId + '" data-set="' + nextSet + '">' +
+                '<span class="material-symbols-outlined text-base">check</span>' +
+              '</button>' +
+            '</div>';
+
+          container.appendChild(row);
+
+          row.querySelectorAll('.set-input').forEach(function (inp) {
+            syncGhost(inp);
+            inp.addEventListener('input', function () { syncGhost(this); });
+            wireInputBlur(inp);
+          });
+          wireCheckBtn(row.querySelector('.check-btn'));
+
+          addBtn.dataset.nextSet = nextSet + 1;
+          refreshStats(d.volume);
+        });
+    });
+  }
+  document.querySelectorAll('.add-set-btn').forEach(wireAddSetBtn);
+
+  // ── Impression modal ──────────────────────────────────────────────
+  var modal = document.getElementById('impression-modal');
+
+  document.getElementById('finish-btn').addEventListener('click', function () {
+    var notesVal = notesEl ? notesEl.value : '';
+    var fd = new FormData();
+    fd.append('notes', notesVal);
+    fd.append('csrfmiddlewaretoken', CSRF);
+    fetch(NOTE_URL, { method: 'POST', body: fd });
+
+    document.getElementById('impression-notes').value = '';
+    modal.style.removeProperty('display');
+    setTimeout(function () { document.getElementById('impression-notes').focus(); }, 50);
+  });
+
+  document.getElementById('modal-cancel-btn').addEventListener('click', function () {
+    modal.style.display = 'none';
+  });
+
+  modal.addEventListener('click', function (e) {
+    if (e.target === modal) modal.style.display = 'none';
+  });
+
+  document.getElementById('finish-form').addEventListener('submit', function () {
+    var impression = document.getElementById('impression-notes').value.trim();
+    var existing   = notesEl ? notesEl.value.trim() : '';
+    var combined   = existing;
+    if (impression) combined = existing ? (existing + '\n\n[Dojam]: ' + impression) : impression;
+    document.getElementById('finish-notes-input').value = combined;
+    var fd = new FormData();
+    fd.append('notes', combined);
+    fd.append('csrfmiddlewaretoken', CSRF);
+    fetch(NOTE_URL, { method: 'POST', body: fd });
+  });
+
+  // ── Zamjena vježbe (swap) ──────────────────────────────────────────
+  var SUBSTITUTE_URL = '{% url "plans:substitute_exercise" %}';
+  var logSwapOverlay    = document.getElementById('log-swap-modal-overlay');
+  var logSwapNameEl     = document.getElementById('log-swap-modal-ex-name');
+  var logSwapReasonEl   = document.getElementById('log-swap-reason');
+  var logSwapErrorEl    = document.getElementById('log-swap-error');
+  var logSwapConfirmBtn = document.getElementById('log-swap-confirm-btn');
+
+  var currentSwapExId    = null;  // PlannedExercise pk
+  var currentSwapLogExId = null;  // LoggedExercise pk
+
+  function openLogSwapModal(exId, logExId, exName) {
+    currentSwapExId    = exId;
+    currentSwapLogExId = logExId;
+    logSwapNameEl.textContent   = exName;
+    logSwapReasonEl.value       = '';
+    logSwapErrorEl.style.display= 'none';
+    logSwapErrorEl.textContent  = '';
+    logSwapConfirmBtn.disabled  = false;
+    logSwapConfirmBtn.textContent = 'Zamijeni';
+    logSwapOverlay.style.display = 'flex';
+    setTimeout(function () { logSwapReasonEl.focus(); }, 50);
+  }
+
+  function closeLogSwapModal() {
+    logSwapOverlay.style.display = 'none';
+    currentSwapExId    = null;
+    currentSwapLogExId = null;
+  }
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.log-swap-btn');
+    if (btn) openLogSwapModal(btn.dataset.exId, btn.dataset.logExId, btn.dataset.exName);
+  });
+
+  logSwapOverlay.addEventListener('click', function (e) {
+    if (e.target === logSwapOverlay) closeLogSwapModal();
+  });
+  document.getElementById('log-swap-modal-close').addEventListener('click', closeLogSwapModal);
+  document.getElementById('log-swap-modal-cancel').addEventListener('click', closeLogSwapModal);
+
+  logSwapConfirmBtn.addEventListener('click', function () {
+    if (!currentSwapExId) return;
+    var reason = logSwapReasonEl.value.trim();
+
+    logSwapConfirmBtn.disabled = true;
+    logSwapConfirmBtn.textContent = 'Zamjenjujem…';
+    logSwapErrorEl.style.display = 'none';
+
+    var fd = new FormData();
+    fd.append('csrfmiddlewaretoken', CSRF);
+    fd.append('exercise_id', currentSwapExId);
+    fd.append('reason', reason);
+
+    fetch(SUBSTITUTE_URL, { method: 'POST', body: fd })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.ok) {
+          // Update exercise heading in the DOM
+          var nameEl = document.querySelector('.log-ex-name-' + currentSwapLogExId);
+          if (nameEl) nameEl.textContent = data.new_name;
+          // Update swap button data so a subsequent swap uses correct name
+          var swapBtn = document.querySelector('.log-swap-btn[data-log-ex-id="' + currentSwapLogExId + '"]');
+          if (swapBtn) swapBtn.dataset.exName = data.new_name;
+          closeLogSwapModal();
+        } else {
+          logSwapErrorEl.textContent = data.error || 'Greška. Pokušaj ponovno.';
+          logSwapErrorEl.style.display = 'block';
+          logSwapConfirmBtn.disabled = false;
+          logSwapConfirmBtn.textContent = 'Zamijeni';
+        }
+      })
+      .catch(function (err) {
+        logSwapErrorEl.textContent = 'Mrežna greška: ' + err;
+        logSwapErrorEl.style.display = 'block';
+        logSwapConfirmBtn.disabled = false;
+        logSwapConfirmBtn.textContent = 'Zamijeni';
+      });
+  });
+
+})();
+</script>
+{% endblock %}

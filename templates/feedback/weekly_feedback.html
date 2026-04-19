@@ -1,0 +1,491 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="hr" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FitOS — Tjedni Feedback</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#71ffe8",
+          "primary-container": "#00e5cc",
+          "on-primary": "#003730",
+          "secondary": "#d3fbff",
+          "secondary-container": "#00eefc",
+          "tertiary": "#ffe5bd",
+          "tertiary-container": "#ffc24d",
+          "on-tertiary-container": "#725000",
+          "background": "#0f131f",
+          "surface": "#0f131f",
+          "surface-container-lowest": "#0a0e1a",
+          "surface-container-low": "#171b28",
+          "surface-container": "#1b1f2c",
+          "surface-container-high": "#262a37",
+          "surface-container-highest": "#313442",
+          "surface-variant": "#313442",
+          "on-background": "#dfe2f3",
+          "on-surface": "#dfe2f3",
+          "on-surface-variant": "#b9cac5",
+          "outline": "#849490",
+          "outline-variant": "#3b4a46",
+          "error": "#ffb4ab",
+          "error-container": "#93000a",
+          "on-error": "#690005",
+        },
+        fontFamily: {
+          "headline": ["Space Grotesk"],
+          "body": ["Inter"],
+          "label": ["Inter"],
+        },
+        borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+      },
+    },
+  }
+</script>
+<style>
+  body { background-color: #0a0e1a; color: #dfe2f3; font-family: 'Inter', sans-serif; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .hud-grid {
+    background-image: linear-gradient(rgba(113,255,232,0.03) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(113,255,232,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .ghost-border { outline: 1px solid rgba(132, 148, 144, 0.15); }
+  .glow-primary  { box-shadow: 0 0 20px rgba(113, 255, 232, 0.15); }
+  .scanline {
+    width: 100%; height: 100px;
+    background: linear-gradient(to bottom, transparent, rgba(113,255,232,0.05), transparent);
+    position: fixed; pointer-events: none;
+  }
+  input[type="range"] { -webkit-appearance: none; background: transparent; width: 100%; }
+  input[type="range"]::-webkit-slider-runnable-track { background: #313442; height: 4px; border-radius: 2px; }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%;
+    background: #71ffe8; margin-top: -7px; box-shadow: 0 0 10px #71ffe8; cursor: pointer;
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #0a0e1a; }
+  ::-webkit-scrollbar-thumb { background: #1b1f2c; border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(113,255,232,0.2); }
+</style>
+</head>
+<body class="hud-grid min-h-screen relative">
+
+{% if messages %}
+<div class="fixed top-4 right-4 z-[100] space-y-2">
+  {% for message in messages %}
+  <div class="px-4 py-3 rounded-lg text-sm font-medium
+    {% if message.tags == 'success' %}bg-primary/20 border border-primary/40 text-primary
+    {% elif message.tags == 'error' %}bg-error-container border border-error/40 text-error
+    {% else %}bg-surface-container border border-outline-variant text-on-surface{% endif %}">
+    {{ message }}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- Sidebar -->
+<aside class="w-[260px] h-full fixed left-0 top-0 bg-[#0a0e1a] border-r border-[#71ffe8]/15 shadow-[4px_0_24px_rgba(113,255,232,0.08)] flex flex-col py-8 px-6 z-50">
+  <div class="mb-12">
+    <div class="text-2xl font-bold tracking-tighter text-[#00e5cc] font-headline">FitOS</div>
+    <div class="text-[10px] font-headline uppercase tracking-[0.2em] text-slate-500 mt-1">AI Gym Coach</div>
+  </div>
+  <nav class="flex-1 space-y-1">
+    <a href="{% url 'core:home' %}"
+       class="flex items-center gap-4 py-3 px-4 rounded-lg text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10 transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs">
+      <span class="material-symbols-outlined text-base">dashboard</span>Dashboard
+    </a>
+    <a href="{% url 'plans:weekly_plan' %}"
+       class="flex items-center gap-4 py-3 px-4 rounded-lg text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10 transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs">
+      <span class="material-symbols-outlined text-base">calendar_month</span>Tjedni Plan
+    </a>
+    <a href="{% url 'logs:session_picker' %}"
+       class="flex items-center gap-4 py-3 px-4 rounded-lg text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10 transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs">
+      <span class="material-symbols-outlined text-base">fitness_center</span>Unesi Trening
+    </a>
+    <!-- Active tab -->
+    <div class="flex items-center gap-4 py-3 px-4 rounded-lg text-[#71ffe8] border-r-2 border-[#71ffe8] bg-[#71ffe8]/5 font-['Space_Grotesk'] uppercase tracking-widest text-xs font-bold">
+      <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1;">feedback</span>Tjedni Feedback
+    </div>
+    <a href="{% url 'logs:statistika' %}"
+       class="flex items-center gap-4 py-3 px-4 rounded-lg text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10 transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs">
+      <span class="material-symbols-outlined text-base">leaderboard</span>Statistika
+    </a>
+  </nav>
+  <div class="pt-6 mt-auto space-y-1 border-t border-[#71ffe8]/10">
+    <a href="{% url 'users:logout' %}"
+       class="flex items-center gap-4 py-3 px-4 rounded-lg text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10 transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs">
+      <span class="material-symbols-outlined text-base">logout</span>Odjava
+    </a>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="ml-[260px] min-h-screen flex flex-col">
+
+  <!-- Top bar -->
+  <header class="h-20 bg-[#0a0e1a]/80 backdrop-blur-xl border-b border-[#71ffe8]/10 flex justify-between items-center px-12 z-40 sticky top-0">
+    <div class="flex items-center gap-6">
+      <div class="flex items-center bg-surface-container px-4 py-2 rounded-lg ghost-border">
+        <span class="material-symbols-outlined text-primary text-sm mr-3">search</span>
+        <input class="bg-transparent border-none focus:ring-0 text-xs font-label tracking-widest text-on-surface-variant uppercase w-48"
+               placeholder="Search..." type="text"/>
+      </div>
+    </div>
+    <div class="flex items-center gap-8">
+      <div class="flex flex-col items-end">
+        <span class="font-headline font-bold text-primary tracking-tight text-sm">TJEDNI FEEDBACK</span>
+        <span class="text-[10px] text-slate-500 tracking-[0.2em]">TJEDAN OD {{ week_start|date:"d.m.Y" }}</span>
+      </div>
+      <div class="flex gap-4">
+        <button class="text-slate-400 hover:text-[#71ffe8] transition-colors">
+          <span class="material-symbols-outlined">notifications</span>
+        </button>
+        <div class="w-10 h-10 rounded-full border border-primary/30 flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">account_circle</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Canvas -->
+  <div class="p-12 space-y-8 flex-1 overflow-y-auto">
+
+    {% if existing %}
+    <div class="bg-primary/10 border border-primary/30 rounded-xl px-6 py-4 flex items-center gap-3">
+      <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">check_circle</span>
+      <div>
+        <p class="text-primary font-bold text-sm font-headline">Feedback za ovaj tjedan je već poslan — možeš ga urediti</p>
+        <p class="text-on-surface-variant text-xs mt-0.5">
+          Spavanje: {{ existing.sleep_quality }}/5 &nbsp;·&nbsp;
+          Stres: {{ existing.stress_level }}/5 &nbsp;·&nbsp;
+          DOMS: {{ existing.doms_level }}/5
+        </p>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="grid grid-cols-12 gap-8">
+
+      <!-- Left col (8/12) -->
+      <div class="col-span-8 space-y-8">
+
+        <!-- Stats bento -->
+        <div class="grid grid-cols-3 gap-6">
+          <!-- Performance card -->
+          <div class="col-span-2 bg-surface-container p-8 rounded-xl ghost-border relative overflow-hidden">
+            <div class="relative z-10">
+              <div class="flex justify-between items-start mb-6">
+                <div>
+                  <h2 class="font-headline text-3xl font-bold tracking-tight text-primary">PREGLED USPJEŠNOSTI</h2>
+                  <p class="text-on-surface-variant text-xs font-label uppercase tracking-widest mt-1">Prošlih 7 dana</p>
+                </div>
+                <div class="text-right">
+                  <div class="text-4xl font-headline font-bold text-secondary">{{ last_week.sessions_completed }}</div>
+                  <div class="text-[10px] text-primary tracking-widest uppercase">Sesija</div>
+                </div>
+              </div>
+              <div class="grid grid-cols-3 gap-4">
+                <div class="bg-surface-container-high p-4 rounded-lg">
+                  <div class="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Volumen</div>
+                  <div class="text-xl font-headline text-on-surface">{{ last_week.volume_display }}</div>
+                </div>
+                <div class="bg-surface-container-high p-4 rounded-lg">
+                  <div class="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Trajanje</div>
+                  <div class="text-xl font-headline text-on-surface">{{ last_week.total_duration_min }}m</div>
+                </div>
+                <div class="bg-surface-container-high p-4 rounded-lg">
+                  <div class="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Prosj. RPE</div>
+                  <div class="text-xl font-headline text-on-surface">
+                    {% if last_week.avg_rpe %}RPE {{ last_week.avg_rpe }}{% else %}—{% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
+          </div>
+
+          <!-- Recovery gauge -->
+          <div class="bg-surface-container p-6 rounded-xl ghost-border flex flex-col items-center justify-center relative overflow-hidden">
+            <div class="relative w-32 h-32 mb-4">
+              <svg class="w-full h-full transform -rotate-90" viewBox="0 0 128 128">
+                <circle class="text-surface-variant/30" cx="64" cy="64" fill="transparent" r="58"
+                        stroke="currentColor" stroke-width="4"></circle>
+                <circle class="text-primary glow-primary" cx="64" cy="64" fill="transparent" r="58"
+                        stroke="currentColor" stroke-dasharray="364.4"
+                        stroke-dashoffset="{{ recovery_offset }}" stroke-linecap="round" stroke-width="4"></circle>
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span class="text-2xl font-headline font-bold text-primary">{{ recovery_pct }}%</span>
+                <span class="text-[8px] text-slate-500 uppercase tracking-widest">Recovery</span>
+              </div>
+            </div>
+            <div class="text-center">
+              <p class="text-xs text-on-surface font-medium">
+                {% if recovery_pct >= 80 %}Spreman za napredak
+                {% elif recovery_pct >= 60 %}Dobar oporavak
+                {% elif recovery_pct >= 40 %}Umjereni oporavak
+                {% else %}Potreban odmor{% endif %}
+              </p>
+              <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-tighter">Bazira se na snu</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feedback form -->
+        <div class="bg-surface-container p-8 rounded-xl ghost-border">
+          <h3 class="font-headline text-xl font-bold tracking-tight mb-8 flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary">tune</span>
+            SUBJEKTIVNI UNOS
+          </h3>
+
+          <form method="post" action="{% url 'feedback:weekly' %}" id="feedback-form">
+            {% csrf_token %}
+            <div class="space-y-12">
+
+              <!-- 1. Kvaliteta sna — range 1-5 -->
+              <div>
+                <div class="flex justify-between items-center mb-4">
+                  <label class="text-sm font-medium tracking-wide">Kvaliteta sna?</label>
+                  <span class="text-primary font-headline text-sm font-bold" id="sleep-display">
+                    {% if existing %}{{ existing.sleep_quality }}{% else %}3{% endif %} / 5
+                  </span>
+                </div>
+                <input type="range" id="sleep_quality" name="sleep_quality"
+                       min="1" max="5" step="1"
+                       value="{% if existing %}{{ existing.sleep_quality }}{% else %}3{% endif %}"
+                       class="w-full h-1"/>
+                <div class="flex justify-between mt-2 text-[10px] text-slate-500 uppercase tracking-widest">
+                  <span>1 — Loše</span><span>5 — Sjajno</span>
+                </div>
+              </div>
+
+              <!-- 2. Razina stresa — 5 zvjezdica -->
+              <div>
+                <div class="flex justify-between items-center mb-4">
+                  <label class="text-sm font-medium tracking-wide">Razina stresa?</label>
+                  <div class="flex gap-1" id="stress-stars">
+                    {% for i in rating_range %}
+                    <button type="button"
+                      class="star-btn material-symbols-outlined text-xl transition-colors
+                        {% if existing and i <= existing.stress_level %}text-primary
+                        {% elif not existing and i <= 3 %}text-primary
+                        {% else %}text-surface-variant{% endif %}"
+                      data-value="{{ i }}"
+                      style="{% if existing and i <= existing.stress_level %}font-variation-settings:'FILL' 1;
+                             {% elif not existing and i <= 3 %}font-variation-settings:'FILL' 1;{% endif %}">star</button>
+                    {% endfor %}
+                  </div>
+                </div>
+                <input type="hidden" name="stress_level" id="stress-input"
+                       value="{% if existing %}{{ existing.stress_level }}{% else %}3{% endif %}"/>
+                <div class="h-[2px] bg-surface-variant/30 w-full"></div>
+                <div class="flex justify-between mt-2 text-[10px] text-slate-500 uppercase tracking-widest">
+                  <span>1 — Nizak</span><span>5 — Visok</span>
+                </div>
+              </div>
+
+              <!-- 3. DOMS — 5 zvjezdica (crvene) -->
+              <div>
+                <div class="flex justify-between items-center mb-4">
+                  <label class="text-sm font-medium tracking-wide">Upala mišića (DOMS)?</label>
+                  <div class="flex gap-1" id="doms-stars">
+                    {% for i in rating_range %}
+                    <button type="button"
+                      class="doms-star-btn material-symbols-outlined text-xl transition-colors
+                        {% if existing and i <= existing.doms_level %}text-error
+                        {% elif not existing and i == 1 %}text-error
+                        {% else %}text-surface-variant{% endif %}"
+                      data-value="{{ i }}"
+                      style="{% if existing and i <= existing.doms_level %}font-variation-settings:'FILL' 1;
+                             {% elif not existing and i == 1 %}font-variation-settings:'FILL' 1;{% endif %}">star</button>
+                    {% endfor %}
+                  </div>
+                </div>
+                <input type="hidden" name="doms_level" id="doms-input"
+                       value="{% if existing %}{{ existing.doms_level }}{% else %}1{% endif %}"/>
+                <div class="h-[2px] bg-surface-variant/30 w-full"></div>
+                <div class="flex justify-between mt-2 text-[10px] text-slate-500 uppercase tracking-widest">
+                  <span>1 — Nema</span><span>5 — Jaka</span>
+                </div>
+              </div>
+
+              <!-- 4. Bilješke -->
+              <div>
+                <label class="text-sm font-medium tracking-wide block mb-2">Dojam o treningu</label>
+                <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-3">Kratki opis kako je bio tjedan</p>
+                <textarea name="training_notes" rows="4"
+                  placeholder="Npr. Tjedan je bio naporan ali produktivan. Osjećam napredak na čučnju..."
+                  class="w-full bg-surface-container-high border border-outline-variant/30 rounded-lg px-4 py-3 text-sm text-on-surface placeholder-slate-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 resize-none transition-colors"
+                >{% if existing %}{{ existing.training_notes }}{% endif %}</textarea>
+              </div>
+
+              <button type="submit"
+                class="w-full bg-surface-container-high border border-primary/30 text-primary font-headline font-bold text-sm uppercase tracking-widest py-4 rounded-xl hover:bg-primary/10 hover:border-primary transition-all">
+                {% if existing %}Ažuriraj feedback{% else %}Spremi feedback{% endif %}
+              </button>
+
+            </div>
+          </form>
+        </div>
+
+      </div><!-- /left col -->
+
+      <!-- Right col (4/12) -->
+      <div class="col-span-4 space-y-8">
+
+        <!-- AI Coach panel -->
+        <div class="bg-[#0a0e1a] p-8 rounded-xl ghost-border border-l-4 border-l-primary relative overflow-hidden">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-8 h-8 rounded bg-primary flex items-center justify-center">
+              <span class="material-symbols-outlined text-on-primary text-lg" style="font-variation-settings:'FILL' 1;">psychology</span>
+            </div>
+            <span class="font-headline font-bold text-sm tracking-widest uppercase">AI Coach Summary</span>
+            <span class="ml-auto flex gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-primary/50"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-primary/20"></span>
+            </span>
+          </div>
+          <div class="font-mono text-xs leading-relaxed text-secondary/80">
+            {% if existing and existing.ai_summary %}
+              <p class="mb-2 text-primary">ANALIZA ZAVRŠENA...</p>
+              <p class="text-on-surface">{{ existing.ai_summary }}</p>
+            {% elif existing %}
+              <p class="mb-2 text-primary">STATUS: FEEDBACK PRIMLJEN_</p>
+              <p class="text-on-surface mb-2">
+                Spavanje: <span class="text-primary font-bold">{{ existing.sleep_quality }}/5</span> &nbsp;·&nbsp;
+                Stres: <span class="text-primary font-bold">{{ existing.stress_level }}/5</span>
+              </p>
+              <p class="text-on-surface">DOMS: <span class="text-primary font-bold">{{ existing.doms_level }}/5</span></p>
+              {% if existing.training_notes %}
+              <p class="text-on-surface-variant mt-3 italic">"{{ existing.training_notes|truncatewords:30 }}"</p>
+              {% endif %}
+              <div class="mt-6 flex items-center gap-2 text-primary font-bold animate-pulse">
+                <span class="w-2 h-4 bg-primary"></span>SPREMAN ZA NOVI PLAN_
+              </div>
+            {% else %}
+              <p class="mb-4 text-primary/60">ČEKANJE NA UNOS...</p>
+              <p class="text-on-surface-variant">Popuni subjektivni unos i AI trener će analizirati tvoj tjedan.</p>
+              <div class="mt-6 flex items-center gap-2 text-primary/40">
+                <span class="w-2 h-4 bg-primary/40"></span>AWAITING INPUT_
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Proposed changes -->
+        <div class="bg-surface-container p-8 rounded-xl ghost-border">
+          <h3 class="font-headline text-lg font-bold tracking-tight mb-6 uppercase tracking-widest">Promjene za idući tjedan</h3>
+          {% if latest_plan %}
+          <div class="space-y-4">
+            <div class="flex items-center gap-4 bg-surface-container-high p-4 rounded-lg border-l-2 border-primary">
+              <span class="material-symbols-outlined text-primary">trending_up</span>
+              <div class="flex-1">
+                <p class="text-xs font-bold text-on-surface">Progresija volumena</p>
+                <p class="text-[10px] text-slate-500 uppercase">Plan #{{ latest_plan.pk }} → tjedan {{ latest_plan.week_number|add:1 }}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4 bg-surface-container-high p-4 rounded-lg border-l-2 border-secondary">
+              <span class="material-symbols-outlined text-secondary">auto_fix_high</span>
+              <div class="flex-1">
+                <p class="text-xs font-bold text-on-surface">AI prilagodba</p>
+                <p class="text-[10px] text-slate-500 uppercase">Bazirana na feedbacku</p>
+              </div>
+            </div>
+          </div>
+          {% else %}
+          <p class="text-on-surface-variant text-xs">Nema aktivnog plana. Generiraj plan u sekciji "Tjedni plan".</p>
+          {% endif %}
+        </div>
+
+        <!-- Generate next week CTA -->
+        {% if existing %}
+        <form method="post" action="{% url 'feedback:generate_next_week' %}">
+          {% csrf_token %}
+          <button type="submit"
+            class="w-full bg-gradient-to-br from-primary to-primary-container py-6 rounded-xl flex flex-col items-center justify-center gap-1 hover:shadow-[0_0_30px_rgba(113,255,232,0.3)] transition-all transform hover:-translate-y-1">
+            <span class="font-headline font-extrabold text-on-primary uppercase tracking-[0.2em] text-lg">Prihvati plan za idući tjedan</span>
+            <span class="text-[10px] text-on-primary/60 font-label tracking-widest uppercase">GENERIRANJE NOVOG RASPOREDA...</span>
+          </button>
+        </form>
+        {% else %}
+        <div class="w-full bg-surface-container-high/50 border border-outline-variant/20 py-6 rounded-xl flex flex-col items-center justify-center gap-1 cursor-not-allowed opacity-50">
+          <span class="font-headline font-extrabold text-on-surface-variant uppercase tracking-[0.2em] text-lg">Prihvati plan za idući tjedan</span>
+          <span class="text-[10px] text-slate-600 font-label tracking-widest uppercase">Najprije pošalji feedback</span>
+        </div>
+        {% endif %}
+
+        <!-- Status dots -->
+        <div class="flex items-center justify-center gap-6 pt-2">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full {% if existing %}bg-primary{% else %}bg-slate-600{% endif %}"></span>
+            <span class="text-[10px] text-slate-500 uppercase tracking-widest">{% if existing %}Sync Active{% else %}Sync Idle{% endif %}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full {% if latest_plan %}bg-secondary{% else %}bg-slate-600{% endif %}"></span>
+            <span class="text-[10px] text-slate-500 uppercase tracking-widest">{% if latest_plan %}AI Calibrated{% else %}No Plan{% endif %}</span>
+          </div>
+        </div>
+
+      </div><!-- /right col -->
+    </div><!-- /grid -->
+  </div><!-- /canvas -->
+</main>
+
+<!-- Visual overlays -->
+<div class="fixed inset-0 pointer-events-none border-[24px] border-surface-container-lowest opacity-30"></div>
+<div class="scanline" style="top:25%; opacity:0.08;"></div>
+<div class="scanline" style="bottom:25%; opacity:0.08;"></div>
+
+<script>
+// Sleep slider → live display
+const sleepSlider = document.getElementById('sleep_quality');
+const sleepDisplay = document.getElementById('sleep-display');
+if (sleepSlider && sleepDisplay) {
+  sleepSlider.addEventListener('input', function() {
+    sleepDisplay.textContent = this.value + ' / 5';
+  });
+}
+
+// Stress stars
+const starBtns = document.querySelectorAll('.star-btn');
+const stressInput = document.getElementById('stress-input');
+starBtns.forEach(btn => {
+  btn.addEventListener('click', function() {
+    const val = parseInt(this.dataset.value);
+    stressInput.value = val;
+    starBtns.forEach((b, idx) => {
+      const active = idx < val;
+      b.classList.toggle('text-primary', active);
+      b.classList.toggle('text-surface-variant', !active);
+      b.style.fontVariationSettings = active ? "'FILL' 1" : "'FILL' 0";
+    });
+  });
+});
+
+// DOMS stars
+const domsBtns = document.querySelectorAll('.doms-star-btn');
+const domsInput = document.getElementById('doms-input');
+domsBtns.forEach(btn => {
+  btn.addEventListener('click', function() {
+    const val = parseInt(this.dataset.value);
+    domsInput.value = val;
+    domsBtns.forEach((b, idx) => {
+      const active = idx < val;
+      b.classList.toggle('text-error', active);
+      b.classList.toggle('text-surface-variant', !active);
+      b.style.fontVariationSettings = active ? "'FILL' 1" : "'FILL' 0";
+    });
+  });
+});
+</script>
+</body>
+</html>

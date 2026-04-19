@@ -1,0 +1,224 @@
+{% extends 'base_tw.html' %}
+{% block title %}Trening Završen — {{ log.planned_session.name|default:"Sažetak" }}{% endblock %}
+
+{% block sidebar_logs %}text-[#71ffe8] border-r-2 border-[#71ffe8] bg-[#71ffe8]/5{% endblock %}
+
+{% block extra_css %}
+<style>
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.92) translateY(10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.pop-in { animation: pop-in 0.35s ease both; }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="px-10 py-10 max-w-[1200px]">
+
+  <!-- Page header -->
+  <div class="flex items-center gap-5 mb-10 pop-in">
+    <div class="w-14 h-14 rounded-full bg-[#71ffe8]/15 border-2 border-[#71ffe8]/35
+                flex items-center justify-center flex-shrink-0">
+      <span class="material-symbols-outlined text-[#71ffe8] text-3xl"
+            style="font-variation-settings:'FILL' 1">check_circle</span>
+    </div>
+    <div>
+      <h1 class="text-3xl font-black font-['Space_Grotesk'] text-white tracking-tight">Trening Završen</h1>
+      <p class="text-slate-500 text-sm mt-1">
+        {{ log.planned_session.name|default:"" }}
+        {% if log.ended_at %}
+          &middot; {{ log.ended_at|date:"d.m.Y · H:i" }}
+        {% elif log.started_at %}
+          &middot; {{ log.started_at|date:"d.m.Y" }}
+        {% endif %}
+      </p>
+    </div>
+  </div>
+
+  <!-- KPI stat cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-10">
+
+    <!-- Duration -->
+    <div class="hud-glass rounded-xl p-7 text-center pop-in" style="animation-delay:0.05s">
+      <p class="text-[9px] font-bold font-['Space_Grotesk'] uppercase tracking-[0.2em] text-slate-500 mb-3">Trajanje</p>
+      <p class="text-4xl font-black font-['Space_Grotesk'] text-white mb-1" id="duration-display">--</p>
+      <p class="text-xs text-slate-500" id="duration-sub">
+        {% if log.duration_seconds %}{{ log.duration_seconds }} sekundi{% else %}Nema podataka{% endif %}
+      </p>
+    </div>
+
+    <!-- Volume -->
+    <div class="hud-glass rounded-xl p-7 text-center pop-in" style="animation-delay:0.12s">
+      <p class="text-[9px] font-bold font-['Space_Grotesk'] uppercase tracking-[0.2em] text-slate-500 mb-3">Ukupni Volumen</p>
+      <p class="text-4xl font-black font-['Space_Grotesk'] text-[#71ffe8] mb-1">
+        {{ log.total_volume_kg|default:"0" }}
+      </p>
+      <p class="text-xs text-slate-500">kg ukupno</p>
+    </div>
+
+    <!-- Completed sets (counted by JS below) -->
+    <div class="hud-glass rounded-xl p-7 text-center pop-in" style="animation-delay:0.19s">
+      <p class="text-[9px] font-bold font-['Space_Grotesk'] uppercase tracking-[0.2em] text-slate-500 mb-3">Završeni Setovi</p>
+      <p class="text-4xl font-black font-['Space_Grotesk'] text-[#5f8cff] mb-1" id="completed-sets-count">--</p>
+      <p class="text-xs text-slate-500">završenih setova</p>
+    </div>
+
+  </div>
+
+  <!-- Exercise breakdown table -->
+  <div class="hud-glass rounded-xl overflow-hidden mb-6 pop-in" style="animation-delay:0.26s">
+    <div class="bg-[#262a37]/50 px-7 py-5 flex items-center justify-between">
+      <h2 class="text-sm font-bold font-['Space_Grotesk'] text-white uppercase tracking-wider">Pregled Vježbi</h2>
+      <span class="text-[10px] text-slate-500">{{ exercises|length }} vježbi</span>
+    </div>
+
+    <div class="p-6 space-y-6">
+      {% for ex in exercises %}
+      <div class="{% if not forloop.last %}border-b border-white/5 pb-6{% endif %}">
+
+        <!-- Exercise name row -->
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-2 h-2 rounded-full flex-shrink-0
+            {% if ex.planned_exercise.role == 'main_compound' %}bg-[#71ffe8]
+            {% elif ex.planned_exercise.role == 'secondary_compound' %}bg-[#5f8cff]
+            {% else %}bg-slate-600{% endif %}"></span>
+          <span class="font-bold text-white text-sm font-['Space_Grotesk'] uppercase tracking-tight">{{ ex.name }}</span>
+          <span class="text-[10px] text-slate-500 ml-auto">{{ ex.sets.all|length }} set(a)</span>
+        </div>
+
+        <!-- Sets table -->
+        {% if ex.sets.all %}
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs">
+            <thead>
+              <tr class="text-slate-500 border-b border-white/5">
+                <th class="text-left   py-2 px-3 font-bold uppercase tracking-widest text-[9px]">Set</th>
+                <th class="text-center py-2 px-3 font-bold uppercase tracking-widest text-[9px]">KG</th>
+                <th class="text-center py-2 px-3 font-bold uppercase tracking-widest text-[9px]">Reps</th>
+                <th class="text-center py-2 px-3 font-bold uppercase tracking-widest text-[9px]">RPE</th>
+                <th class="text-right  py-2 px-3 font-bold uppercase tracking-widest text-[9px]">Volumen</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for s in ex.sets.all %}
+              <tr class="border-t border-white/[0.03] {% if not s.completed %}opacity-40{% endif %}">
+                <td class="py-2.5 px-3 text-slate-500">
+                  {{ s.set_number|stringformat:"02d" }}
+                  {% if not s.completed %}
+                    <span class="ml-1 text-[8px] text-slate-600 uppercase">(nije završen)</span>
+                  {% endif %}
+                </td>
+                <td class="py-2.5 px-3 text-center font-bold text-white font-['Space_Grotesk']">
+                  {{ s.weight_kg|default:"--" }}
+                </td>
+                <td class="py-2.5 px-3 text-center font-bold text-white font-['Space_Grotesk']">
+                  {{ s.reps_done|default:"--" }}
+                </td>
+                <td class="py-2.5 px-3 text-center text-slate-500">
+                  {% if s.rpe_done %}{{ s.rpe_done }}{% else %}--{% endif %}
+                </td>
+                <td class="py-2.5 px-3 text-right font-bold font-['Space_Grotesk']
+                           {% if s.completed and s.weight_kg and s.reps_done %}text-[#71ffe8]{% else %}text-slate-600{% endif %}">
+                  {% if s.completed and s.weight_kg and s.reps_done %}
+                    {{ s.weight_kg }} &times; {{ s.reps_done }} kg
+                  {% else %}
+                    --
+                  {% endif %}
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="5" class="py-4 px-3 text-slate-600 text-center">Nema setova</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p class="text-slate-600 text-xs pl-5">Nema završenih setova</p>
+        {% endif %}
+
+      </div>
+      {% empty %}
+      <p class="text-slate-500 text-sm py-6 text-center">Nema zabilježenih vježbi.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Notes / impression -->
+  {% if log.notes %}
+  <div class="hud-glass rounded-xl p-6 mb-6 pop-in" style="animation-delay:0.33s">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="material-symbols-outlined text-[#71ffe8] text-lg">sticky_note_2</span>
+      <h3 class="text-[10px] font-bold font-['Space_Grotesk'] uppercase tracking-widest text-[#71ffe8]">Bilješka i Dojam</h3>
+    </div>
+    <p class="text-sm leading-relaxed text-[#dfe2f3]/80 whitespace-pre-wrap">{{ log.notes }}</p>
+  </div>
+  {% endif %}
+
+  <!-- Action buttons -->
+  <div class="flex flex-wrap gap-4 pop-in" style="animation-delay:0.4s">
+    <a href="{% url 'core:home' %}"
+       class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#71ffe8] to-[#00e5cc]
+              text-[#003730] font-black font-['Space_Grotesk'] text-xs uppercase tracking-widest
+              rounded-xl hover:scale-105 transition-transform glow-primary">
+      <span class="material-symbols-outlined text-base">dashboard</span>
+      Natrag na Dashboard
+    </a>
+    <a href="{% url 'plans:weekly_plan' %}"
+       class="inline-flex items-center gap-2 px-6 py-3 border border-white/15
+              text-slate-300 hover:text-white hover:border-white/30 font-bold font-['Space_Grotesk']
+              text-xs uppercase tracking-widest rounded-xl transition-all">
+      <span class="material-symbols-outlined text-base">calendar_month</span>
+      Vidi Tjedni Plan
+    </a>
+    <a href="{% url 'logs:session_picker' %}"
+       class="inline-flex items-center gap-2 px-6 py-3 border border-[#71ffe8]/20
+              text-[#71ffe8]/70 hover:text-[#71ffe8] hover:border-[#71ffe8]/40 font-bold
+              font-['Space_Grotesk'] text-xs uppercase tracking-widest rounded-xl transition-all">
+      <span class="material-symbols-outlined text-base">fitness_center</span>
+      Novi Trening
+    </a>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  // Duration display
+  var d = {{ log.duration_seconds|default:0 }};
+  var el = document.getElementById('duration-display');
+  var sub = document.getElementById('duration-sub');
+  if (el) {
+    if (d > 0) {
+      var h = Math.floor(d / 3600);
+      var m = Math.floor((d % 3600) / 60);
+      var s = d % 60;
+      el.textContent = h > 0
+        ? h + 'h ' + String(m).padStart(2, '0') + 'm'
+        : m > 0
+          ? String(m) + 'm ' + String(s).padStart(2, '0') + 's'
+          : d + 's';
+      if (sub) sub.textContent = 'oko ' + Math.round(d / 60) + ' min';
+    } else {
+      el.textContent = '--';
+      if (sub) sub.textContent = 'Nema podataka';
+    }
+  }
+
+  // Count completed sets from template data
+  var completedCount = 0;
+  {% for ex in exercises %}
+    {% for s in ex.sets.all %}
+      {% if s.completed %}completedCount++;{% endif %}
+    {% endfor %}
+  {% endfor %}
+
+  var setsEl = document.getElementById('completed-sets-count');
+  if (setsEl) setsEl.textContent = completedCount;
+})();
+</script>
+{% endblock %}

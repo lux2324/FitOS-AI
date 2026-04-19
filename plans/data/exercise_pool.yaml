@@ -1,0 +1,714 @@
+# Exercise Pool - standardizirani iz stvarnih trening logova
+# Izvor: training_log_all.yaml (35 tjedana), Odabir vjezbi.md, exercise_template_muskarac_2.md
+#
+# Polja:
+#   role: main_compound | secondary_compound | isolation
+#   movement_category: horizontal_push | vertical_pull | horizontal_pull | squat_knee_dominant | hip_hinge | single_leg | chest_isolation | shoulder_isolation | biceps_isolation | triceps_isolation | quad_isolation | hamstring_isolation | calf | abs
+#   primary_muscles: glavne misicne skupine koje vjezba pogadja
+#   secondary_muscles: pomocne misicne skupine
+#   fatigue_cost: high | medium | low
+#   log_frequency: koliko puta se pojavila u 35 tjedana loga
+#   log_sessions: u kojim tipovima sesija se pojavljivala
+#   preferred: true ako je u tvojim preferiranim poolovima iz Odabir vjezbi.md
+#   aliases: alternative nazive iz loga (za normalizaciju)
+#
+# Za reps_min/reps_max po vjezbi pogledaj: EXCERSISES/rep_ranges.md
+#
+# Body map:
+#   prsa, latovi, gornja_leda, prednje_rame, srednje_rame, straznje_rame,
+#   triceps, biceps, kvadovi, zadnja_loza, gluteus, listovi, trbuh, donja_leda
+
+# ============================================================
+# HORIZONTAL PUSH
+# ============================================================
+
+exercises:
+
+  - name: Bench press
+    role: main_compound
+    movement_category: horizontal_push
+    primary_muscles: [prsa]
+    secondary_muscles: [prednje_rame, triceps]
+    fatigue_cost: high
+    log_frequency: 31
+    log_sessions: [Push, Upper 1, Full Body]
+    preferred: true
+    sex: male
+    aliases: []
+
+  - name: Chest press
+    role: secondary_compound
+    movement_category: horizontal_push
+    primary_muscles: [prsa]
+    secondary_muscles: [prednje_rame, triceps]
+    fatigue_cost: medium
+    log_frequency: 0
+    log_sessions: []
+    preferred: true
+    sex: male
+    aliases: [Masina za prsa]
+
+  - name: Kosi potisak bucicama
+    role: main_compound
+    movement_category: horizontal_push
+    primary_muscles: [prsa]
+    secondary_muscles: [prednje_rame, triceps]
+    fatigue_cost: medium
+    log_frequency: 31
+    log_sessions: [Push, Upper 2]
+    preferred: false
+    sex: male
+    aliases: [Kosi potisak s bučicama, Kosi potisak bučicama]
+
+  - name: Kosi bench press
+    role: main_compound
+    movement_category: horizontal_push
+    primary_muscles: [prsa]
+    secondary_muscles: [prednje_rame, triceps]
+    fatigue_cost: high
+    log_frequency: 11
+    log_sessions: [Upper]
+    preferred: false
+    sex: male
+    aliases: []
+
+  - name: Propadanja
+    role: main_compound
+    movement_category: horizontal_push
+    primary_muscles: [prsa, triceps]
+    secondary_muscles: [prednje_rame]
+    fatigue_cost: medium
+    log_frequency: 10
+    log_sessions: [Upper 2]
+    preferred: false
+    sex: male
+    aliases: [Propadanja (sprava)]
+
+# ============================================================
+# VERTICAL PULL
+# ============================================================
+
+  - name: Lat pulldown
+    role: main_compound
+    movement_category: vertical_pull
+    primary_muscles: [latovi]
+    secondary_muscles: [gornja_leda, biceps]
+    fatigue_cost: medium
+    log_frequency: 31
+    log_sessions: [Pull, Push, Upper 1, Full Body]
+    preferred: true
+    aliases: [Lat pulldown siroki hvat, Latpulldown, Lat machine]
+
+  - name: Lat pulldown uski hvat
+    role: main_compound
+    movement_category: vertical_pull
+    primary_muscles: [latovi]
+    secondary_muscles: [gornja_leda, biceps]
+    fatigue_cost: medium
+    log_frequency: 10
+    log_sessions: [Upper 2]
+    preferred: false
+    sex: male
+    aliases: []
+
+  - name: Pullups
+    role: main_compound
+    movement_category: vertical_pull
+    primary_muscles: [latovi]
+    secondary_muscles: [gornja_leda, biceps]
+    fatigue_cost: high
+    log_frequency: 0
+    log_sessions: []
+    preferred: true
+    sex: male
+    aliases: [Zgibovi]
+
+# ============================================================
+# HORIZONTAL PULL
+# ============================================================
+
+  - name: Veslanje u pretklonu sa sipkom
+    role: main_compound
+    movement_category: horizontal_pull
+    primary_muscles: [gornja_leda]
+    secondary_muscles: [latovi, biceps, straznje_rame]
+    fatigue_cost: high
+    log_frequency: 21
+    log_sessions: [Pull, Push, Upper]
+    preferred: false
+    sex: male
+    aliases: [Veslanje šipkom]
+
+  - name: Veslanje na sajli
+    role: secondary_compound
+    movement_category: horizontal_pull
+    primary_muscles: [gornja_leda]
+    secondary_muscles: [latovi, biceps, straznje_rame]
+    fatigue_cost: medium
+    log_frequency: 32
+    log_sessions: [Pull, Push, Upper]
+    preferred: true
+    aliases: [Seated cable row uski, Veslanje na sajli(horizontalno)]
+
+  - name: Veslanje bucicom
+    role: main_compound
+    movement_category: horizontal_pull
+    primary_muscles: [gornja_leda]
+    secondary_muscles: [latovi, biceps, straznje_rame]
+    fatigue_cost: medium
+    log_frequency: 4
+    log_sessions: [Upper 1]
+    preferred: true
+    sex: male
+    aliases: [Veslanje bučicom(jednom), Dumbbell row]
+
+  - name: Veslanje sprava
+    role: secondary_compound
+    movement_category: horizontal_pull
+    primary_muscles: [gornja_leda]
+    secondary_muscles: [latovi, straznje_rame]
+    fatigue_cost: medium
+    log_frequency: 6
+    log_sessions: [Upper 1]
+    preferred: false
+    sex: male
+    aliases: []
+
+  - name: T-bar
+    role: main_compound
+    movement_category: horizontal_pull
+    primary_muscles: [gornja_leda]
+    secondary_muscles: [latovi, biceps, straznje_rame]
+    fatigue_cost: high
+    log_frequency: 5
+    log_sessions: [Upper 2]
+    preferred: false
+    sex: male
+    aliases: [T-bar veslanje]
+
+  - name: Cable row siroki
+    role: secondary_compound
+    movement_category: horizontal_pull
+    primary_muscles: [gornja_leda, straznje_rame]
+    secondary_muscles: [latovi, biceps]
+    fatigue_cost: medium
+    log_frequency: 0
+    log_sessions: []
+    preferred: true
+    sex: male
+    aliases: []
+
+# ============================================================
+# SQUAT / KNEE-DOMINANT
+# ============================================================
+
+  - name: Leg press
+    role: main_compound
+    movement_category: squat_knee_dominant
+    primary_muscles: [kvadovi]
+    secondary_muscles: [gluteus]
+    fatigue_cost: high
+    log_frequency: 21
+    log_sessions: [Legs]
+    preferred: true
+    aliases: []
+
+  - name: Hack squat
+    role: main_compound
+    movement_category: squat_knee_dominant
+    primary_muscles: [kvadovi]
+    secondary_muscles: [gluteus]
+    fatigue_cost: high
+    log_frequency: 10
+    log_sessions: [Full Body]
+    preferred: true
+    aliases: [Hack čučanj]
+
+  - name: Bugarski cucanj
+    role: main_compound
+    movement_category: single_leg
+    primary_muscles: [kvadovi]
+    secondary_muscles: [gluteus]
+    fatigue_cost: high
+    log_frequency: 10
+    log_sessions: [Lower 2]
+    preferred: true
+    aliases: [Bugarski čučanj]
+
+  - name: Step-ups
+    role: main_compound
+    movement_category: single_leg
+    primary_muscles: [kvadovi, gluteus]
+    secondary_muscles: [zadnja_loza]
+    fatigue_cost: medium
+    log_frequency: 5
+    log_sessions: []
+    preferred: false
+    aliases: [Step up, Stepovi]
+
+# ============================================================
+# HIP HINGE
+# ============================================================
+
+  - name: Rumunjsko mrtvo dizanje
+    role: main_compound
+    movement_category: hip_hinge
+    primary_muscles: [zadnja_loza, gluteus]
+    secondary_muscles: [donja_leda]
+    fatigue_cost: high
+    log_frequency: 36
+    log_sessions: [Legs, Lower 1, Lower 2]
+    preferred: true
+    aliases: [Rumunjski deadlift, RDL, Rumunjski deadlift(RDL)]
+
+  - name: Stiff leg deadlift
+    role: main_compound
+    movement_category: hip_hinge
+    primary_muscles: [zadnja_loza, gluteus]
+    secondary_muscles: [donja_leda]
+    fatigue_cost: high
+    log_frequency: 5
+    log_sessions: [Lower 2]
+    preferred: false
+    aliases: []
+
+# ============================================================
+# CHEST ISOLATION
+# ============================================================
+
+  - name: Razvlacenje za prsa na sajli
+    role: isolation
+    movement_category: chest_isolation
+    primary_muscles: [prsa]
+    secondary_muscles: []
+    fatigue_cost: low
+    log_frequency: 22
+    log_sessions: [Push, Upper]
+    preferred: false
+    sex: male
+    aliases: [Razvlačenje za prsa na sajli, Razvlačenje za prsa]
+
+  - name: Razvlacenje za prsa sprava
+    role: isolation
+    movement_category: chest_isolation
+    primary_muscles: [prsa]
+    secondary_muscles: []
+    fatigue_cost: low
+    log_frequency: 0
+    log_sessions: []
+    preferred: false
+    sex: male
+    aliases: [Masina za prsa]
+
+  - name: Letenje bucicama
+    role: isolation
+    movement_category: chest_isolation
+    primary_muscles: [prsa]
+    secondary_muscles: []
+    fatigue_cost: low
+    log_frequency: 10
+    log_sessions: [Upper 2]
+    preferred: false
+    sex: male
+    aliases: [Letenje bučicama]
+
+# ============================================================
+# SHOULDER ISOLATION
+# ============================================================
+
+  - name: Lateral raises
+    role: isolation
+    movement_category: shoulder_isolation
+    primary_muscles: [srednje_rame]
+    secondary_muscles: []
+    fatigue_cost: low
+    log_frequency: 21
+    log_sessions: [Push, Upper]
+    preferred: false
+    aliases: [Odručenje bučicama]
+
+# ============================================================
+# TRICEPS ISOLATION
+# ============================================================
+
+  - name: Triceps ekstenzija iznad glave
+    role: isolation
+    movement_category: triceps_isolation
+    primary_muscles: [triceps]
+    secondary_muscles: []
+    fatigue_cost: low
+    log_frequency: 26
+    log_sessions: [Push, Upper]
+    preferred: false
+    aliases: [Triceps ekstenzija iznad glave sajla, Triceps ekstenzija iznad glave(bucica)]
+
+  - name: Triceps ekstenzija sajla
+    role: isolation
+    movement_category: triceps_isolation
+    primary_muscles: [triceps]
+    secondary_muscles: []
+    fatigue_cost: low
+    log_frequency: 31
+    log_sessions: [Push, Full Body, Upper 1]
+    preferred: false
+    aliases: [Triceps ekstenzija sajla s ravnom šipkom, Triceps ekstenzija]
+
+  - name: Skullcrushers
+    role: isolation
+    movement_category: triceps_isolation
+    primary_muscles: [triceps]
+    secondary_muscles: []
+    fatigue_cost: low
+    log_frequency: 16
+    log_sessions: [Upper, Upper 2]
+    preferred: false
+    sex: male
+    aliases: [Skullchrushers, Skull crusher, Triceps ekstenzija šipkom(na klupici)]
+
+# ============================================================
+# BICEPS ISOLATION
+# ============================================================
+
+  - name: Biceps pregib s bucicama
+    role: isolation
+    movement_category: biceps_isolation
+    primary_muscles: [biceps]
+    secondary_muscles: []
+    fatigue_cost: low
+    log_frequency: 32
+    log_sessions: [Pull, Push, Full Body, Upper]
+    preferred: false
+    aliases: [Biceps pregib s bučicama, Biceps pregib]
+
+  - name: Biceps pregib sa sipkom
+    role: isolation
+    movement_category: biceps_isolation
+    primary_muscles: [biceps]
+    secondary_muscles: []
+    fatigue_cost: low
+    log_frequency: 21
+    log_sessions: [Pull, Push, Upper]
+    preferred: false
+    aliases: [Biceps pregib sa šipkom]
+
+  - name: Jednoručni preacher curl
+    role: isolation
+    movement_category: biceps_isolation
+    primary_muscles: [biceps]
+    secondary_muscles: []
+    fatigue_cost: low
+    log_frequency: 10
+    log_sessions: [Upper 2]
+    preferred: false
+    aliases: []
+
+# ============================================================
+# QUAD ISOLATION
+# ============================================================
+
+  - name: Nozna ekstenzija
+    role: isolation
+    movement_category: quad_isolation
+    primary_muscles: [kvadovi]
+    secondary_muscles: []
+    fatigue_cost: low
+    log_frequency: 41
+    log_sessions: [Legs, Lower 1, Lower 2]
+    preferred: true
+    aliases: [Nožna ekstenzija, Ekstenzija]
+
+# ============================================================
+# HAMSTRING ISOLATION
+# ============================================================
+
+  - name: Lezeca fleksija
+    role: isolation
+    movement_category: hamstring_isolation
+    primary_muscles: [zadnja_loza]
+    secondary_muscles: []
+    fatigue_cost: low
+    log_frequency: 41
+    log_sessions: [Legs, Lower 1, Lower 2]
+    preferred: true
+    aliases: [Ležeća fleksija, Nožna fleksija, Leg curl lezeci]
+
+  - name: Sjedeca fleksija
+    role: isolation
+    movement_category: hamstring_isolation
+    primary_muscles: [zadnja_loza]
+    secondary_muscles: []
+    fatigue_cost: low
+    log_frequency: 10
+    log_sessions: [Full Body]
+    preferred: true
+    aliases: [Sjedeća fleksija, Leg curl sjedeci]
+
+# ============================================================
+# CALVES
+# ============================================================
+
+  - name: Podizanje na prste
+    role: isolation
+    movement_category: calf
+    primary_muscles: [listovi]
+    secondary_muscles: []
+    fatigue_cost: low
+    log_frequency: 41
+    log_sessions: [Legs, Lower 1, Lower 2]
+    preferred: false
+    aliases: [Podizanje na prste (smith sprava), Podizanje za listove jednonožno]
+
+# ============================================================
+# GLUTE / HIP
+# ============================================================
+
+  - name: Hip thrust
+    role: main_compound
+    movement_category: glute_compound
+    primary_muscles: [gluteus]
+    secondary_muscles: [zadnja_loza]
+    fatigue_cost: medium
+    log_frequency: 0
+    log_sessions: []
+    preferred: true
+    aliases: [Barbell hip thrust, Hip thrust sprava]
+
+  - name: Hip abduction sprava
+    role: isolation
+    movement_category: glute_isolation
+    primary_muscles: [gluteus]
+    secondary_muscles: []
+    fatigue_cost: low
+    log_frequency: 0
+    log_sessions: []
+    preferred: true
+    aliases: [Abduktor sprava, Hip abduction]
+
+  - name: Hip adduction sprava
+    role: isolation
+    movement_category: adductor_isolation
+    primary_muscles: [kvadovi]
+    secondary_muscles: []
+    fatigue_cost: low
+    log_frequency: 0
+    log_sessions: []
+    preferred: true
+    aliases: [Aduktor sprava, Hip adduction]
+
+  - name: Cable kickback
+    role: isolation
+    movement_category: glute_isolation
+    primary_muscles: [gluteus]
+    secondary_muscles: []
+    fatigue_cost: low
+    log_frequency: 0
+    log_sessions: []
+    preferred: true
+    aliases: [Kickback sajla, Glute kickback]
+
+# ============================================================
+# ABS
+# ============================================================
+
+  - name: Plank
+    role: isolation
+    movement_category: abs
+    primary_muscles: [trbuh]
+    secondary_muscles: []
+    fatigue_cost: low
+    log_frequency: 21
+    log_sessions: [Legs]
+    preferred: false
+    aliases: []
+
+  - name: Podizanje nogu
+    role: isolation
+    movement_category: abs
+    primary_muscles: [trbuh]
+    secondary_muscles: []
+    fatigue_cost: low
+    log_frequency: 10
+    log_sessions: [Lower 2]
+    preferred: false
+    aliases: [Podizanje nogu(za trbuh)]
+
+
+# ============================================================
+# SESSION TEMPLATES - izvuceno iz tvojih stvarnih obrazaca
+# ============================================================
+#
+# Ovo su standardni obrasci koji se ponavljaju kroz 35 tjedana.
+# Agent ih koristi kao template, pa popunjava iz exercise poola.
+#
+# PRAVILO: sesija pocinje s 1-2 main compounda,
+#          zatim 1 support/secondary,
+#          zavrsava s 2-3 izolacija.
+
+session_templates:
+
+  push:
+    description: "Prsa + triceps + rame"
+    slots:
+      - {slot: 1, category: horizontal_push, role: main_compound, note: "glavni press"}
+      - {slot: 2, category: horizontal_push, role: main_compound, note: "drugi press ili kosi"}
+      - {slot: 3, category: chest_isolation, role: isolation}
+      - {slot: 4, category: triceps_isolation, role: isolation}
+      - {slot: 5, category: shoulder_isolation, role: isolation}
+      - {slot: 6, category: triceps_isolation, role: isolation, optional: true}
+
+  pull:
+    description: "Leda + biceps"
+    slots:
+      - {slot: 1, category: horizontal_pull, role: main_compound, note: "row pattern"}
+      - {slot: 2, category: vertical_pull, role: main_compound, note: "pulldown/pullup"}
+      - {slot: 3, category: horizontal_pull, role: secondary_compound, note: "drugi row"}
+      - {slot: 4, category: biceps_isolation, role: isolation}
+      - {slot: 5, category: biceps_isolation, role: isolation}
+
+  legs:
+    description: "Noge kompletno"
+    slots:
+      - {slot: 1, category: hip_hinge, role: main_compound, note: "RDL ili deadlift varijanta"}
+      - {slot: 2, category: squat_knee_dominant, role: main_compound, note: "leg press ili hack squat"}
+      - {slot: 3, category: quad_isolation, role: isolation}
+      - {slot: 4, category: hamstring_isolation, role: isolation}
+      - {slot: 5, category: calf, role: isolation}
+      - {slot: 6, category: abs, role: isolation}
+
+  upper:
+    description: "Gornji dio - push + pull + ruke"
+    slots:
+      - {slot: 1, category: horizontal_push, role: main_compound}
+      - {slot: 2, category: vertical_pull, role: main_compound}
+      - {slot: 3, category: horizontal_pull, role: secondary_compound}
+      - {slot: 4, category: chest_isolation, role: isolation, note: "ili shoulder_isolation"}
+      - {slot: 5, category: biceps_isolation, role: isolation}
+      - {slot: 6, category: triceps_isolation, role: isolation}
+
+  upper_1:
+    description: "Upper 1 - tezi push fokus"
+    slots:
+      - {slot: 1, category: horizontal_push, role: main_compound, note: "bench press"}
+      - {slot: 2, category: vertical_pull, role: main_compound, note: "lat pulldown"}
+      - {slot: 3, category: chest_isolation, role: isolation}
+      - {slot: 4, category: horizontal_pull, role: secondary_compound}
+      - {slot: 5, category: triceps_isolation, role: isolation}
+      - {slot: 6, category: biceps_isolation, role: isolation}
+
+  upper_2:
+    description: "Upper 2 - drugaciji odabir, vise pull"
+    slots:
+      - {slot: 1, category: horizontal_push, role: main_compound, note: "kosi potisak ili propadanja"}
+      - {slot: 2, category: horizontal_pull, role: main_compound, note: "row varijanta"}
+      - {slot: 3, category: horizontal_push, role: main_compound, note: "propadanja ili drugi press"}
+      - {slot: 4, category: vertical_pull, role: main_compound, note: "uski hvat"}
+      - {slot: 5, category: chest_isolation, role: isolation}
+      - {slot: 6, category: biceps_isolation, role: isolation}
+      - {slot: 7, category: triceps_isolation, role: isolation}
+
+  lower_1:
+    description: "Lower 1 - tezi compounds"
+    slots:
+      - {slot: 1, category: squat_knee_dominant, role: main_compound, note: "hack squat"}
+      - {slot: 2, category: hip_hinge, role: main_compound, note: "RDL"}
+      - {slot: 3, category: quad_isolation, role: isolation}
+      - {slot: 4, category: hamstring_isolation, role: isolation}
+      - {slot: 5, category: calf, role: isolation}
+
+  lower_2:
+    description: "Lower 2 - unilateral + dopuna"
+    slots:
+      - {slot: 1, category: single_leg, role: main_compound, note: "bugarski cucanj"}
+      - {slot: 2, category: hip_hinge, role: main_compound, note: "stiff leg ili RDL"}
+      - {slot: 3, category: quad_isolation, role: isolation}
+      - {slot: 4, category: hamstring_isolation, role: isolation}
+      - {slot: 5, category: calf, role: isolation}
+      - {slot: 6, category: abs, role: isolation}
+
+  full_body:
+    description: "Cijelo tijelo - minimalna pokrivenost"
+    slots:
+      - {slot: 1, category: horizontal_push, role: main_compound}
+      - {slot: 2, category: vertical_pull, role: main_compound}
+      - {slot: 3, category: squat_knee_dominant, role: main_compound}
+      - {slot: 4, category: hamstring_isolation, role: isolation}
+      - {slot: 5, category: biceps_isolation, role: isolation}
+      - {slot: 6, category: triceps_isolation, role: isolation}
+
+  # ----------------------------------------------------------
+  # FEMALE-SPECIFIC TEMPLATES
+  # ----------------------------------------------------------
+
+  lower_f1:
+    description: "Ženski Lower 1 - squat + RDL + hip thrust"
+    slots:
+      - {slot: 1, category: squat_knee_dominant, role: main_compound, note: "hack squat ili leg press"}
+      - {slot: 2, category: hip_hinge, role: main_compound, note: "RDL"}
+      - {slot: 3, category: glute_compound, role: main_compound, note: "hip thrust"}
+      - {slot: 4, category: quad_isolation, role: isolation}
+      - {slot: 5, category: hamstring_isolation, role: isolation}
+      - {slot: 6, category: glute_isolation, role: isolation, optional: true}
+
+  lower_f2:
+    description: "Ženski Lower 2 - unilateral + gluteus fokus"
+    slots:
+      - {slot: 1, category: single_leg, role: main_compound, note: "bugarski cucanj ili step-ups"}
+      - {slot: 2, category: hip_hinge, role: main_compound, note: "stiff leg ili RDL varijanta"}
+      - {slot: 3, category: glute_compound, role: main_compound, note: "hip thrust"}
+      - {slot: 4, category: glute_isolation, role: isolation}
+      - {slot: 5, category: hamstring_isolation, role: isolation}
+      - {slot: 6, category: adductor_isolation, role: isolation, optional: true}
+
+  full_body_f:
+    description: "Ženski Full Body - noge/glute compounds + leda + ruke"
+    slots:
+      - {slot: 1, category: glute_compound, role: main_compound, note: "hip thrust"}
+      - {slot: 2, category: single_leg, role: main_compound, note: "step-ups ili bugarski"}
+      - {slot: 3, category: vertical_pull, role: main_compound, note: "lat pulldown"}
+      - {slot: 4, category: horizontal_pull, role: secondary_compound, note: "veslanje na sajli"}
+      - {slot: 5, category: biceps_isolation, role: isolation}
+      - {slot: 6, category: triceps_isolation, role: isolation, optional: true}
+      - {slot: 7, category: glute_isolation, role: isolation, optional: true}
+
+
+# ============================================================
+# SPLIT CONFIGURATIONS - koji templatei idu zajedno
+# ============================================================
+
+split_configs:
+
+  push_pull_legs:
+    sessions_per_week: 4
+    rotation: [push, pull, legs, upper]
+    phases_used: [1]
+    notes: "Faza 1, tjedni 1-11. Push i Pull su odvojeni, Upper spaja oba."
+
+  full_body_upper_legs:
+    sessions_per_week: 3
+    rotation: [full_body, upper, legs]
+    phases_used: [2, 3]
+    notes: "Faza 2-3, tjedni 12-22. Tranzicija na full body, manje sesija."
+
+  upper_lower:
+    sessions_per_week: 4
+    rotation: [upper_1, lower_1, upper_2, lower_2]
+    phases_used: [4]
+    notes: "Faza 4, tjedni 25-35. Svaki dio tijela 2x tjedno, razliciti odabiri."
+
+
+# ============================================================
+# MUSCLE GROUP COVERAGE PER SESSION TYPE
+# ============================================================
+# Ovo pokazuje koje misicne skupine svaki session tip pokriva,
+# korisno za provjeru frekvencije i volumena.
+
+coverage_map:
+  push:     {prsa: 3, triceps: 2, srednje_rame: 1, prednje_rame: 2}
+  pull:     {gornja_leda: 2, latovi: 1, biceps: 2, straznje_rame: 1}
+  legs:     {kvadovi: 2, zadnja_loza: 2, gluteus: 1, listovi: 1, trbuh: 1}
+  upper:    {prsa: 2, latovi: 1, gornja_leda: 1, triceps: 1, biceps: 1}
+  upper_1:  {prsa: 2, latovi: 1, gornja_leda: 1, triceps: 1, biceps: 1}
+  upper_2:  {prsa: 2, latovi: 1, gornja_leda: 1, triceps: 1, biceps: 1}
+  lower_1:  {kvadovi: 2, zadnja_loza: 2, gluteus: 1, listovi: 1}
+  lower_2:  {kvadovi: 2, zadnja_loza: 2, gluteus: 1, listovi: 1, trbuh: 1}
+  full_body: {prsa: 1, latovi: 1, kvadovi: 1, zadnja_loza: 1, triceps: 1, biceps: 1}

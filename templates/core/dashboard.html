@@ -1,90 +1,436 @@
-{% extends 'base.html' %}
+{% extends "base_tw.html" %}
+
 {% block title %}Dashboard{% endblock %}
 
+{% block sidebar_dashboard %}text-[#71ffe8] bg-[#71ffe8]/10 border-r-2 border-[#71ffe8] font-bold{% endblock %}
+
+{% block extra_css %}
+<style>
+  .glass-panel {
+    background: rgba(27,31,44,0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(113,255,232,0.1);
+  }
+  .primary-gradient {
+    background: linear-gradient(135deg, #71ffe8 0%, #00e5cc 100%);
+  }
+</style>
+{% endblock %}
+
 {% block body %}
-<div class="app-layout">
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <h1>FitOS</h1>
-      <p>AI Coach</p>
+<!-- Top Header Bar -->
+<header class="fixed top-0 right-0 w-[calc(100%-260px)] h-20 bg-[#0a0e1a]/80 backdrop-blur-xl border-b border-[#00e5cc]/10 flex justify-between items-center px-12 z-40">
+  <div class="flex items-center gap-4">
+    <span class="text-slate-500 font-label uppercase text-xs tracking-[0.2em]">System Status: Active</span>
+  </div>
+  <div class="flex items-center gap-6">
+    <span class="relative inline-block">
+      <span class="material-symbols-outlined text-slate-500 hover:text-[#71ffe8] cursor-pointer transition-colors text-2xl">notifications</span>
+      <span class="absolute -top-1 -right-1 w-2 h-2 bg-[#71ffe8] rounded-full shadow-[0_0_8px_#71ffe8]"></span>
+    </span>
+    <div class="w-9 h-9 rounded-full border border-[#71ffe8]/30 bg-[#71ffe8]/10 flex items-center justify-center">
+      <span class="material-symbols-outlined text-[#71ffe8] text-lg">person</span>
     </div>
-    <nav>
-      <a class="nav-item active" href="{% url 'core:home' %}">
-        <span class="material-symbols-outlined">dashboard</span> Dashboard
-      </a>
-      <a class="nav-item" href="#">
-        <span class="material-symbols-outlined">calendar_month</span> Tjedni Plan
-      </a>
-      <a class="nav-item" href="#">
-        <span class="material-symbols-outlined">fitness_center</span> Unesi Trening
-      </a>
-      <a class="nav-item" href="#">
-        <span class="material-symbols-outlined">chat_bubble</span> Tjedni Feedback
-      </a>
-      <a class="nav-item" href="#">
-        <span class="material-symbols-outlined">compare_arrows</span> Plan Diff
-      </a>
-      <a class="nav-item" href="#">
-        <span class="material-symbols-outlined">leaderboard</span> Statistika
-      </a>
-      <div class="nav-spacer"></div>
-      <a class="nav-item" href="{% url 'users:logout' %}">
-        <span class="material-symbols-outlined">logout</span> Logout
-      </a>
-    </nav>
-  </aside>
+  </div>
+</header>
 
-  <!-- Main -->
-  <main class="main-content">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
-      <div>
-        <p class="label" style="margin-bottom:4px;">Welcome back</p>
-        <h1>Hi, {{ request.user.first_name }}</h1>
-        <p style="color:var(--text-muted); font-size:13px; margin-top:4px;">Your intake is complete. Dashboard coming soon.</p>
-      </div>
-      <div style="width:40px;height:40px;border-radius:50%;background:var(--cyan-bg-strong);border:2px solid var(--cyan);display:flex;align-items:center;justify-content:center;">
-        <span class="material-symbols-outlined" style="font-size:20px;color:var(--cyan);">person</span>
+<!-- Main Canvas -->
+<div class="pt-20 p-12 space-y-10">
+
+  <!-- ── Page Header ──────────────────────────────────────────────────── -->
+  <div class="flex justify-between items-end">
+    <div>
+      <h2 class="text-6xl font-headline font-black uppercase tracking-tight text-[#71ffe8]">DASHBOARD</h2>
+      <p class="text-slate-400 font-medium text-lg mt-2">
+        {% if current_plan %}
+          Tjedan {{ current_plan.week_number }} — {{ current_plan.split_type }}
+        {% else %}
+          Nema aktivnog plana
+        {% endif %}
+      </p>
+    </div>
+    <div class="flex gap-4">
+      {% if plan_complete %}
+        <form method="post" action="{% url 'plans:generate' %}">
+          {% csrf_token %}
+          <button type="submit"
+                  class="px-8 py-3 rounded-md border border-[#71ffe8] text-[#71ffe8] font-headline uppercase tracking-widest text-sm hover:bg-[#71ffe8]/10 transition-all flex items-center gap-2">
+            <span class="material-symbols-outlined text-sm">auto_awesome</span>
+            Generiraj novi tjedan
+          </button>
+        </form>
+      {% else %}
+        <a href="{% url 'logs:session_picker' %}"
+           class="px-8 py-3 rounded-md border border-[#71ffe8] text-[#71ffe8] font-headline uppercase tracking-widest text-sm hover:bg-[#71ffe8]/10 transition-all">
+          Unesi trening
+        </a>
+      {% endif %}
+      <a href="{% url 'feedback:weekly' %}"
+         class="px-8 py-3 rounded-md primary-gradient text-on-primary font-headline font-bold uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(113,255,232,0.3)] hover:brightness-110 transition-all">
+        Tjedni feedback
+      </a>
+    </div>
+  </div>
+
+  <!-- ── KPI Row ──────────────────────────────────────────────────────── -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+    <!-- Treninzi ovaj tjedan -->
+    <div class="glass-panel p-8 rounded-2xl">
+      <p class="font-label uppercase text-xs tracking-[0.2em] text-slate-500 mb-3">Treninzi ovaj tjedan</p>
+      <p class="text-4xl font-headline font-bold text-white">
+        {{ kpi_sessions }}{% if current_plan %}<span class="text-slate-500 text-2xl">/{{ current_plan.days_per_week }}</span>{% endif %}
+      </p>
+    </div>
+
+    <!-- Tjedni volumen -->
+    <div class="glass-panel p-8 rounded-2xl relative overflow-hidden">
+      <p class="font-label uppercase text-xs tracking-[0.2em] text-slate-500 mb-3">Tjedni volumen</p>
+      {% if weekly_volume > 0 %}
+        <p class="text-4xl font-headline font-bold text-white">
+          {{ weekly_volume|floatformat:0 }} <span class="text-base font-normal text-slate-500">kg</span>
+        </p>
+      {% else %}
+        <p class="text-4xl font-headline font-bold text-slate-500">—</p>
+      {% endif %}
+      <div class="absolute bottom-0 left-0 h-1.5 bg-[#71ffe8]/20 w-full">
+        {% if weekly_volume > 0 %}
+          <div class="h-full bg-[#71ffe8] shadow-[0_0_15px_#71ffe8]" style="width:66%"></div>
+        {% endif %}
       </div>
     </div>
 
-    <div class="card" style="max-width:600px;">
-      <div class="card-header">
-        <span class="card-title">Intake Summary</span>
-        <a href="{% url 'intake:step1' %}" class="btn btn-outline btn-sm">
-          <span class="material-symbols-outlined">edit</span> Edit
+    <!-- Streak dana -->
+    <div class="glass-panel p-8 rounded-2xl">
+      <p class="font-label uppercase text-xs tracking-[0.2em] text-slate-500 mb-3">Streak dana</p>
+      <div class="flex items-baseline gap-2">
+        <p class="text-4xl font-headline font-bold text-white">{{ streak }}</p>
+        <span class="text-sm text-slate-500">dan{{ streak|pluralize:"a,a" }}</span>
+      </div>
+    </div>
+
+    <!-- Readiness kratki prikaz -->
+    <div class="glass-panel p-8 rounded-2xl">
+      <p class="font-label uppercase text-xs tracking-[0.2em] text-slate-500 mb-3">Readiness</p>
+      {% if readiness_score is not None %}
+        <p class="text-4xl font-headline font-bold text-white">
+          {{ readiness_score }}<span class="text-slate-500 text-2xl">/100</span>
+        </p>
+        <p class="text-xs text-[#71ffe8] mt-2 font-bold uppercase tracking-widest">{{ readiness_label }}</p>
+      {% else %}
+        <p class="text-4xl font-headline font-bold text-slate-500">—</p>
+        <p class="text-xs text-slate-600 mt-2 uppercase tracking-widest">Nema feedbacka</p>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <!-- ── Middle 3-Column ──────────────────────────────────────────────── -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+    <!-- LEFT: Readiness Gauge -->
+    <div class="lg:col-span-3 glass-panel p-10 rounded-3xl flex flex-col items-center justify-center text-center">
+      <h3 class="font-label uppercase text-xs tracking-[0.2em] text-slate-500 mb-8 self-start">Readiness Score</h3>
+
+      <div class="relative w-56 h-56 flex items-center justify-center mb-8">
+        {% if readiness_score is not None %}
+          <svg class="w-full h-full -rotate-90" viewBox="0 0 192 192">
+            <defs>
+              <linearGradient id="gauge-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#71ffe8"/>
+                <stop offset="100%" stop-color="#00eefc"/>
+              </linearGradient>
+            </defs>
+            <!-- Track -->
+            <circle cx="96" cy="96" r="88" fill="transparent"
+                    stroke="rgba(255,255,255,0.05)" stroke-width="4"/>
+            <!-- Filled arc: dashoffset = 552.92 * (1 - score/100) -->
+            <circle cx="96" cy="96" r="88" fill="transparent"
+                    stroke="url(#gauge-grad)"
+                    stroke-width="10"
+                    stroke-linecap="round"
+                    stroke-dasharray="552.92"
+                    stroke-dashoffset="{{ readiness_score|add:0 }}"
+                    id="gauge-arc"
+                    style="filter: drop-shadow(0 0 10px #71ffe8);"/>
+          </svg>
+          <div class="absolute text-center">
+            <span class="text-5xl font-headline font-black text-white">{{ readiness_score }}</span>
+            <span class="block text-sm text-slate-500 uppercase font-label mt-1">/100</span>
+          </div>
+        {% else %}
+          <!-- No data state -->
+          <svg class="w-full h-full -rotate-90" viewBox="0 0 192 192">
+            <circle cx="96" cy="96" r="88" fill="transparent"
+                    stroke="rgba(255,255,255,0.05)" stroke-width="4"/>
+            <circle cx="96" cy="96" r="88" fill="transparent"
+                    stroke="rgba(113,255,232,0.1)" stroke-width="10"
+                    stroke-linecap="round" stroke-dasharray="552.92" stroke-dashoffset="0"/>
+          </svg>
+          <div class="absolute text-center">
+            <span class="text-5xl font-headline font-black text-slate-600">—</span>
+            <span class="block text-sm text-slate-600 uppercase font-label mt-1">/100</span>
+          </div>
+        {% endif %}
+      </div>
+
+      {% if readiness_score is not None %}
+        <div class="{% if readiness_score >= 70 %}bg-[#71ffe8]/10 text-[#71ffe8] border border-[#71ffe8]/30{% else %}bg-amber-500/10 text-amber-400 border border-amber-500/30{% endif %} px-6 py-2 rounded-full text-sm font-black tracking-widest mb-4 uppercase">
+          {{ readiness_label }}
+        </div>
+        <p class="text-slate-500 text-xs font-medium italic">
+          {% if readiness_score >= 85 %}Spreman za maksimalni napor
+          {% elif readiness_score >= 70 %}Normalan trening preporučen
+          {% elif readiness_score >= 50 %}Umjereni intenzitet
+          {% else %}Odmor ili laki trening{% endif %}
+        </p>
+      {% else %}
+        <div class="bg-[#71ffe8]/5 text-slate-500 px-6 py-2 rounded-full text-sm font-black tracking-widest border border-[#71ffe8]/10 mb-4 uppercase">
+          Nema podataka
+        </div>
+        <a href="{% url 'feedback:weekly' %}" class="text-xs text-[#71ffe8] hover:underline">
+          Unesi tjedni feedback →
+        </a>
+      {% endif %}
+    </div>
+
+    <!-- CENTER: Progression Queue -->
+    <div class="lg:col-span-5 glass-panel p-10 rounded-3xl">
+      <h3 class="font-label uppercase text-xs tracking-[0.2em] text-slate-500 mb-8">Progression Queue</h3>
+
+      {% if progression_queue %}
+        <div class="space-y-4">
+          {% for item in progression_queue %}
+          <div class="flex items-center justify-between p-4 rounded-2xl
+            {% if forloop.first %}bg-surface-container-high/50 border-l-4 border-[#71ffe8]{% else %}bg-surface-container-high/30{% endif %}">
+            <div>
+              <p class="text-base font-headline font-bold text-white uppercase">{{ item.name }}</p>
+              <p class="text-xs text-slate-500 mt-1">{{ item.log_count }} završenih treninga</p>
+            </div>
+            <span class="px-4 py-1.5 rounded-lg bg-[#71ffe8]/10 text-[#71ffe8] text-xs font-bold border border-[#71ffe8]/20 whitespace-nowrap">
+              READY +
+            </span>
+          </div>
+          {% endfor %}
+        </div>
+      {% elif todays_session and todays_session.exercises.all %}
+        <!-- Fallback: show today's exercise list if no progression data yet -->
+        <div class="space-y-4">
+          {% for ex in todays_session.exercises.all %}
+          <div class="flex items-center justify-between p-4 rounded-2xl
+            {% if forloop.first %}bg-surface-container-high/50 border-l-4 border-[#71ffe8]{% else %}bg-surface-container-high/30{% endif %}">
+            <div>
+              <p class="text-base font-headline font-bold text-white uppercase">{{ ex.name }}</p>
+              <p class="text-xs text-slate-500 mt-1">
+                {{ ex.sets }}×{{ ex.reps_min }}{% if ex.reps_max != ex.reps_min %}-{{ ex.reps_max }}{% endif %} @ RPE {{ ex.target_rpe }}
+              </p>
+            </div>
+            {% if ex.role == 'main_compound' %}
+              <span class="px-4 py-1.5 rounded-lg bg-[#71ffe8]/10 text-[#71ffe8] text-xs font-bold border border-[#71ffe8]/20 whitespace-nowrap">MAIN</span>
+            {% elif ex.role == 'secondary_compound' %}
+              <span class="px-4 py-1.5 rounded-lg bg-secondary-container/10 text-secondary-container text-xs font-bold border border-secondary-container/20 whitespace-nowrap">COMPOUND</span>
+            {% else %}
+              <span class="px-4 py-1.5 rounded-lg bg-slate-800 text-slate-400 text-xs font-bold whitespace-nowrap">ACCESSORY</span>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="flex flex-col items-center justify-center h-48 text-center">
+          <span class="material-symbols-outlined text-4xl text-slate-700 mb-4">queue</span>
+          <p class="text-slate-500 text-sm">Završi 3+ treninga za iste vježbe<br>da se pojavi progression queue</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- RIGHT: Volume Trend Bars -->
+    <div class="lg:col-span-4 glass-panel p-10 rounded-3xl flex flex-col">
+      <div class="flex items-center justify-between mb-10">
+        <h3 class="font-label uppercase text-xs tracking-[0.2em] text-slate-500">Volume Trend (kg/T)</h3>
+        {% if consistency_pct is not None %}
+          <span class="px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase
+            {% if consistency_pct >= 80 %}bg-[#71ffe8]/10 text-[#71ffe8] border border-[#71ffe8]/30
+            {% elif consistency_pct >= 50 %}bg-amber-500/10 text-amber-400 border border-amber-500/30
+            {% else %}bg-red-500/10 text-red-400 border border-red-500/30{% endif %}">
+            Konzistentnost: {{ consistency_pct }}%
+          </span>
+        {% endif %}
+      </div>
+
+      {% if volume_trend %}
+        <div class="flex-1 flex items-end justify-between gap-3 px-2" style="min-height:200px;">
+          {% for bar in volume_trend %}
+          <div class="flex-1 group flex flex-col items-center gap-3">
+            {% if forloop.last %}
+              <div class="w-full bg-[#71ffe8] rounded-t-sm shadow-[0_0_20px_rgba(113,255,232,0.5)] transition-all"
+                   style="height:{% if bar.pct > 0 %}{{ bar.pct }}%{% else %}4px{% endif %}"></div>
+              <span class="text-[10px] text-[#71ffe8] font-black font-label">{{ bar.label }}</span>
+            {% else %}
+              <div class="w-full bg-[#71ffe8]/20 rounded-t-sm group-hover:bg-[#71ffe8]/40 transition-all"
+                   style="height:{% if bar.pct > 0 %}{{ bar.pct }}%{% else %}4px{% endif %}"></div>
+              <span class="text-[10px] text-slate-600 font-label">{{ bar.label }}</span>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <!-- Fallback: current-week day bars -->
+        <div class="flex-1 flex items-end justify-between gap-3 px-2" style="min-height:200px;">
+          {% for day_num, day_vol in volume_by_day.items %}
+          <div class="flex-1 group flex flex-col items-center gap-3">
+            <div class="w-full {% if day_vol > 0 %}bg-[#71ffe8]/50 group-hover:bg-[#71ffe8]/70{% else %}bg-[#71ffe8]/10{% endif %} rounded-t-sm transition-all"
+                 style="height:{% if day_vol > 0 %}60%{% else %}6px{% endif %}"></div>
+            <span class="text-[10px] text-slate-600 font-label">
+              {% if day_num == 0 %}P{% elif day_num == 1 %}U{% elif day_num == 2 %}S{% elif day_num == 3 %}Č{% elif day_num == 4 %}Pe{% elif day_num == 5 %}Su{% else %}N{% endif %}
+            </span>
+          </div>
+          {% endfor %}
+        </div>
+        <p class="text-center text-xs text-slate-700 mt-4 italic">Trendi dostupni nakon više tjedana</p>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <!-- ── Danasnja Sesija ───────────────────────────────────────────────── -->
+  <section class="glass-panel p-10 rounded-3xl">
+
+    {% if active_log %}
+      <!-- Session currently in progress -->
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h3 class="text-3xl font-headline font-black text-white uppercase tracking-tight">
+            TRENING U TIJEKU — {{ active_log.planned_session.name }}
+          </h3>
+          <p class="text-slate-500 text-sm font-label uppercase tracking-widest mt-2">Status: U tijeku</p>
+        </div>
+        <a href="{% url 'logs:log_session' active_log.id %}"
+           class="flex items-center gap-3 px-10 py-4 rounded-md primary-gradient text-on-primary font-headline font-bold uppercase tracking-widest text-base shadow-[0_0_30px_rgba(113,255,232,0.4)] hover:scale-105 transition-all">
+          <span class="material-symbols-outlined text-2xl" style="font-variation-settings:'FILL' 1;">play_arrow</span>
+          Nastavi trening
         </a>
       </div>
-      {% with p=request.user.intake_profile %}
-      <div class="grid-2" style="font-size:13px;">
+
+    {% elif todays_session %}
+      <!-- Today's planned session ready to start -->
+      <div class="flex justify-between items-center mb-10">
         <div>
-          <p class="text-muted" style="margin-bottom:4px;">Age / Sex</p>
-          <p>{{ p.age }} / {{ p.get_sex_display }}</p>
+          <h3 class="text-3xl font-headline font-black text-white uppercase tracking-tight">
+            DANASNJA SESIJA — {{ todays_session.name }}
+          </h3>
+          <p class="text-slate-500 text-sm font-label uppercase tracking-widest mt-2">Status: Spreman za pokretanje</p>
         </div>
-        <div>
-          <p class="text-muted" style="margin-bottom:4px;">Height / Weight</p>
-          <p>{{ p.height_cm }} cm / {{ p.weight_kg }} kg</p>
-        </div>
-        <div>
-          <p class="text-muted" style="margin-bottom:4px;">Goal</p>
-          <p>{{ p.get_primary_goal_display }}</p>
-        </div>
-        <div>
-          <p class="text-muted" style="margin-bottom:4px;">Experience</p>
-          <p>{{ p.get_training_experience_level_display }}</p>
-        </div>
-        <div>
-          <p class="text-muted" style="margin-bottom:4px;">Days / Session</p>
-          <p>{{ p.days_per_week_available }}x / {{ p.max_session_minutes }} min</p>
-        </div>
-        <div>
-          <p class="text-muted" style="margin-bottom:4px;">Priority</p>
-          <p>{{ p.get_body_part_priority_display }}</p>
+        <form method="post" action="{% url 'logs:start_session' todays_session.id %}" class="inline">
+          {% csrf_token %}
+          <button type="submit"
+             class="flex items-center gap-3 px-10 py-4 rounded-md primary-gradient text-on-primary font-headline font-bold uppercase tracking-widest text-base shadow-[0_0_30px_rgba(113,255,232,0.4)] hover:scale-105 transition-all">
+            <span class="material-symbols-outlined text-2xl" style="font-variation-settings:'FILL' 1;">play_arrow</span>
+            Zapocni trening
+          </button>
+        </form>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead>
+            <tr class="border-b border-outline-variant/30">
+              <th class="pb-5 font-label uppercase text-xs tracking-[0.2em] text-slate-500">Vjezba</th>
+              <th class="pb-5 font-label uppercase text-xs tracking-[0.2em] text-slate-500">Setovi</th>
+              <th class="pb-5 font-label uppercase text-xs tracking-[0.2em] text-slate-500">Ponavljanja</th>
+              <th class="pb-5 font-label uppercase text-xs tracking-[0.2em] text-slate-500">RPE</th>
+              <th class="pb-5 font-label uppercase text-xs tracking-[0.2em] text-slate-500 text-right">Odmor</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-outline-variant/10">
+            {% for ex in todays_session.exercises.all %}
+            <tr class="group hover:bg-[#71ffe8]/5 transition-colors">
+              <td class="py-5">
+                <div class="flex items-center gap-4">
+                  {% if ex.role == 'main_compound' %}
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#71ffe8] shadow-[0_0_8px_#71ffe8] flex-shrink-0"></span>
+                  {% elif ex.role == 'secondary_compound' %}
+                    <span class="w-2.5 h-2.5 rounded-full bg-secondary-container shadow-[0_0_8px_#00eefc] flex-shrink-0"></span>
+                  {% else %}
+                    <span class="w-2.5 h-2.5 rounded-full bg-slate-500 flex-shrink-0"></span>
+                  {% endif %}
+                  <span class="font-headline font-bold uppercase text-white text-base">{{ ex.name }}</span>
+                </div>
+              </td>
+              <td class="py-5 font-headline text-white text-base">{{ ex.sets }}</td>
+              <td class="py-5 font-headline text-white text-base">
+                {{ ex.reps_min }}{% if ex.reps_max != ex.reps_min %}-{{ ex.reps_max }}{% endif %}
+              </td>
+              <td class="py-5 font-headline text-white text-base">{{ ex.target_rpe }}</td>
+              <td class="py-5 text-right text-slate-400 text-sm">{{ ex.rest }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    {% elif plan_complete or current_plan and not todays_session %}
+      <!-- Plan exists but all sessions done or week expired -->
+      <div class="flex flex-col items-center justify-center py-16 text-center">
+        <span class="material-symbols-outlined text-5xl text-[#71ffe8] mb-6"
+              style="font-variation-settings:'FILL' 1;">verified</span>
+        <h3 class="text-2xl font-headline font-black text-white uppercase tracking-tight mb-3">Tjedan zavrsen!</h3>
+        <p class="text-slate-500 text-sm mb-8">Sve sesije ovog tjedna su odradene. Odlican rad!</p>
+        <div class="flex gap-4">
+          <a href="{% url 'feedback:weekly' %}"
+             class="flex items-center gap-3 px-8 py-3 border border-[#71ffe8] text-[#71ffe8] font-headline font-bold uppercase tracking-widest rounded-lg text-sm hover:bg-[#71ffe8]/10 transition-all">
+            <span class="material-symbols-outlined text-base">chat_bubble</span>
+            Tjedni feedback
+          </a>
+          <form method="post" action="{% url 'plans:generate' %}">
+            {% csrf_token %}
+            <button type="submit"
+                    class="flex items-center gap-3 px-8 py-3 primary-gradient text-on-primary font-headline font-bold uppercase tracking-widest rounded-lg text-sm shadow-[0_0_20px_rgba(113,255,232,0.3)] hover:brightness-110 transition-all">
+              <span class="material-symbols-outlined text-base">auto_awesome</span>
+              Generiraj novi tjedan
+            </button>
+          </form>
         </div>
       </div>
-      {% endwith %}
-    </div>
-  </main>
+
+    {% else %}
+      <!-- No plan yet -->
+      <div class="flex justify-between items-center">
+        <div>
+          <h3 class="text-3xl font-headline font-black text-white uppercase tracking-tight mb-3">DANASNJA SESIJA</h3>
+          <p class="text-slate-500 text-sm">Nema generiranog plana. Generiraj plan da pocnes.</p>
+        </div>
+        <form method="post" action="{% url 'plans:generate' %}">
+          {% csrf_token %}
+          <button type="submit"
+                  class="flex items-center gap-3 px-10 py-4 rounded-md primary-gradient text-on-primary font-headline font-bold uppercase tracking-widest text-base shadow-[0_0_30px_rgba(113,255,232,0.4)] hover:scale-105 transition-all">
+            <span class="material-symbols-outlined text-2xl">auto_awesome</span>
+            Generiraj plan
+          </button>
+        </form>
+      </div>
+    {% endif %}
+
+  </section>
+
 </div>
+
+<!-- Scanline HUD overlay -->
+<div class="fixed inset-0 pointer-events-none opacity-[0.03] z-[100]"
+     style="background: repeating-linear-gradient(0deg, #71ffe8, #71ffe8 1px, transparent 1px, transparent 4px);"></div>
+
+<!-- JS: set correct SVG gauge dashoffset -->
+{% if readiness_score is not None %}
+<script>
+(function() {
+  var arc = document.getElementById('gauge-arc');
+  if (arc) {
+    var score = {{ readiness_score }};
+    var total = 552.92;
+    arc.style.strokeDashoffset = total * (1 - score / 100);
+  }
+})();
+</script>
+{% endif %}
+
 {% endblock %}

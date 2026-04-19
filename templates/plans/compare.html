@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load plan_filters %}
+{% block title %}Plan Comparison{% endblock %}
+
+{% block body %}
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><h1>FitOS</h1><p>AI Coach</p></div>
+    <nav>
+      <a class="nav-item" href="{% url 'core:home' %}"><span class="material-symbols-outlined">dashboard</span> Dashboard</a>
+      <a class="nav-item" href="{% url 'plans:weekly_plan' %}"><span class="material-symbols-outlined">calendar_month</span> Tjedni Plan</a>
+      <div class="nav-spacer"></div>
+      <a class="nav-item" href="{% url 'users:logout' %}"><span class="material-symbols-outlined">logout</span> Logout</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div style="margin-bottom:24px;">
+      <p class="label" style="margin-bottom:4px;">Batch Compare</p>
+      <h1>Plan Comparison</h1>
+      <p style="color:var(--text-muted); font-size:13px; margin-top:4px;">
+        {{ success }}/{{ total }} plans generated
+      </p>
+    </div>
+
+    {% if male_plans %}
+    <h2 style="font-size:16px; margin-bottom:16px; color:var(--cyan);">Male</h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:16px; margin-bottom:40px;">
+      {% for item in male_plans %}
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title" style="font-size:12px;">{{ item.label }}</span>
+          {% if item.plan %}
+          <span class="text-muted" style="font-size:10px;">{{ item.plan.split_type }}</span>
+          {% endif %}
+        </div>
+        {% if item.error %}
+        <p style="color:#ff5e7a; font-size:11px;">{{ item.error }}</p>
+        {% elif item.plan %}
+        {% for session in item.plan.sessions.all %}
+        <div style="margin-bottom:10px;">
+          <p style="font-size:11px; font-weight:600; color:var(--cyan); margin-bottom:4px;">{{ session.name }}</p>
+          <table style="width:100%; font-size:10px; border-collapse:collapse;">
+            <tbody>
+              {% for ex in session.exercises.all %}
+              <tr style="border-top:1px solid rgba(255,255,255,0.04);">
+                <td style="padding:2px;">
+                  <span style="display:inline-block;width:4px;height:4px;border-radius:50%;margin-right:3px;
+                    background:{% if ex.role == 'main_compound' %}var(--cyan){% elif ex.role == 'secondary_compound' %}#5f8cff{% else %}#555{% endif %};"></span>
+                  {{ ex.name }}
+                </td>
+                <td style="padding:2px; text-align:right; color:var(--text-muted);">{{ ex.sets }}x{{ ex|format_reps }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endfor %}
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if female_plans %}
+    <h2 style="font-size:16px; margin-bottom:16px; color:var(--cyan);">Female</h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:16px; margin-bottom:40px;">
+      {% for item in female_plans %}
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title" style="font-size:12px;">{{ item.label }}</span>
+          {% if item.plan %}
+          <span class="text-muted" style="font-size:10px;">{{ item.plan.split_type }}</span>
+          {% endif %}
+        </div>
+        {% if item.error %}
+        <p style="color:#ff5e7a; font-size:11px;">{{ item.error }}</p>
+        {% elif item.plan %}
+        {% for session in item.plan.sessions.all %}
+        <div style="margin-bottom:10px;">
+          <p style="font-size:11px; font-weight:600; color:var(--cyan); margin-bottom:4px;">{{ session.name }}</p>
+          <table style="width:100%; font-size:10px; border-collapse:collapse;">
+            <tbody>
+              {% for ex in session.exercises.all %}
+              <tr style="border-top:1px solid rgba(255,255,255,0.04);">
+                <td style="padding:2px;">
+                  <span style="display:inline-block;width:4px;height:4px;border-radius:50%;margin-right:3px;
+                    background:{% if ex.role == 'main_compound' %}var(--cyan){% elif ex.role == 'secondary_compound' %}#5f8cff{% else %}#555{% endif %};"></span>
+                  {{ ex.name }}
+                </td>
+                <td style="padding:2px; text-align:right; color:var(--text-muted);">{{ ex.sets }}x{{ ex|format_reps }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endfor %}
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <a href="{% url 'plans:weekly_plan' %}" class="btn btn-outline">Back to Tjedni Plan</a>
+  </main>
+</div>
+{% endblock %}

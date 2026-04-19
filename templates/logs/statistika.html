@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="hr" class="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FitOS | Statistika</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#71ffe8",
+          "primary-container": "#00e5cc",
+          "primary-fixed": "#41fce2",
+          "primary-fixed-dim": "#00dfc6",
+          "on-primary": "#003730",
+          "on-primary-fixed": "#00201b",
+          "on-primary-fixed-variant": "#005047",
+          "on-primary-container": "#006256",
+          "secondary": "#d3fbff",
+          "secondary-container": "#00eefc",
+          "secondary-fixed": "#7df4ff",
+          "secondary-fixed-dim": "#00dbe9",
+          "on-secondary": "#00363a",
+          "on-secondary-fixed": "#002022",
+          "on-secondary-fixed-variant": "#004f54",
+          "on-secondary-container": "#00686f",
+          "tertiary": "#ffe5bd",
+          "tertiary-container": "#ffc24d",
+          "tertiary-fixed": "#ffdea9",
+          "on-tertiary": "#422c00",
+          "on-tertiary-container": "#725000",
+          "background": "#0f131f",
+          "surface": "#0f131f",
+          "surface-dim": "#0f131f",
+          "surface-bright": "#353946",
+          "surface-container-lowest": "#0a0e1a",
+          "surface-container-low": "#171b28",
+          "surface-container": "#1b1f2c",
+          "surface-container-high": "#262a37",
+          "surface-container-highest": "#313442",
+          "surface-variant": "#313442",
+          "surface-tint": "#00dfc6",
+          "on-background": "#dfe2f3",
+          "on-surface": "#dfe2f3",
+          "on-surface-variant": "#b9cac5",
+          "inverse-surface": "#dfe2f3",
+          "inverse-on-surface": "#2c303d",
+          "inverse-primary": "#006b5e",
+          "outline": "#849490",
+          "outline-variant": "#3b4a46",
+          "error": "#ffb4ab",
+          "error-container": "#93000a",
+          "on-error": "#690005",
+          "on-error-container": "#ffdad6",
+        },
+        fontFamily: {
+          "headline": ["Space Grotesk"],
+          "body": ["Inter"],
+          "label": ["Inter"],
+        },
+        borderRadius: {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "full": "9999px",
+        },
+      },
+    },
+  }
+</script>
+<style>
+  body {
+    background-color: #0a0e1a;
+    color: #dfe2f3;
+    font-family: 'Inter', sans-serif;
+  }
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .scific-grid {
+    background-image: linear-gradient(rgba(113,255,232,0.03) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(113,255,232,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .glow-border {
+    box-shadow: inset 0 0 0 1px rgba(113, 255, 232, 0.15);
+  }
+  .neon-text-glow {
+    text-shadow: 0 0 8px rgba(113, 255, 232, 0.6);
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #0a0e1a; }
+  ::-webkit-scrollbar-thumb { background: #1b1f2c; border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(113,255,232,0.2); }
+</style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface font-body scific-grid min-h-screen">
+
+<!-- SideNavBar -->
+<aside class="w-[260px] h-screen fixed left-0 top-0 border-r border-[#00e5cc]/15 bg-[#0a0e1a] flex flex-col py-8 px-4 z-50 shadow-[0_0_24px_rgba(113,255,232,0.08)]">
+  <div class="mb-10 px-4">
+    <h1 class="text-2xl font-black tracking-tighter text-[#71ffe8] font-headline">FitOS</h1>
+    <p class="font-['Space_Grotesk'] uppercase tracking-widest text-[10px] text-slate-500 mt-1">AI COACH SYSTEM</p>
+  </div>
+  <nav class="flex-1 space-y-1">
+    <a href="{% url 'core:home' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-xs hover:bg-[#71ffe8]/5 hover:text-[#71ffe8] transition-all duration-300">
+      <span class="material-symbols-outlined">dashboard</span>
+      <span>Dashboard</span>
+    </a>
+    <a href="{% url 'plans:weekly_plan' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-xs hover:bg-[#71ffe8]/5 hover:text-[#71ffe8] transition-all duration-300">
+      <span class="material-symbols-outlined">calendar_month</span>
+      <span>Tjedni plan</span>
+    </a>
+    <a href="{% url 'logs:session_picker' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-xs hover:bg-[#71ffe8]/5 hover:text-[#71ffe8] transition-all duration-300">
+      <span class="material-symbols-outlined">fitness_center</span>
+      <span>Unesi trening</span>
+    </a>
+    <a href="{% url 'feedback:weekly' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-xs hover:bg-[#71ffe8]/5 hover:text-[#71ffe8] transition-all duration-300">
+      <span class="material-symbols-outlined">feedback</span>
+      <span>Tjedni feedback</span>
+    </a>
+    <!-- Active -->
+    <div class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#71ffe8] bg-[#71ffe8]/10 border-r-4 border-[#71ffe8] font-bold font-['Space_Grotesk'] uppercase tracking-widest text-xs">
+      <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">leaderboard</span>
+      <span>Statistika</span>
+    </div>
+  </nav>
+  <div class="mt-auto border-t border-outline-variant/20 pt-6 px-4 space-y-1">
+    <a href="#" class="flex items-center gap-3 text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-xs hover:text-[#71ffe8] transition-colors py-2">
+      <span class="material-symbols-outlined">settings</span>
+      <span>Postavke</span>
+    </a>
+    <a href="{% url 'users:logout' %}" class="flex items-center gap-3 text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-xs hover:text-[#71ffe8] transition-colors py-2">
+      <span class="material-symbols-outlined">logout</span>
+      <span>Odjava</span>
+    </a>
+  </div>
+</aside>
+
+<!-- Main Content Area -->
+<main class="ml-[260px] min-h-screen">
+  <!-- TopAppBar -->
+  <header class="fixed top-0 right-0 w-[calc(100%-260px)] h-16 bg-[#0a0e1a]/80 backdrop-blur-xl flex justify-between items-center px-8 z-40 border-b border-[#00e5cc]/10">
+    <div class="flex items-center gap-4">
+      <h2 class="font-headline font-bold uppercase tracking-tighter text-xl text-primary neon-text-glow">STATISTIČKI CENTAR</h2>
+      <div class="h-4 w-px bg-outline-variant/30 mx-2"></div>
+      <div class="text-[10px] font-label text-on-surface-variant uppercase tracking-widest">Zadnjih 30 dana</div>
+    </div>
+    <div class="flex items-center gap-6">
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3 border-l border-outline-variant/20 pl-6">
+          <div class="text-right">
+            <p class="text-[10px] font-label tracking-widest text-on-surface-variant">KORISNIK</p>
+            <p class="text-xs font-bold text-on-surface">{{ request.user.get_username|upper }}</p>
+          </div>
+          <span class="material-symbols-outlined text-3xl text-primary" style="font-variation-settings:'FILL' 1;">account_circle</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Scrollable Canvas -->
+  <div class="pt-24 pb-12 px-8 max-w-[1440px] mx-auto">
+
+    <!-- ── Filter Bar ─────────────────────────────────────────────────────── -->
+    <form method="get" action="" class="mb-8 flex flex-wrap gap-4 items-end">
+      <!-- Session type filter -->
+      <div class="flex flex-col gap-1">
+        <label class="text-[10px] font-label uppercase tracking-widest text-on-surface-variant">Tip sesije</label>
+        <select name="session_type"
+                class="bg-surface-container border border-outline-variant/30 text-on-surface text-xs font-label rounded px-3 py-2 focus:outline-none focus:border-primary/60 min-w-[160px]"
+                onchange="this.form.submit()">
+          <option value="">Sve sesije</option>
+          {% for st in session_types %}
+            <option value="{{ st }}" {% if selected_session_type == st %}selected{% endif %}>{{ st }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <!-- Exercise filter -->
+      <div class="flex flex-col gap-1">
+        <label class="text-[10px] font-label uppercase tracking-widest text-on-surface-variant">Praćenje vježbe</label>
+        <select name="exercise"
+                class="bg-surface-container border border-outline-variant/30 text-on-surface text-xs font-label rounded px-3 py-2 focus:outline-none focus:border-primary/60 min-w-[220px]"
+                onchange="this.form.submit()">
+          <option value="">— Odaberi vježbu —</option>
+          {% for ex in exercise_list %}
+            <option value="{{ ex }}" {% if selected_exercise == ex %}selected{% endif %}>{{ ex }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      {% if selected_exercise or selected_session_type %}
+        <a href="{% url 'logs:statistika' %}"
+           class="text-[10px] font-label uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors py-2 self-end">
+          ✕ Poništi filtere
+        </a>
+      {% endif %}
+    </form>
+
+    <!-- ── Exercise Progress Chart (shown when exercise selected) ────────── -->
+    {% if selected_exercise and exercise_history %}
+    <div class="mb-8 bg-surface-container rounded-xl p-6 glow-border">
+      <div class="flex justify-between items-start mb-6">
+        <div>
+          <h3 class="font-headline text-xl font-bold uppercase tracking-tight text-on-surface">{{ selected_exercise }}</h3>
+          <p class="font-label text-[10px] tracking-widest text-on-surface-variant uppercase mt-1">
+            Procjena 1RM po tjednima — zadnjih {{ exercise_history|length }} tjedan(a)
+          </p>
+        </div>
+        {% with last=exercise_history|last %}
+        <div class="text-right">
+          <p class="text-[10px] text-on-surface-variant uppercase tracking-widest font-label">Zadnji best 1RM</p>
+          <p class="text-2xl font-headline font-bold text-primary">
+            {{ last.best_1rm }} <span class="text-xs text-on-surface-variant">kg</span>
+          </p>
+          <p class="text-[9px] text-slate-500 mt-1">{{ last.best_weight }} kg × {{ last.best_reps }} reps</p>
+        </div>
+        {% endwith %}
+      </div>
+      <!-- CSS bar chart: bars scaled to max 1RM across history -->
+      <div class="flex items-end gap-2 h-36 px-2">
+        {% for point in exercise_history %}
+        <div class="flex-1 flex flex-col items-center gap-1 group" title="{{ point.best_weight }}kg × {{ point.best_reps }} reps — est. {{ point.best_1rm }} kg 1RM">
+          <span class="text-[9px] text-primary opacity-0 group-hover:opacity-100 transition-opacity font-bold whitespace-nowrap">{{ point.best_1rm }}</span>
+          <div class="w-full rounded-t-sm transition-all
+            {% if forloop.last %}bg-primary shadow-[0_0_12px_rgba(113,255,232,0.6)]
+            {% else %}bg-primary/25 group-hover:bg-primary/50{% endif %}"
+            style="height: {{ point.pct }}%; min-height: 4px;">
+          </div>
+          <span class="text-[9px] {% if forloop.last %}text-primary font-bold{% else %}text-slate-500{% endif %} uppercase tracking-tighter">{{ point.week_label }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% elif selected_exercise %}
+    <div class="mb-8 bg-surface-container rounded-xl p-6 glow-border flex items-center justify-center h-32">
+      <p class="text-on-surface-variant text-sm">Nema podataka za <strong class="text-on-surface">{{ selected_exercise }}</strong></p>
+    </div>
+    {% endif %}
+
+    <!-- Hero Stats Bar -->
+    <div class="grid grid-cols-3 gap-6 mb-8">
+      <div class="bg-surface-container rounded-xl p-5 glow-border flex items-center gap-4">
+        <div class="w-12 h-12 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">calendar_month</span>
+        </div>
+        <div>
+          <p class="text-[10px] text-on-surface-variant uppercase tracking-widest font-label">Sesija/tjedan (avg)</p>
+          <p class="text-2xl font-headline font-bold text-on-surface">{{ avg_sessions }}</p>
+        </div>
+      </div>
+      <div class="bg-surface-container rounded-xl p-5 glow-border flex items-center gap-4">
+        <div class="w-12 h-12 rounded-lg bg-secondary/10 border border-secondary/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-secondary" style="font-variation-settings:'FILL' 1;">repeat</span>
+        </div>
+        <div>
+          <p class="text-[10px] text-on-surface-variant uppercase tracking-widest font-label">Setova/tjedan (avg)</p>
+          <p class="text-2xl font-headline font-bold text-on-surface">{{ avg_sets }}</p>
+        </div>
+      </div>
+      <div class="bg-surface-container rounded-xl p-5 glow-border flex items-center gap-4">
+        <div class="w-12 h-12 rounded-lg bg-secondary-container/10 border border-secondary-container/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-secondary-container" style="font-variation-settings:'FILL' 1;">fitness_center</span>
+        </div>
+        <div>
+          <p class="text-[10px] text-on-surface-variant uppercase tracking-widest font-label">Volumen/tjedan (avg)</p>
+          <p class="text-2xl font-headline font-bold text-on-surface">
+            {% if avg_volume >= 1000 %}{{ avg_volume|floatformat:0 }} kg{% else %}{{ avg_volume }} kg{% endif %}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero Stats Bento Row -->
+    <div class="grid grid-cols-12 gap-6 mb-8">
+
+      <!-- Main Strength Chart (8/12) -->
+      <div class="col-span-8 bg-surface-container rounded-xl p-6 relative overflow-hidden glow-border group">
+        <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-primary to-primary-container opacity-50"></div>
+        <div class="flex justify-between items-start mb-8">
+          <div>
+            <h3 class="font-headline text-2xl font-bold uppercase tracking-tight text-on-surface">Strength Evolution</h3>
+            <p class="font-label text-xs tracking-widest text-on-surface-variant uppercase mt-1">Compound vježbe — procjena 1RM (zadnjih 8 tjedana)</p>
+          </div>
+          {% if svg_paths %}
+          <div class="flex gap-4 font-label text-[10px] uppercase tracking-tighter flex-wrap">
+            {% for path in svg_paths %}
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full shadow-[0_0_8px_currentColor]" style="background-color: {{ path.color }};"></span>
+              <span class="text-on-surface-variant">{{ path.name|truncatechars:15 }}</span>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- SVG Chart -->
+        <div class="h-64 relative">
+          {% if svg_paths %}
+          <svg class="absolute inset-0 w-full h-full" viewBox="0 0 800 200" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="lineGrad0" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#71ffe8" stop-opacity="0.2"/>
+                <stop offset="100%" stop-color="#71ffe8" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <!-- Y-axis guide lines -->
+            <line x1="0" x2="800" y1="40" y2="40" stroke="#3b4a46" stroke-width="0.5"/>
+            <line x1="0" x2="800" y1="100" y2="100" stroke="#3b4a46" stroke-width="0.5"/>
+            <line x1="0" x2="800" y1="160" y2="160" stroke="#3b4a46" stroke-width="0.5"/>
+            {% for path in svg_paths %}
+            <polyline
+              points="{{ path.points }}"
+              fill="none"
+              stroke="{{ path.color }}"
+              stroke-width="{% if forloop.first %}3{% else %}2{% endif %}"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              {% if not forloop.first %}stroke-dasharray="6 3" opacity="0.75"{% endif %}
+              class="drop-shadow-[0_0_6px_rgba(113,255,232,0.5)]"
+            />
+            {% endfor %}
+          </svg>
+          <!-- X-axis labels -->
+          <div class="absolute bottom-[-24px] w-full flex justify-between font-label text-[10px] text-slate-500 uppercase tracking-widest px-4">
+            {% for label in week_labels %}
+            <span>{{ label }}</span>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="absolute inset-0 flex flex-col items-center justify-center gap-3">
+            <span class="material-symbols-outlined text-4xl text-outline/30">show_chart</span>
+            <p class="text-on-surface-variant text-sm">Nema dovoljno podataka za grafikon</p>
+            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Pokreni treninge da vidiš napredak</p>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Week volume mini-chart below strength chart -->
+        {% if week_vol_bars %}
+        <div class="mt-12 pt-6 border-t border-outline-variant/10">
+          <p class="text-[10px] text-on-surface-variant uppercase tracking-widest mb-4 font-label">Tjedni volumen (kg)</p>
+          <div class="flex items-end gap-4 h-16">
+            {% for bar in week_vol_bars %}
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-primary/10 rounded-sm relative overflow-hidden" style="height: {{ bar.pct }}%; min-height: 4px; max-height: 100%;">
+                <div class="absolute inset-0 bg-gradient-to-t from-primary/60 to-primary/20"></div>
+              </div>
+              <span class="text-[9px] text-slate-500 uppercase tracking-tighter">{{ bar.label }}</span>
+              <span class="text-[9px] text-primary">{{ bar.volume }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Body Weight Card (4/12) -->
+      <div class="col-span-4 bg-surface-container rounded-xl p-6 glow-border flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="font-headline text-lg font-bold uppercase tracking-tight text-on-surface">Tjelesna Težina</h3>
+            <span class="material-symbols-outlined text-primary">monitor_weight</span>
+          </div>
+          <div class="flex items-baseline gap-2 mb-2">
+            <span class="text-4xl font-headline font-black text-primary italic">—</span>
+            <span class="font-label text-sm text-on-surface-variant uppercase tracking-widest">KG</span>
+          </div>
+          <p class="text-[10px] text-slate-500 uppercase tracking-widest">Nema podataka o težini</p>
+        </div>
+        <!-- Decorative placeholder SVG -->
+        <div class="h-32 mt-4 relative opacity-30">
+          <svg class="w-full h-full" viewBox="0 0 200 100">
+            <path d="M0,80 C20,70 40,90 60,75 C80,60 100,65 120,40 C140,15 160,25 180,10 L200,5 L200,100 L0,100 Z" fill="url(#wGrad)"/>
+            <path d="M0,80 C20,70 40,90 60,75 C80,60 100,65 120,40 C140,15 160,25 180,10 L200,5" fill="none" stroke="#71ffe8" stroke-width="2"/>
+            <defs>
+              <linearGradient id="wGrad" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#71ffe8" stop-opacity="0.3"/>
+                <stop offset="100%" stop-color="#71ffe8" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <!-- Summary stats -->
+        <div class="mt-4 pt-4 border-t border-outline-variant/10 grid grid-cols-2 gap-3">
+          <div>
+            <p class="text-[10px] text-slate-500 uppercase tracking-widest">Sesija/tjedan</p>
+            <p class="text-lg font-headline font-bold text-on-surface">{{ avg_sessions }}</p>
+          </div>
+          <div>
+            <p class="text-[10px] text-slate-500 uppercase tracking-widest">Setova/tjedan</p>
+            <p class="text-lg font-headline font-bold text-on-surface">{{ avg_sets }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Second Row: Volume Load + Personal Records -->
+    <div class="grid grid-cols-12 gap-6">
+
+      <!-- Volume Load by Muscle Group (5/12) -->
+      <div class="col-span-5 bg-surface-container rounded-xl p-6 glow-border">
+        <div class="flex justify-between items-start mb-8">
+          <div>
+            <h3 class="font-headline text-xl font-bold uppercase tracking-tight text-on-surface">Volume Load</h3>
+            <p class="font-label text-[10px] tracking-widest text-on-surface-variant uppercase">Po mišićnoj grupi (zadnja 4 tjedna)</p>
+          </div>
+          <div class="bg-surface-container-high px-3 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">
+            UKUPNO: {% if total_volume_kg >= 1000 %}{{ total_volume_kg|floatformat:0 }} KG{% else %}{{ total_volume_kg }} KG{% endif %}
+          </div>
+        </div>
+
+        {% if volume_bars %}
+        <div class="space-y-6">
+          {% for bar in volume_bars %}
+          {% if forloop.counter <= 6 %}
+          <div class="space-y-2">
+            <div class="flex justify-between text-[10px] font-label font-bold uppercase tracking-widest">
+              <span class="text-on-surface">{{ bar.group }}</span>
+              <span class="{% if bar.pct >= 70 %}text-primary{% else %}text-on-surface-variant{% endif %}">{{ bar.pct }}%</span>
+            </div>
+            <div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
+              <div class="h-full rounded-full relative
+                {% if forloop.counter == 1 %}bg-gradient-to-r from-primary/40 to-primary
+                {% elif forloop.counter == 2 %}bg-gradient-to-r from-secondary/40 to-secondary
+                {% elif forloop.counter == 3 %}bg-gradient-to-r from-secondary-container/40 to-secondary-container
+                {% else %}bg-gradient-to-r from-outline/40 to-outline{% endif %}"
+                style="width: {{ bar.pct }}%">
+                {% if bar.pct >= 70 %}
+                <div class="absolute right-0 top-0 h-full w-1 bg-white shadow-[0_0_8px_#fff]"></div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="flex flex-col items-center justify-center py-12 gap-3">
+          <span class="material-symbols-outlined text-4xl text-outline/30">bar_chart</span>
+          <p class="text-on-surface-variant text-sm">Nema podataka o volumenu</p>
+          <p class="text-[10px] text-slate-600 uppercase tracking-widest">Dodaj treninge da vidiš statistiku</p>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Personal Records (7/12) -->
+      <div class="col-span-7 bg-surface-container rounded-xl glow-border flex flex-col">
+        <div class="p-6 border-b border-outline-variant/10 flex justify-between items-center">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded bg-primary/10 flex items-center justify-center border border-primary/30">
+              <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">military_tech</span>
+            </div>
+            <h3 class="font-headline text-xl font-bold uppercase tracking-tight text-on-surface">Osobni Rekordi</h3>
+          </div>
+          <span class="text-[10px] font-label text-on-surface-variant tracking-widest uppercase">Max težina po vježbi</span>
+        </div>
+
+        {% if personal_records %}
+        <div class="flex-1 p-6 grid grid-cols-2 gap-4">
+          {% for pr in personal_records %}
+          {% with colors_cycle="primary secondary secondary-container outline" %}
+          <div class="bg-surface-container-low p-4 rounded-lg flex items-center gap-4 group hover:bg-surface-container-high transition-colors">
+            <div class="w-12 h-12 rounded-full flex items-center justify-center
+              {% if forloop.counter == 1 %}bg-primary/5 border border-primary/20 group-hover:border-primary group-hover:shadow-[0_0_12px_rgba(113,255,232,0.3)]
+              {% elif forloop.counter == 2 %}bg-secondary/5 border border-secondary/20 group-hover:border-secondary
+              {% elif forloop.counter == 3 %}bg-secondary-container/5 border border-secondary-container/20 group-hover:border-secondary-container
+              {% else %}bg-outline/5 border border-outline/20{% endif %} transition-all">
+              <span class="material-symbols-outlined
+                {% if forloop.counter == 1 %}text-primary
+                {% elif forloop.counter == 2 %}text-secondary
+                {% elif forloop.counter == 3 %}text-secondary-container
+                {% else %}text-outline/60{% endif %}"
+                style="font-variation-settings:'FILL' 1;">emoji_events</span>
+            </div>
+            <div class="min-w-0">
+              <p class="text-[10px] font-label text-on-surface-variant uppercase tracking-widest truncate">{{ pr.name }}</p>
+              <p class="text-xl font-headline font-bold text-on-surface">{{ pr.weight_kg }} <span class="text-xs
+                {% if forloop.counter == 1 %}text-primary
+                {% elif forloop.counter == 2 %}text-secondary
+                {% elif forloop.counter == 3 %}text-secondary-container
+                {% else %}text-outline{% endif %}">KG</span></p>
+              <p class="text-[9px] text-slate-500 uppercase tracking-tighter mt-1">
+                {{ pr.reps }}× &nbsp;·&nbsp; 1RM est. {{ pr.est_1rm }} kg
+              </p>
+            </div>
+          </div>
+          {% endwith %}
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="flex-1 flex flex-col items-center justify-center gap-3 p-8">
+          <span class="material-symbols-outlined text-5xl text-outline/20">emoji_events</span>
+          <p class="text-on-surface-variant text-sm font-medium">Nema osobnih rekorda</p>
+          <p class="text-[10px] text-slate-600 uppercase tracking-widest text-center">
+            Unesite treninge s težinama<br/>da se prate vaši osobni rekordi
+          </p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Bottom Row: Info Cards -->
+    <div class="mt-8 grid grid-cols-3 gap-6">
+
+      <!-- Weekly stats stream -->
+      <div class="bg-surface-container-low border border-outline-variant/10 rounded p-4">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+          <h4 class="font-label text-[10px] font-black uppercase tracking-widest text-on-surface">Tjedni Pregled</h4>
+        </div>
+        <div class="space-y-3 font-mono text-[10px]">
+          <div class="flex justify-between border-b border-outline-variant/5 pb-2">
+            <span class="text-slate-500">PROSJ. SESIJA/TJEDAN</span>
+            <span class="text-on-surface">{{ avg_sessions }}</span>
+          </div>
+          <div class="flex justify-between border-b border-outline-variant/5 pb-2">
+            <span class="text-slate-500">PROSJ. SETOVA/TJEDAN</span>
+            <span class="text-primary font-bold">{{ avg_sets }}</span>
+          </div>
+          <div class="flex justify-between border-b border-outline-variant/5 pb-2">
+            <span class="text-slate-500">PROSJ. VOLUMEN/TJEDAN</span>
+            <span class="text-on-surface">
+              {% if avg_volume >= 1000 %}{{ avg_volume|floatformat:0 }} kg
+              {% else %}{{ avg_volume }} kg{% endif %}
+            </span>
+          </div>
+          <div class="flex justify-between pb-2">
+            <span class="text-slate-500">PRAĆENE VJEŽBE (PR)</span>
+            <span class="text-on-surface">{{ personal_records|length }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Insights -->
+      <div class="bg-surface-container-low border border-outline-variant/10 rounded p-4">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+          <h4 class="font-label text-[10px] font-black uppercase tracking-widest text-on-surface">AI Coach Insights</h4>
+        </div>
+        <p class="text-[11px] text-on-surface-variant leading-relaxed">
+          {% if avg_sessions >= 4 %}
+          <span class="text-primary font-bold">OPTIMIZACIJA:</span> Odlična konzistentnost!
+          Treninzi {{ avg_sessions }}×/tjedan su idealni za hipertrofiju.
+          <span class="text-on-surface font-bold">Nastavi progresivno opterećenje.</span>
+          {% elif avg_sessions >= 2 %}
+          <span class="text-secondary font-bold">PREPORUKA:</span> Treninzi {{ avg_sessions }}×/tjedan su solidan temelj.
+          <span class="text-on-surface font-bold">Pokušaj dodati još jednu sesiju</span> za brži napredak.
+          {% elif avg_sessions > 0 %}
+          <span class="text-tertiary font-bold">UPOZORENJE:</span> Frekvencija treninga je niska.
+          <span class="text-on-surface font-bold">Cilj: 3+ sesija/tjedan</span> za vidljive rezultate.
+          {% else %}
+          <span class="text-on-surface-variant">Nema dovoljno podataka za analizu.
+          Unesite nekoliko treninga da aktivirate AI coach preporuke.</span>
+          {% endif %}
+        </p>
+      </div>
+
+      <!-- System integrity -->
+      <div class="bg-primary/5 border border-primary/20 rounded p-4 flex flex-col justify-between">
+        <div class="flex justify-between">
+          <h4 class="font-label text-[10px] font-black uppercase tracking-widest text-primary">System Integrity</h4>
+          <span class="material-symbols-outlined text-primary text-sm">shield</span>
+        </div>
+        <div class="mt-4 flex items-center justify-between">
+          <div class="h-1 bg-surface-container-high flex-1 rounded-full overflow-hidden mr-4">
+            {% if personal_records %}
+            <div class="h-full bg-primary shadow-[0_0_8px_#71ffe8]" style="width: {% if personal_records|length >= 8 %}100{% elif personal_records|length >= 4 %}75{% else %}40{% endif %}%;"></div>
+            {% else %}
+            <div class="h-full bg-outline w-[10%]"></div>
+            {% endif %}
+          </div>
+          <span class="font-headline font-bold text-primary italic text-lg">
+            {% if personal_records|length >= 8 %}100%
+            {% elif personal_records|length >= 4 %}75%
+            {% elif personal_records|length >= 1 %}40%
+            {% else %}0%{% endif %}
+          </span>
+        </div>
+        <p class="text-[9px] text-primary/60 uppercase tracking-widest mt-2">
+          {% if personal_records %}{{ personal_records|length }} osobnih rekorda praćeno.
+          {% else %}Nema rekorda. Počni bilježiti treninge.{% endif %}
+        </p>
+      </div>
+
+    </div>
+  </div><!-- /canvas -->
+</main>
+
+</body>
+</html>

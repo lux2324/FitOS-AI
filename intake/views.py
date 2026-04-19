@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import IntakeStep1Form, IntakeStep2Form, IntakeStep3Form, IntakeStep4Form
 from .models import IntakeProfile
+from .ai_service import analyze_intake_text
 
 
 def _get_or_create_profile(user):
@@ -73,15 +74,21 @@ def step4(request):
         if form.is_valid():
             profile = form.save(commit=False)
             profile.completed = True
+
+            # AI analysis of free-text fields
+            analysis = analyze_intake_text(
+                training_story=profile.training_story,
+                limitations_story=profile.limitations_story,
+                extra_notes=profile.extra_notes,
+            )
+            profile.ai_analysis = analysis
             profile.save()
             return redirect('core:home')
 
-    show_exercise_prefs = profile.training_experience_level != 'complete_novice'
     show_limitations = profile.injury_history != 'no' or profile.current_pain_flags != 'no'
 
     return render(request, 'intake/step4.html', {
         'form': form,
         'step': 4,
-        'show_exercise_prefs': show_exercise_prefs,
         'show_limitations': show_limitations,
     })

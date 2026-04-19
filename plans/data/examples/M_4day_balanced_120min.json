@@ -1,0 +1,278 @@
+{
+  "_meta": {
+    "label": "Muskarac, 4 dana, 120min — upper_lower_2x",
+    "purpose": "Reference good-practice plan for upper/lower split.",
+    "first_plan": true,
+    "rep_rule": "first plan = (reps_min, reps_min + 2), locked compounds min 6"
+  },
+  "inputs": {
+    "sex": "male",
+    "days_per_week_available": 4,
+    "max_session_minutes": 120,
+    "body_part_priority": "chest_back_legs",
+    "primary_goal": "muscle_gain",
+    "training_experience_level": "intermediate"
+  },
+  "expected_skeleton": {
+    "split_id": "upper_lower_2x",
+    "max_slots": 7
+  },
+  "expected_plan": {
+    "sessions": [
+      {
+        "order": 1,
+        "name": "Upper 1",
+        "template_key": "upper_1",
+        "exercises": [
+          {
+            "name": "Bench press",
+            "role": "main_compound",
+            "category": "horizontal_push",
+            "sets": 3,
+            "reps_min": 6,
+            "reps_max": 8,
+            "rpe": 8
+          },
+          {
+            "name": "Pullups",
+            "role": "main_compound",
+            "category": "vertical_pull",
+            "sets": 3,
+            "reps_min": 6,
+            "reps_max": 8,
+            "rpe": 8
+          },
+          {
+            "name": "Razvlacenje za prsa na sajli",
+            "role": "isolation",
+            "category": "chest_isolation",
+            "sets": 3,
+            "reps_min": 8,
+            "reps_max": 10,
+            "rpe": 9
+          },
+          {
+            "name": "Veslanje na sajli",
+            "role": "secondary_compound",
+            "category": "horizontal_pull",
+            "sets": 3,
+            "reps_min": 6,
+            "reps_max": 8,
+            "rpe": 8
+          },
+          {
+            "name": "Triceps ekstenzija sajla",
+            "role": "isolation",
+            "category": "triceps_isolation",
+            "sets": 2,
+            "reps_min": 8,
+            "reps_max": 10,
+            "rpe": 9
+          },
+          {
+            "name": "Biceps pregib sa sipkom",
+            "role": "isolation",
+            "category": "biceps_isolation",
+            "sets": 3,
+            "reps_min": 6,
+            "reps_max": 8,
+            "rpe": 9
+          }
+        ]
+      },
+      {
+        "order": 2,
+        "name": "Lower 1",
+        "template_key": "lower_1",
+        "exercises": [
+          {
+            "name": "Hack squat",
+            "role": "main_compound",
+            "category": "squat_knee_dominant",
+            "sets": 3,
+            "reps_min": 6,
+            "reps_max": 8,
+            "rpe": 8
+          },
+          {
+            "name": "Rumunjsko mrtvo dizanje",
+            "role": "main_compound",
+            "category": "hip_hinge",
+            "sets": 3,
+            "reps_min": 6,
+            "reps_max": 8,
+            "rpe": 8
+          },
+          {
+            "name": "Nozna ekstenzija",
+            "role": "isolation",
+            "category": "quad_isolation",
+            "sets": 3,
+            "reps_min": 8,
+            "reps_max": 10,
+            "rpe": 9
+          },
+          {
+            "name": "Lezeca fleksija",
+            "role": "isolation",
+            "category": "hamstring_isolation",
+            "sets": 3,
+            "reps_min": 8,
+            "reps_max": 10,
+            "rpe": 9
+          },
+          {
+            "name": "Podizanje na prste",
+            "role": "isolation",
+            "category": "calf",
+            "sets": 2,
+            "reps_min": 8,
+            "reps_max": 10,
+            "rpe": 9
+          }
+        ]
+      },
+      {
+        "order": 3,
+        "name": "Upper 2",
+        "template_key": "upper_2",
+        "exercises": [
+          {
+            "name": "Kosi potisak bucicama",
+            "role": "main_compound",
+            "category": "horizontal_push",
+            "sets": 3,
+            "reps_min": 6,
+            "reps_max": 8,
+            "rpe": 8
+          },
+          {
+            "name": "Veslanje bucicom",
+            "role": "main_compound",
+            "category": "horizontal_pull",
+            "sets": 3,
+            "reps_min": 8,
+            "reps_max": 10,
+            "rpe": 8
+          },
+          {
+            "name": "Propadanja",
+            "role": "main_compound",
+            "category": "horizontal_push",
+            "sets": 3,
+            "reps_min": 6,
+            "reps_max": 8,
+            "rpe": 8
+          },
+          {
+            "name": "Lat pulldown uski hvat",
+            "role": "main_compound",
+            "category": "vertical_pull",
+            "sets": 3,
+            "reps_min": 8,
+            "reps_max": 10,
+            "rpe": 8
+          },
+          {
+            "name": "Letenje bucicama",
+            "role": "isolation",
+            "category": "chest_isolation",
+            "sets": 3,
+            "reps_min": 6,
+            "reps_max": 8,
+            "rpe": 9
+          },
+          {
+            "name": "Jednoručni preacher curl",
+            "role": "isolation",
+            "category": "biceps_isolation",
+            "sets": 3,
+            "reps_min": 9,
+            "reps_max": 11,
+            "rpe": 9
+          },
+          {
+            "name": "Skullcrushers",
+            "role": "isolation",
+            "category": "triceps_isolation",
+            "sets": 2,
+            "reps_min": 8,
+            "reps_max": 10,
+            "rpe": 9
+          }
+        ]
+      },
+      {
+        "order": 4,
+        "name": "Lower 2",
+        "template_key": "lower_2",
+        "exercises": [
+          {
+            "name": "Bugarski cucanj",
+            "role": "main_compound",
+            "category": "single_leg",
+            "sets": 3,
+            "reps_min": 8,
+            "reps_max": 10,
+            "rpe": 8
+          },
+          {
+            "name": "Rumunjsko mrtvo dizanje",
+            "role": "main_compound",
+            "category": "hip_hinge",
+            "sets": 3,
+            "reps_min": 6,
+            "reps_max": 8,
+            "rpe": 8
+          },
+          {
+            "name": "Nozna ekstenzija",
+            "role": "isolation",
+            "category": "quad_isolation",
+            "sets": 3,
+            "reps_min": 8,
+            "reps_max": 10,
+            "rpe": 9
+          },
+          {
+            "name": "Sjedeca fleksija",
+            "role": "isolation",
+            "category": "hamstring_isolation",
+            "sets": 3,
+            "reps_min": 8,
+            "reps_max": 10,
+            "rpe": 9
+          },
+          {
+            "name": "Podizanje na prste",
+            "role": "isolation",
+            "category": "calf",
+            "sets": 2,
+            "reps_min": 8,
+            "reps_max": 10,
+            "rpe": 9
+          },
+          {
+            "name": "Plank",
+            "role": "isolation",
+            "category": "abs",
+            "sets": 3,
+            "reps_min": 0,
+            "reps_max": 0,
+            "rpe": 9
+          }
+        ]
+      }
+    ]
+  },
+  "rules_demonstrated": [
+    "First plan uses narrowed rep range: (reps_min, reps_min + 2)",
+    "Heavy compounds locked at min 6 reps until strength threshold",
+    "Never less than 2 sets per exercise",
+    "Upper 1 vs Upper 2 use different exercise variants (angle/grip variation)",
+    "Lower 2 uses different hinge variant than Lower 1",
+    "Biceps pairing: preacher curl paired with barbell, not dumbbell",
+    "RDL always first in session when present",
+    "Session time budget is soft cap"
+  ]
+}

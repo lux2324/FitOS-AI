@@ -1,0 +1,181 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="hr" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FitOS — {% block title %}AI Coach{% endblock %}</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "on-primary-container": "#006256",
+          "inverse-primary": "#006b5e",
+          "tertiary-fixed-dim": "#f9bc48",
+          "on-background": "#dfe2f3",
+          "surface": "#0f131f",
+          "surface-container": "#1b1f2c",
+          "secondary": "#d3fbff",
+          "tertiary": "#ffe5bd",
+          "on-tertiary-container": "#725000",
+          "secondary-fixed": "#7df4ff",
+          "on-secondary": "#00363a",
+          "surface-variant": "#313442",
+          "on-surface-variant": "#b9cac5",
+          "on-error": "#690005",
+          "inverse-surface": "#dfe2f3",
+          "surface-container-high": "#262a37",
+          "primary-container": "#00e5cc",
+          "on-secondary-fixed-variant": "#004f54",
+          "tertiary-container": "#ffc24d",
+          "on-secondary-fixed": "#002022",
+          "surface-tint": "#00dfc6",
+          "primary-fixed": "#41fce2",
+          "on-primary": "#003730",
+          "secondary-container": "#00eefc",
+          "inverse-on-surface": "#2c303d",
+          "on-surface": "#dfe2f3",
+          "on-secondary-container": "#00686f",
+          "background": "#0f131f",
+          "surface-bright": "#353946",
+          "secondary-fixed-dim": "#00dbe9",
+          "primary": "#71ffe8",
+          "surface-container-lowest": "#0a0e1a",
+          "on-tertiary": "#422c00",
+          "on-primary-fixed-variant": "#005047",
+          "on-primary-fixed": "#00201b",
+          "surface-container-low": "#171b28",
+          "error": "#ffb4ab",
+          "surface-container-highest": "#313442",
+          "on-error-container": "#ffdad6",
+          "error-container": "#93000a",
+          "on-tertiary-fixed": "#271900",
+          "on-tertiary-fixed-variant": "#5e4100",
+          "tertiary-fixed": "#ffdea9",
+          "outline": "#849490",
+          "primary-fixed-dim": "#00dfc6",
+          "surface-dim": "#0f131f",
+          "outline-variant": "#3b4a46"
+        },
+        borderRadius: {
+          DEFAULT: "0.25rem",
+          lg: "0.5rem",
+          xl: "0.75rem",
+          full: "9999px"
+        },
+        fontFamily: {
+          headline: ["Space Grotesk"],
+          body: ["Inter"],
+          label: ["Inter"]
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  body {
+    background-color: #0a0e1a;
+    color: #dfe2f3;
+    font-family: 'Inter', sans-serif;
+    background-image: radial-gradient(circle at 2px 2px, rgba(113,255,232,0.03) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .hud-glass {
+    background: rgba(27,31,44,0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(113,255,232,0.1);
+  }
+  .glow-primary {
+    box-shadow: 0 0 15px rgba(113,255,232,0.3);
+  }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type=number] { -moz-appearance: textfield; }
+
+  /* Custom range slider */
+  input[type=range] { accent-color: #71ffe8; }
+  input[type=range]::-webkit-slider-thumb { background: #71ffe8; }
+</style>
+
+{% block extra_css %}{% endblock %}
+</head>
+<body class="min-h-screen">
+
+<!-- Sidebar -->
+<aside class="w-[260px] h-full fixed left-0 top-0 bg-[#0a0e1a] border-r border-[#71ffe8]/15 flex flex-col py-8 px-6 shadow-[4px_0_24px_rgba(113,255,232,0.08)] z-50">
+  <div class="mb-12">
+    <h1 class="text-2xl font-bold tracking-tighter text-[#00e5cc] font-['Space_Grotesk']">FitOS</h1>
+    <p class="font-['Space_Grotesk'] uppercase tracking-widest text-[10px] text-slate-500">AI Gym Coach</p>
+  </div>
+  <nav class="flex-1 space-y-1">
+    <a href="{% url 'core:home' %}"
+       class="flex items-center gap-4 py-3 px-4 rounded-lg transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs
+              {% block sidebar_dashboard %}text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10{% endblock %}">
+      <span class="material-symbols-outlined text-base">dashboard</span>
+      Dashboard
+    </a>
+    <a href="{% url 'plans:weekly_plan' %}"
+       class="flex items-center gap-4 py-3 px-4 rounded-lg transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs
+              {% block sidebar_plan %}text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10{% endblock %}">
+      <span class="material-symbols-outlined text-base">calendar_month</span>
+      Tjedni Plan
+    </a>
+    <a href="{% url 'logs:session_picker' %}"
+       class="flex items-center gap-4 py-3 px-4 rounded-lg transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs
+              {% block sidebar_logs %}text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10{% endblock %}">
+      <span class="material-symbols-outlined text-base">fitness_center</span>
+      Unesi Trening
+    </a>
+    <a href="{% url 'feedback:weekly' %}"
+       class="flex items-center gap-4 py-3 px-4 rounded-lg transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs
+              {% block sidebar_feedback %}text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10{% endblock %}">
+      <span class="material-symbols-outlined text-base">chat_bubble</span>
+      Tjedni Feedback
+    </a>
+    <a href="{% url 'logs:statistika' %}"
+       class="flex items-center gap-4 py-3 px-4 rounded-lg transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs
+              {% block sidebar_statistika %}text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10{% endblock %}">
+      <span class="material-symbols-outlined text-base">leaderboard</span>
+      Statistika
+    </a>
+  </nav>
+  <div class="pt-6 mt-auto space-y-1 border-t border-[#71ffe8]/10">
+    <a href="{% url 'users:logout' %}"
+       class="flex items-center gap-4 py-3 px-4 rounded-lg text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10 transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs">
+      <span class="material-symbols-outlined text-base">logout</span>
+      Odjava
+    </a>
+  </div>
+</aside>
+
+<!-- Page body -->
+<div class="ml-[260px] min-h-screen">
+  {% block body %}{% endblock %}
+</div>
+
+<!-- Visual HUD lines -->
+<div class="fixed top-0 left-0 w-full h-full pointer-events-none z-[-1] opacity-10">
+  <div class="absolute top-1/2 left-0 w-64 h-[1px] bg-[#71ffe8]"></div>
+  <div class="absolute top-1/2 right-0 w-64 h-[1px] bg-[#71ffe8]"></div>
+  <div class="absolute bottom-0 left-[260px] right-0 h-32 bg-gradient-to-t from-[#71ffe8]/10 to-transparent"></div>
+</div>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>
