@@ -1,10 +1,10 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="hr" class="dark">
+<html lang="en" class="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FitOS — Tjedni Feedback</title>
+<title>FitOS — Weekly Feedback</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -104,25 +104,25 @@
     </a>
     <a href="{% url 'plans:weekly_plan' %}"
        class="flex items-center gap-4 py-3 px-4 rounded-lg text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10 transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs">
-      <span class="material-symbols-outlined text-base">calendar_month</span>Tjedni Plan
+      <span class="material-symbols-outlined text-base">calendar_month</span>Weekly Plan
     </a>
     <a href="{% url 'logs:session_picker' %}"
        class="flex items-center gap-4 py-3 px-4 rounded-lg text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10 transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs">
-      <span class="material-symbols-outlined text-base">fitness_center</span>Unesi Trening
+      <span class="material-symbols-outlined text-base">fitness_center</span>Log Workout
     </a>
     <!-- Active tab -->
     <div class="flex items-center gap-4 py-3 px-4 rounded-lg text-[#71ffe8] border-r-2 border-[#71ffe8] bg-[#71ffe8]/5 font-['Space_Grotesk'] uppercase tracking-widest text-xs font-bold">
-      <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1;">feedback</span>Tjedni Feedback
+      <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1;">feedback</span>Weekly Feedback
     </div>
     <a href="{% url 'logs:statistika' %}"
        class="flex items-center gap-4 py-3 px-4 rounded-lg text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10 transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs">
-      <span class="material-symbols-outlined text-base">leaderboard</span>Statistika
+      <span class="material-symbols-outlined text-base">leaderboard</span>Statistics
     </a>
   </nav>
   <div class="pt-6 mt-auto space-y-1 border-t border-[#71ffe8]/10">
     <a href="{% url 'users:logout' %}"
        class="flex items-center gap-4 py-3 px-4 rounded-lg text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10 transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs">
-      <span class="material-symbols-outlined text-base">logout</span>Odjava
+      <span class="material-symbols-outlined text-base">logout</span>Sign Out
     </a>
   </div>
 </aside>
@@ -141,8 +141,8 @@
     </div>
     <div class="flex items-center gap-8">
       <div class="flex flex-col items-end">
-        <span class="font-headline font-bold text-primary tracking-tight text-sm">TJEDNI FEEDBACK</span>
-        <span class="text-[10px] text-slate-500 tracking-[0.2em]">TJEDAN OD {{ week_start|date:"d.m.Y" }}</span>
+        <span class="font-headline font-bold text-primary tracking-tight text-sm">WEEKLY FEEDBACK</span>
+        <span class="text-[10px] text-slate-500 tracking-[0.2em]">WEEK OF {{ week_start|date:"d.m.Y" }}</span>
       </div>
       <div class="flex gap-4">
         <button class="text-slate-400 hover:text-[#71ffe8] transition-colors">
@@ -162,10 +162,10 @@
     <div class="bg-primary/10 border border-primary/30 rounded-xl px-6 py-4 flex items-center gap-3">
       <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">check_circle</span>
       <div>
-        <p class="text-primary font-bold text-sm font-headline">Feedback za ovaj tjedan je već poslan — možeš ga urediti</p>
+        <p class="text-primary font-bold text-sm font-headline">Feedback for this week has already been submitted — you can edit it</p>
         <p class="text-on-surface-variant text-xs mt-0.5">
-          Spavanje: {{ existing.sleep_quality }}/5 &nbsp;·&nbsp;
-          Stres: {{ existing.stress_level }}/5 &nbsp;·&nbsp;
+          Sleep: {{ existing.sleep_quality }}/5 &nbsp;·&nbsp;
+          Stress: {{ existing.stress_level }}/5 &nbsp;·&nbsp;
           DOMS: {{ existing.doms_level }}/5
         </p>
       </div>
@@ -184,25 +184,25 @@
             <div class="relative z-10">
               <div class="flex justify-between items-start mb-6">
                 <div>
-                  <h2 class="font-headline text-3xl font-bold tracking-tight text-primary">PREGLED USPJEŠNOSTI</h2>
-                  <p class="text-on-surface-variant text-xs font-label uppercase tracking-widest mt-1">Prošlih 7 dana</p>
+                  <h2 class="font-headline text-3xl font-bold tracking-tight text-primary">PERFORMANCE REVIEW</h2>
+                  <p class="text-on-surface-variant text-xs font-label uppercase tracking-widest mt-1">Previous 7 days</p>
                 </div>
                 <div class="text-right">
                   <div class="text-4xl font-headline font-bold text-secondary">{{ last_week.sessions_completed }}</div>
-                  <div class="text-[10px] text-primary tracking-widest uppercase">Sesija</div>
+                  <div class="text-[10px] text-primary tracking-widest uppercase">Sessions</div>
                 </div>
               </div>
               <div class="grid grid-cols-3 gap-4">
                 <div class="bg-surface-container-high p-4 rounded-lg">
-                  <div class="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Volumen</div>
+                  <div class="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Volume</div>
                   <div class="text-xl font-headline text-on-surface">{{ last_week.volume_display }}</div>
                 </div>
                 <div class="bg-surface-container-high p-4 rounded-lg">
-                  <div class="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Trajanje</div>
+                  <div class="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Duration</div>
                   <div class="text-xl font-headline text-on-surface">{{ last_week.total_duration_min }}m</div>
                 </div>
                 <div class="bg-surface-container-high p-4 rounded-lg">
-                  <div class="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Prosj. RPE</div>
+                  <div class="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Avg. RPE</div>
                   <div class="text-xl font-headline text-on-surface">
                     {% if last_week.avg_rpe %}RPE {{ last_week.avg_rpe }}{% else %}—{% endif %}
                   </div>
@@ -229,12 +229,12 @@
             </div>
             <div class="text-center">
               <p class="text-xs text-on-surface font-medium">
-                {% if recovery_pct >= 80 %}Spreman za napredak
-                {% elif recovery_pct >= 60 %}Dobar oporavak
-                {% elif recovery_pct >= 40 %}Umjereni oporavak
-                {% else %}Potreban odmor{% endif %}
+                {% if recovery_pct >= 80 %}Ready for progression
+                {% elif recovery_pct >= 60 %}Good recovery
+                {% elif recovery_pct >= 40 %}Moderate recovery
+                {% else %}Rest needed{% endif %}
               </p>
-              <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-tighter">Bazira se na snu</p>
+              <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-tighter">Based on sleep</p>
             </div>
           </div>
         </div>
@@ -243,7 +243,7 @@
         <div class="bg-surface-container p-8 rounded-xl ghost-border">
           <h3 class="font-headline text-xl font-bold tracking-tight mb-8 flex items-center gap-3">
             <span class="material-symbols-outlined text-primary">tune</span>
-            SUBJEKTIVNI UNOS
+            SUBJECTIVE INPUT
           </h3>
 
           <form method="post" action="{% url 'feedback:weekly' %}" id="feedback-form">
@@ -253,7 +253,7 @@
               <!-- 1. Kvaliteta sna — range 1-5 -->
               <div>
                 <div class="flex justify-between items-center mb-4">
-                  <label class="text-sm font-medium tracking-wide">Kvaliteta sna?</label>
+                  <label class="text-sm font-medium tracking-wide">Sleep quality?</label>
                   <span class="text-primary font-headline text-sm font-bold" id="sleep-display">
                     {% if existing %}{{ existing.sleep_quality }}{% else %}3{% endif %} / 5
                   </span>
@@ -263,73 +263,57 @@
                        value="{% if existing %}{{ existing.sleep_quality }}{% else %}3{% endif %}"
                        class="w-full h-1"/>
                 <div class="flex justify-between mt-2 text-[10px] text-slate-500 uppercase tracking-widest">
-                  <span>1 — Loše</span><span>5 — Sjajno</span>
+                  <span>1 — Poor</span><span>5 — Excellent</span>
                 </div>
               </div>
 
-              <!-- 2. Razina stresa — 5 zvjezdica -->
+              <!-- 2. Stress level — range 1-5 -->
               <div>
                 <div class="flex justify-between items-center mb-4">
-                  <label class="text-sm font-medium tracking-wide">Razina stresa?</label>
-                  <div class="flex gap-1" id="stress-stars">
-                    {% for i in rating_range %}
-                    <button type="button"
-                      class="star-btn material-symbols-outlined text-xl transition-colors
-                        {% if existing and i <= existing.stress_level %}text-primary
-                        {% elif not existing and i <= 3 %}text-primary
-                        {% else %}text-surface-variant{% endif %}"
-                      data-value="{{ i }}"
-                      style="{% if existing and i <= existing.stress_level %}font-variation-settings:'FILL' 1;
-                             {% elif not existing and i <= 3 %}font-variation-settings:'FILL' 1;{% endif %}">star</button>
-                    {% endfor %}
-                  </div>
+                  <label class="text-sm font-medium tracking-wide">Stress level?</label>
+                  <span class="text-primary font-headline text-sm font-bold" id="stress-display">
+                    {% if existing %}{{ existing.stress_level }}{% else %}3{% endif %} / 5
+                  </span>
                 </div>
-                <input type="hidden" name="stress_level" id="stress-input"
-                       value="{% if existing %}{{ existing.stress_level }}{% else %}3{% endif %}"/>
-                <div class="h-[2px] bg-surface-variant/30 w-full"></div>
+                <input type="range" id="stress_quality" name="stress_level"
+                       min="1" max="5" step="1"
+                       value="{% if existing %}{{ existing.stress_level }}{% else %}3{% endif %}"
+                       class="w-full h-1"/>
                 <div class="flex justify-between mt-2 text-[10px] text-slate-500 uppercase tracking-widest">
-                  <span>1 — Nizak</span><span>5 — Visok</span>
+                  <span>1 — Low</span><span>5 — High</span>
                 </div>
               </div>
 
-              <!-- 3. DOMS — 5 zvjezdica (crvene) -->
+              <!-- 3. Muscle soreness (DOMS) — range 1-5 -->
               <div>
                 <div class="flex justify-between items-center mb-4">
-                  <label class="text-sm font-medium tracking-wide">Upala mišića (DOMS)?</label>
-                  <div class="flex gap-1" id="doms-stars">
-                    {% for i in rating_range %}
-                    <button type="button"
-                      class="doms-star-btn material-symbols-outlined text-xl transition-colors
-                        {% if existing and i <= existing.doms_level %}text-error
-                        {% elif not existing and i == 1 %}text-error
-                        {% else %}text-surface-variant{% endif %}"
-                      data-value="{{ i }}"
-                      style="{% if existing and i <= existing.doms_level %}font-variation-settings:'FILL' 1;
-                             {% elif not existing and i == 1 %}font-variation-settings:'FILL' 1;{% endif %}">star</button>
-                    {% endfor %}
-                  </div>
+                  <label class="text-sm font-medium tracking-wide">Muscle soreness (DOMS)?</label>
+                  <span class="text-error font-headline text-sm font-bold" id="doms-display">
+                    {% if existing %}{{ existing.doms_level }}{% else %}1{% endif %} / 5
+                  </span>
                 </div>
-                <input type="hidden" name="doms_level" id="doms-input"
-                       value="{% if existing %}{{ existing.doms_level }}{% else %}1{% endif %}"/>
-                <div class="h-[2px] bg-surface-variant/30 w-full"></div>
+                <input type="range" id="doms_quality" name="doms_level"
+                       min="1" max="5" step="1"
+                       value="{% if existing %}{{ existing.doms_level }}{% else %}1{% endif %}"
+                       class="w-full h-1"/>
                 <div class="flex justify-between mt-2 text-[10px] text-slate-500 uppercase tracking-widest">
-                  <span>1 — Nema</span><span>5 — Jaka</span>
+                  <span>1 — None</span><span>5 — Severe</span>
                 </div>
               </div>
 
               <!-- 4. Bilješke -->
               <div>
-                <label class="text-sm font-medium tracking-wide block mb-2">Dojam o treningu</label>
-                <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-3">Kratki opis kako je bio tjedan</p>
+                <label class="text-sm font-medium tracking-wide block mb-2">Training impression</label>
+                <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-3">Brief description of how the week went</p>
                 <textarea name="training_notes" rows="4"
-                  placeholder="Npr. Tjedan je bio naporan ali produktivan. Osjećam napredak na čučnju..."
+                  placeholder="E.g. The week was tough but productive. I feel progress on squats..."
                   class="w-full bg-surface-container-high border border-outline-variant/30 rounded-lg px-4 py-3 text-sm text-on-surface placeholder-slate-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 resize-none transition-colors"
                 >{% if existing %}{{ existing.training_notes }}{% endif %}</textarea>
               </div>
 
               <button type="submit"
                 class="w-full bg-surface-container-high border border-primary/30 text-primary font-headline font-bold text-sm uppercase tracking-widest py-4 rounded-xl hover:bg-primary/10 hover:border-primary transition-all">
-                {% if existing %}Ažuriraj feedback{% else %}Spremi feedback{% endif %}
+                {% if existing %}Update feedback{% else %}Save feedback{% endif %}
               </button>
 
             </div>
@@ -356,24 +340,24 @@
           </div>
           <div class="font-mono text-xs leading-relaxed text-secondary/80">
             {% if existing and existing.ai_summary %}
-              <p class="mb-2 text-primary">ANALIZA ZAVRŠENA...</p>
+              <p class="mb-2 text-primary">ANALYSIS COMPLETE...</p>
               <p class="text-on-surface">{{ existing.ai_summary }}</p>
             {% elif existing %}
-              <p class="mb-2 text-primary">STATUS: FEEDBACK PRIMLJEN_</p>
+              <p class="mb-2 text-primary">STATUS: FEEDBACK RECEIVED_</p>
               <p class="text-on-surface mb-2">
-                Spavanje: <span class="text-primary font-bold">{{ existing.sleep_quality }}/5</span> &nbsp;·&nbsp;
-                Stres: <span class="text-primary font-bold">{{ existing.stress_level }}/5</span>
+                Sleep: <span class="text-primary font-bold">{{ existing.sleep_quality }}/5</span> &nbsp;·&nbsp;
+                Stress: <span class="text-primary font-bold">{{ existing.stress_level }}/5</span>
               </p>
               <p class="text-on-surface">DOMS: <span class="text-primary font-bold">{{ existing.doms_level }}/5</span></p>
               {% if existing.training_notes %}
               <p class="text-on-surface-variant mt-3 italic">"{{ existing.training_notes|truncatewords:30 }}"</p>
               {% endif %}
               <div class="mt-6 flex items-center gap-2 text-primary font-bold animate-pulse">
-                <span class="w-2 h-4 bg-primary"></span>SPREMAN ZA NOVI PLAN_
+                <span class="w-2 h-4 bg-primary"></span>READY FOR NEW PLAN_
               </div>
             {% else %}
-              <p class="mb-4 text-primary/60">ČEKANJE NA UNOS...</p>
-              <p class="text-on-surface-variant">Popuni subjektivni unos i AI trener će analizirati tvoj tjedan.</p>
+              <p class="mb-4 text-primary/60">AWAITING INPUT...</p>
+              <p class="text-on-surface-variant">Fill in the subjective input and the AI coach will analyze your week.</p>
               <div class="mt-6 flex items-center gap-2 text-primary/40">
                 <span class="w-2 h-4 bg-primary/40"></span>AWAITING INPUT_
               </div>
@@ -383,26 +367,26 @@
 
         <!-- Proposed changes -->
         <div class="bg-surface-container p-8 rounded-xl ghost-border">
-          <h3 class="font-headline text-lg font-bold tracking-tight mb-6 uppercase tracking-widest">Promjene za idući tjedan</h3>
+          <h3 class="font-headline text-lg font-bold tracking-tight mb-6 uppercase tracking-widest">Changes for next week</h3>
           {% if latest_plan %}
           <div class="space-y-4">
             <div class="flex items-center gap-4 bg-surface-container-high p-4 rounded-lg border-l-2 border-primary">
               <span class="material-symbols-outlined text-primary">trending_up</span>
               <div class="flex-1">
-                <p class="text-xs font-bold text-on-surface">Progresija volumena</p>
+                <p class="text-xs font-bold text-on-surface">Volume progression</p>
                 <p class="text-[10px] text-slate-500 uppercase">Plan #{{ latest_plan.pk }} → tjedan {{ latest_plan.week_number|add:1 }}</p>
               </div>
             </div>
             <div class="flex items-center gap-4 bg-surface-container-high p-4 rounded-lg border-l-2 border-secondary">
               <span class="material-symbols-outlined text-secondary">auto_fix_high</span>
               <div class="flex-1">
-                <p class="text-xs font-bold text-on-surface">AI prilagodba</p>
-                <p class="text-[10px] text-slate-500 uppercase">Bazirana na feedbacku</p>
+                <p class="text-xs font-bold text-on-surface">AI adjustment</p>
+                <p class="text-[10px] text-slate-500 uppercase">Based on feedback</p>
               </div>
             </div>
           </div>
           {% else %}
-          <p class="text-on-surface-variant text-xs">Nema aktivnog plana. Generiraj plan u sekciji "Tjedni plan".</p>
+          <p class="text-on-surface-variant text-xs">No active plan. Generate a plan in the "Weekly Plan" section.</p>
           {% endif %}
         </div>
 
@@ -412,14 +396,14 @@
           {% csrf_token %}
           <button type="submit"
             class="w-full bg-gradient-to-br from-primary to-primary-container py-6 rounded-xl flex flex-col items-center justify-center gap-1 hover:shadow-[0_0_30px_rgba(113,255,232,0.3)] transition-all transform hover:-translate-y-1">
-            <span class="font-headline font-extrabold text-on-primary uppercase tracking-[0.2em] text-lg">Prihvati plan za idući tjedan</span>
-            <span class="text-[10px] text-on-primary/60 font-label tracking-widest uppercase">GENERIRANJE NOVOG RASPOREDA...</span>
+            <span class="font-headline font-extrabold text-on-primary uppercase tracking-[0.2em] text-lg">Accept plan for next week</span>
+            <span class="text-[10px] text-on-primary/60 font-label tracking-widest uppercase">GENERATING NEW SCHEDULE...</span>
           </button>
         </form>
         {% else %}
         <div class="w-full bg-surface-container-high/50 border border-outline-variant/20 py-6 rounded-xl flex flex-col items-center justify-center gap-1 cursor-not-allowed opacity-50">
-          <span class="font-headline font-extrabold text-on-surface-variant uppercase tracking-[0.2em] text-lg">Prihvati plan za idući tjedan</span>
-          <span class="text-[10px] text-slate-600 font-label tracking-widest uppercase">Najprije pošalji feedback</span>
+          <span class="font-headline font-extrabold text-on-surface-variant uppercase tracking-[0.2em] text-lg">Accept plan for next week</span>
+          <span class="text-[10px] text-slate-600 font-label tracking-widest uppercase">Submit feedback first</span>
         </div>
         {% endif %}
 
@@ -455,37 +439,23 @@ if (sleepSlider && sleepDisplay) {
   });
 }
 
-// Stress stars
-const starBtns = document.querySelectorAll('.star-btn');
-const stressInput = document.getElementById('stress-input');
-starBtns.forEach(btn => {
-  btn.addEventListener('click', function() {
-    const val = parseInt(this.dataset.value);
-    stressInput.value = val;
-    starBtns.forEach((b, idx) => {
-      const active = idx < val;
-      b.classList.toggle('text-primary', active);
-      b.classList.toggle('text-surface-variant', !active);
-      b.style.fontVariationSettings = active ? "'FILL' 1" : "'FILL' 0";
-    });
+// Stress slider → live display
+const stressSlider = document.getElementById('stress_quality');
+const stressDisplay = document.getElementById('stress-display');
+if (stressSlider && stressDisplay) {
+  stressSlider.addEventListener('input', function() {
+    stressDisplay.textContent = this.value + ' / 5';
   });
-});
+}
 
-// DOMS stars
-const domsBtns = document.querySelectorAll('.doms-star-btn');
-const domsInput = document.getElementById('doms-input');
-domsBtns.forEach(btn => {
-  btn.addEventListener('click', function() {
-    const val = parseInt(this.dataset.value);
-    domsInput.value = val;
-    domsBtns.forEach((b, idx) => {
-      const active = idx < val;
-      b.classList.toggle('text-error', active);
-      b.classList.toggle('text-surface-variant', !active);
-      b.style.fontVariationSettings = active ? "'FILL' 1" : "'FILL' 0";
-    });
+// DOMS slider → live display
+const domsSlider = document.getElementById('doms_quality');
+const domsDisplay = document.getElementById('doms-display');
+if (domsSlider && domsDisplay) {
+  domsSlider.addEventListener('input', function() {
+    domsDisplay.textContent = this.value + ' / 5';
   });
-});
+}
 </script>
 </body>
 </html>
