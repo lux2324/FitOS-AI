@@ -1,5 +1,5 @@
 {% extends 'base_tw.html' %}
-{% block title %}{{ log.planned_session.name|default:"Trening" }} — Aktivan{% endblock %}
+{% block title %}{{ log.planned_session.name|default:"Workout" }} — Active{% endblock %}
 
 {% block sidebar_logs %}text-[#71ffe8] border-r-2 border-[#71ffe8] bg-[#71ffe8]/5{% endblock %}
 
@@ -119,9 +119,9 @@
         <span class="material-symbols-outlined text-lg">arrow_back</span>
       </a>
       <div>
-        <p class="text-[9px] font-['Space_Grotesk'] uppercase tracking-[0.25em] text-slate-500">Aktivan Trening</p>
+        <p class="text-[9px] font-['Space_Grotesk'] uppercase tracking-[0.25em] text-slate-500">Active Workout</p>
         <h2 class="text-base font-bold font-['Space_Grotesk'] text-white tracking-tight leading-none mt-0.5">
-          {{ log.planned_session.name|default:"Trening" }}
+          {{ log.planned_session.name|default:"Workout" }}
         </h2>
       </div>
     </div>
@@ -129,13 +129,13 @@
     <!-- HUD stats row -->
     <div class="flex items-center gap-6">
       <div class="text-center">
-        <p class="text-[9px] font-['Space_Grotesk'] uppercase tracking-widest text-slate-500 mb-0.5">Trajanje</p>
+        <p class="text-[9px] font-['Space_Grotesk'] uppercase tracking-widest text-slate-500 mb-0.5">Duration</p>
         <p class="text-xl font-black font-['Space_Grotesk'] text-[#71ffe8] tabular-nums" id="hud-timer">00:00:00</p>
       </div>
       <div class="w-px h-8 bg-white/10"></div>
 
       <div class="text-center">
-        <p class="text-[9px] font-['Space_Grotesk'] uppercase tracking-widest text-slate-500 mb-0.5">Volumen</p>
+        <p class="text-[9px] font-['Space_Grotesk'] uppercase tracking-widest text-slate-500 mb-0.5">Volume</p>
         <p class="text-xl font-black font-['Space_Grotesk'] text-white tabular-nums">
           <span id="hud-volume">0</span><span class="text-xs text-slate-500 font-normal ml-0.5">kg</span>
         </p>
@@ -143,7 +143,7 @@
       <div class="w-px h-8 bg-white/10"></div>
 
       <div class="text-center">
-        <p class="text-[9px] font-['Space_Grotesk'] uppercase tracking-widest text-slate-500 mb-0.5">Setovi</p>
+        <p class="text-[9px] font-['Space_Grotesk'] uppercase tracking-widest text-slate-500 mb-0.5">Sets</p>
         <p class="text-xl font-black font-['Space_Grotesk'] text-white tabular-nums" id="hud-sets">0</p>
       </div>
       <div class="w-px h-8 bg-white/10"></div>
@@ -151,7 +151,7 @@
       <!-- Rest timer -->
       <div class="flex items-center gap-3">
         <div>
-          <p class="text-[9px] font-['Space_Grotesk'] uppercase tracking-widest text-[#71ffe8] mb-0.5">Odmor</p>
+          <p class="text-[9px] font-['Space_Grotesk'] uppercase tracking-widest text-[#71ffe8] mb-0.5">Rest</p>
           <p class="text-xl font-black font-['Space_Grotesk'] text-white tabular-nums" id="rest-display">01:30</p>
         </div>
         <div class="flex flex-col gap-1">
@@ -182,7 +182,7 @@
     <div class="col-span-8 space-y-6">
 
       {% for ex in exercises %}
-      <div class="hud-glass rounded-xl overflow-hidden
+      <div class="glass-panel rounded-xl overflow-hidden
         {% if ex.planned_exercise.role == 'main_compound' %}border-l-4 border-l-[#71ffe8]
         {% elif ex.planned_exercise.role == 'secondary_compound' %}border-l-4 border-l-[#5f8cff]/60
         {% else %}border-l-4 border-l-white/10{% endif %}">
@@ -201,17 +201,17 @@
                         data-ex-id="{{ ex.planned_exercise.id }}"
                         data-log-ex-id="{{ ex.id }}"
                         data-ex-name="{{ ex.name }}"
-                        title="Zamijeni vježbu"
+                        title="Swap exercise"
                         style="font-size:14px;border:1px solid rgba(255,255,255,0.08);">⇄</button>
                 {% endif %}
               </div>
               <div class="flex items-center gap-3 mt-1">
                 {% if ex.planned_exercise.role == 'main_compound' %}
-                  <span class="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full role-main">Glavni</span>
+                  <span class="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full role-main">Main</span>
                 {% elif ex.planned_exercise.role == 'secondary_compound' %}
-                  <span class="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full role-sec">Sekundarni</span>
+                  <span class="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full role-sec">Secondary</span>
                 {% else %}
-                  <span class="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full role-iso">Izolacija</span>
+                  <span class="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full role-iso">Isolation</span>
                 {% endif %}
                 <span class="text-[10px] text-slate-500">
                   {{ ex.target.sets }} &times; {{ ex.target.reps_min }}–{{ ex.target.reps_max }}
@@ -227,9 +227,9 @@
           <!-- Column headers -->
           <div class="grid grid-cols-[40px_1fr_1fr_1fr_44px] gap-3 mb-3 px-3">
             <div class="text-[9px] font-bold uppercase tracking-widest text-slate-500">Set</div>
-            <div class="text-[9px] font-bold uppercase tracking-widest text-slate-500 text-center">Prethodni</div>
-            <div class="text-[9px] font-bold uppercase tracking-widest text-slate-500 text-center">Kilaža</div>
-            <div class="text-[9px] font-bold uppercase tracking-widest text-slate-500 text-center">Ponavljanja</div>
+            <div class="text-[9px] font-bold uppercase tracking-widest text-slate-500 text-center">Previous</div>
+            <div class="text-[9px] font-bold uppercase tracking-widest text-slate-500 text-center">Weight</div>
+            <div class="text-[9px] font-bold uppercase tracking-widest text-slate-500 text-center">Reps</div>
             <div class="text-[9px] font-bold uppercase tracking-widest text-slate-500 text-center">✓</div>
           </div>
 
@@ -249,7 +249,7 @@
                   {% if s.prev and s.prev.weight_kg and s.prev.reps_done %}
                     <span class="text-xs text-slate-400 hover:text-[#71ffe8] cursor-pointer prev-fill-btn transition-colors"
                           data-prev-w="{{ s.prev.weight_kg }}" data-prev-r="{{ s.prev.reps_done }}"
-                          title="Klikni za prihvati prethodni rezultat">
+                          title="Click to accept previous result">
                       {{ s.prev.weight_kg }}kg &times; {{ s.prev.reps_done }}
                     </span>
                   {% else %}
@@ -295,7 +295,7 @@
                 <div class="flex justify-center">
                   <button class="check-btn {% if s.completed %}done{% endif %}"
                           data-ex="{{ ex.id }}" data-set="{{ s.set_number }}"
-                          title="Označi set kao završen">
+                          title="Mark set as completed">
                     <span class="material-symbols-outlined text-base"
                           {% if s.completed %}style="font-variation-settings:'FILL' 1"{% endif %}>check</span>
                   </button>
@@ -311,14 +311,14 @@
                          text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2"
                   data-ex="{{ ex.id }}" data-next-set="{{ ex.sets.count|add:1 }}">
             <span class="material-symbols-outlined text-sm">add</span>
-            Dodaj set
+            Add set
           </button>
         </div>
 
       </div>
       {% empty %}
-      <div class="hud-glass rounded-xl p-10 text-center text-slate-500">
-        Nema vježbi u ovoj sesiji.
+      <div class="glass-panel rounded-xl p-10 text-center text-slate-500">
+        No exercises in this session.
       </div>
       {% endfor %}
 
@@ -328,12 +328,12 @@
     <div class="col-span-4 space-y-5 sticky top-[80px]">
 
       <!-- RPE slider -->
-      <div class="hud-glass rounded-xl p-6">
+      <div class="glass-panel rounded-xl p-6">
         <h4 class="text-[10px] font-bold font-['Space_Grotesk'] text-[#71ffe8] tracking-[0.2em] uppercase mb-5">
-          Subjektivni Napor (RPE)
+          Perceived Exertion (RPE)
         </h4>
         <div class="flex justify-between mb-2 text-[9px] font-bold text-slate-500 uppercase tracking-widest">
-          <span>Lako</span><span>Maksimalno</span>
+          <span>Easy</span><span>Maximum</span>
         </div>
         <input type="range" id="rpe-slider" class="w-full cursor-pointer mb-4" min="1" max="10" step="0.5" value="7">
         <div class="flex items-center justify-between mt-1">
@@ -346,23 +346,23 @@
       </div>
 
       <!-- Notes -->
-      <div class="hud-glass rounded-xl p-6">
-        <h4 class="text-[10px] font-bold font-['Space_Grotesk'] text-[#71ffe8] tracking-[0.2em] uppercase mb-4">Bilješka</h4>
+      <div class="glass-panel rounded-xl p-6">
+        <h4 class="text-[10px] font-bold font-['Space_Grotesk'] text-[#71ffe8] tracking-[0.2em] uppercase mb-4">Notes</h4>
         <textarea id="session-notes" rows="4"
           class="w-full bg-[#171b28] border-none rounded-xl text-sm p-4 text-white
                  focus:ring-1 focus:ring-[#71ffe8]/50 resize-none placeholder-slate-600 outline-none leading-relaxed"
-          placeholder="Kako se osjećaš? Imaš li kakve bolove ili napomene...">{{ log.notes }}</textarea>
-        <p class="text-[9px] text-slate-600 mt-2 uppercase tracking-widest">Auto-sprema na blur</p>
+          placeholder="How are you feeling? Any pain or issues...">{{ log.notes }}</textarea>
+        <p class="text-[9px] text-slate-600 mt-2 uppercase tracking-widest">Auto-saves on blur</p>
       </div>
 
       <!-- Mini stats -->
       <div class="grid grid-cols-2 gap-4">
-        <div class="hud-glass rounded-xl p-5">
-          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2">Ukupno setova</p>
+        <div class="glass-panel rounded-xl p-5">
+          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2">Total sets</p>
           <p class="text-3xl font-black text-white font-['Space_Grotesk']" id="stat-sets">0</p>
         </div>
-        <div class="hud-glass rounded-xl p-5">
-          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2">Ukupan volumen</p>
+        <div class="glass-panel rounded-xl p-5">
+          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2">Total volume</p>
           <p class="text-2xl font-black text-white font-['Space_Grotesk']">
             <span id="stat-volume">0</span><span class="text-xs font-normal text-slate-500 ml-0.5">kg</span>
           </p>
@@ -376,17 +376,17 @@
                rounded-xl flex items-center justify-center gap-3
                hover:scale-[1.02] transition-transform glow-primary">
         <span class="material-symbols-outlined">check_circle</span>
-        Završi Trening
+        Finish Workout
       </button>
 
       <!-- Abort link -->
       <a href="{% url 'logs:session_picker' %}"
-         onclick="return confirm('Odustati od treninga? Uneseni podaci ostaju spremljeni, ali trening neće biti označen kao završen.')"
+         onclick="return confirm('Cancel workout? Entered data will be saved, but the workout will not be marked as completed.')"
          class="w-full py-3 border border-red-500/30 text-red-400/60 font-bold uppercase tracking-widest
                 text-[10px] hover:bg-red-500/5 hover:text-red-400 transition-all rounded-xl
                 flex items-center justify-center gap-2">
         <span class="material-symbols-outlined text-sm">close</span>
-        Odustani od treninga
+        Cancel workout
       </a>
 
     </div><!-- /col-span-4 -->
@@ -406,7 +406,7 @@
           <span style="color:#71ffe8;font-size:16px;">⇄</span>
         </div>
         <div>
-          <h3 class="text-sm font-bold font-['Space_Grotesk'] text-white uppercase tracking-wide">Zamijeni vježbu</h3>
+          <h3 class="text-sm font-bold font-['Space_Grotesk'] text-white uppercase tracking-wide">Swap exercise</h3>
           <p class="text-[11px] text-slate-500 mt-0.5" id="log-swap-modal-ex-name"></p>
         </div>
       </div>
@@ -417,14 +417,14 @@
 
     <label class="block text-[10px] font-bold font-['Space_Grotesk'] uppercase tracking-widest mb-2"
            style="color:#71ffe8;">
-      Zašto ne odgovara?
+      Why doesn't it suit you?
     </label>
     <textarea id="log-swap-reason" rows="3"
       class="w-full rounded-xl text-sm p-4 text-white outline-none resize-none leading-relaxed transition-colors"
       style="background:#171b28;border:1px solid rgba(59,74,70,0.8);"
       onfocus="this.style.borderColor='rgba(113,255,232,0.5)'"
       onblur="this.style.borderColor='rgba(59,74,70,0.8)'"
-      placeholder="Npr. 'nema te sprave u teretani', 'htio bih nešto s bučicama', 'boli me koljeno pri tom pokretu'..."></textarea>
+      placeholder="E.g. 'that machine is not available', 'I'd prefer dumbbells', 'my knee hurts during that movement'..."></textarea>
 
     <div id="log-swap-error" class="mt-3 text-xs text-red-400" style="display:none;"></div>
 
@@ -434,12 +434,12 @@
         style="border:1px solid rgba(255,255,255,0.1);color:#94a3b8;"
         onmouseover="this.style.borderColor='rgba(255,255,255,0.25)';this.style.color='#fff'"
         onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='#94a3b8'">
-        Odustani
+        Cancel
       </button>
       <button type="button" id="log-swap-confirm-btn"
         class="flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all"
         style="background:linear-gradient(135deg,#71ffe8 0%,#00e5cc 100%);color:#003730;">
-        Zamijeni
+        Swap
       </button>
     </div>
   </div>
@@ -450,31 +450,31 @@
 <div id="impression-modal"
      class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-6"
      style="display:none!important">
-  <div class="hud-glass rounded-2xl w-full max-w-lg p-8 shadow-2xl border border-[#71ffe8]/20">
+  <div class="glass-panel rounded-2xl w-full max-w-lg p-8 shadow-2xl border border-[#71ffe8]/20">
     <div class="flex items-center gap-3 mb-6">
       <div class="w-10 h-10 rounded-full bg-[#71ffe8]/15 border border-[#71ffe8]/30 flex items-center justify-center">
         <span class="material-symbols-outlined text-[#71ffe8]" style="font-variation-settings:'FILL' 1">sentiment_satisfied</span>
       </div>
       <div>
-        <h3 class="text-lg font-black font-['Space_Grotesk'] text-white">Trening završen!</h3>
+        <h3 class="text-lg font-black font-['Space_Grotesk'] text-white">Workout complete!</h3>
         <p class="text-slate-500 text-xs mt-0.5">{{ log.planned_session.name|default:"" }}</p>
       </div>
     </div>
 
     <label class="block text-[10px] font-bold font-['Space_Grotesk'] uppercase tracking-widest text-[#71ffe8] mb-3">
-      Kako je bio trening? <span class="text-slate-600 normal-case tracking-normal">(opcionalno)</span>
+      How was the workout? <span class="text-slate-600 normal-case tracking-normal">(optional)</span>
     </label>
     <textarea id="impression-notes" rows="4"
       class="w-full bg-[#171b28] border border-[#3b4a46] focus:border-[#71ffe8] rounded-xl
              text-sm p-4 text-white outline-none resize-none placeholder-slate-600 leading-relaxed
              focus:ring-1 focus:ring-[#71ffe8]/30 transition-colors"
-      placeholder="Npr. Sjajan trening, podigao novi PR na benchu. Ramena su bila malo ukočena..."></textarea>
+      placeholder="E.g. Great workout, hit a new bench PR. Shoulders felt a bit stiff..."></textarea>
 
     <div class="flex gap-3 mt-6">
       <button id="modal-cancel-btn"
         class="flex-1 py-3 border border-white/10 text-slate-400 hover:text-white hover:border-white/25
                rounded-xl text-xs font-bold uppercase tracking-widest transition-all">
-        Nazad
+        Back
       </button>
       <form id="finish-form" method="post" action="{% url 'logs:finish_session' log.id %}" class="flex-1">
         {% csrf_token %}
@@ -483,7 +483,7 @@
           class="w-full py-3 bg-gradient-to-r from-[#71ffe8] to-[#00e5cc] text-[#003730]
                  font-black font-['Space_Grotesk'] uppercase tracking-widest text-xs
                  rounded-xl hover:scale-[1.02] transition-transform glow-primary">
-          Spremi i Završi
+          Save & Finish
         </button>
       </form>
     </div>
@@ -704,16 +704,16 @@
 
   // ── RPE slider ────────────────────────────────────────────────────
   var RPE_DATA = {
-    1:  ['Trivijalno',       'Bez napora'],
-    2:  ['Jako lako',        'Višestruki sati bez zamora'],
-    3:  ['Lako',             'Ugodna aktivnost'],
-    4:  ['Umjereno',         'Lako za razgovor'],
-    5:  ['Umjereno teško',   '~5 ponavljanja u rezervi'],
-    6:  ['Teže',             '~4 ponavljanja u rezervi'],
-    7:  ['Teško',            '~3 ponavljanja u rezervi'],
-    8:  ['Jako teško',       '~2 ponavljanja u rezervi'],
-    9:  ['Skoro maksimalno', '~1 ponavljanje u rezervi'],
-    10: ['Maksimum',         'Sve iz sebe']
+    1:  ['Trivial',          'No effort'],
+    2:  ['Very easy',        'Could go for hours'],
+    3:  ['Easy',             'Comfortable activity'],
+    4:  ['Moderate',         'Easy to talk'],
+    5:  ['Moderate hard',    '~5 reps in reserve'],
+    6:  ['Harder',           '~4 reps in reserve'],
+    7:  ['Hard',             '~3 reps in reserve'],
+    8:  ['Very hard',        '~2 reps in reserve'],
+    9:  ['Near maximum',     '~1 rep in reserve'],
+    10: ['Maximum',          'All out']
   };
 
   var rpeSlider  = document.getElementById('rpe-slider');
@@ -855,7 +855,7 @@
     logSwapErrorEl.style.display= 'none';
     logSwapErrorEl.textContent  = '';
     logSwapConfirmBtn.disabled  = false;
-    logSwapConfirmBtn.textContent = 'Zamijeni';
+    logSwapConfirmBtn.textContent = 'Swap';
     logSwapOverlay.style.display = 'flex';
     setTimeout(function () { logSwapReasonEl.focus(); }, 50);
   }
@@ -882,7 +882,7 @@
     var reason = logSwapReasonEl.value.trim();
 
     logSwapConfirmBtn.disabled = true;
-    logSwapConfirmBtn.textContent = 'Zamjenjujem…';
+    logSwapConfirmBtn.textContent = 'Swapping...';
     logSwapErrorEl.style.display = 'none';
 
     var fd = new FormData();
@@ -902,17 +902,17 @@
           if (swapBtn) swapBtn.dataset.exName = data.new_name;
           closeLogSwapModal();
         } else {
-          logSwapErrorEl.textContent = data.error || 'Greška. Pokušaj ponovno.';
+          logSwapErrorEl.textContent = data.error || 'Error. Please try again.';
           logSwapErrorEl.style.display = 'block';
           logSwapConfirmBtn.disabled = false;
-          logSwapConfirmBtn.textContent = 'Zamijeni';
+          logSwapConfirmBtn.textContent = 'Swap';
         }
       })
       .catch(function (err) {
-        logSwapErrorEl.textContent = 'Mrežna greška: ' + err;
+        logSwapErrorEl.textContent = 'Network error: ' + err;
         logSwapErrorEl.style.display = 'block';
         logSwapConfirmBtn.disabled = false;
-        logSwapConfirmBtn.textContent = 'Zamijeni';
+        logSwapConfirmBtn.textContent = 'Swap';
       });
   });
 

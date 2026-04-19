@@ -1,5 +1,5 @@
 {% extends 'base_tw.html' %}
-{% block title %}Odaberi Sesiju{% endblock %}
+{% block title %}Select Session{% endblock %}
 
 {% block sidebar_logs %}text-[#71ffe8] border-r-2 border-[#71ffe8] bg-[#71ffe8]/5{% endblock %}
 
@@ -8,8 +8,8 @@
 
   <!-- Page header -->
   <div class="mb-10">
-    <p class="text-[10px] font-['Space_Grotesk'] uppercase tracking-[0.3em] text-slate-500 mb-2">Trening</p>
-    <h1 class="text-3xl font-black font-['Space_Grotesk'] text-white tracking-tight">Odaberi Sesiju</h1>
+    <p class="text-[10px] font-['Space_Grotesk'] uppercase tracking-[0.3em] text-slate-500 mb-2">Workout</p>
+    <h1 class="text-3xl font-black font-['Space_Grotesk'] text-white tracking-tight">Select Session</h1>
     {% if plan %}
     <p class="text-slate-500 text-sm mt-1 font-['Inter']">
       {{ plan.split_type }} &middot; Tjedan {{ plan.week_number }}
@@ -19,37 +19,37 @@
 
   {% if not plan %}
   <!-- No active plan state -->
-  <div class="hud-glass rounded-xl p-10 max-w-lg flex items-start gap-6">
+  <div class="glass-panel rounded-xl p-10 max-w-lg flex items-start gap-6">
     <span class="material-symbols-outlined text-5xl text-slate-600 flex-shrink-0">calendar_month</span>
     <div>
-      <p class="font-bold text-white text-lg mb-2 font-['Space_Grotesk']">Nema aktivnog plana</p>
+      <p class="font-bold text-white text-lg mb-2 font-['Space_Grotesk']">No active plan</p>
       <p class="text-slate-500 text-sm mb-5 leading-relaxed">
-        Trebaš aktivan tjedni plan kako bi mogao/la upisati trening.
+        You need an active weekly plan to log a workout.
       </p>
       <a href="{% url 'plans:weekly_plan' %}"
          class="inline-flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-[#71ffe8] to-[#00e5cc]
                 text-[#003730] font-black font-['Space_Grotesk'] text-xs uppercase tracking-widest
                 rounded-xl transition-transform hover:scale-105 glow-primary">
         <span class="material-symbols-outlined text-base">calendar_month</span>
-        Generiraj Plan
+        Generate Plan
       </a>
     </div>
   </div>
 
   {% elif plan_complete %}
   <!-- Week complete state -->
-  <div class="hud-glass rounded-xl p-12 max-w-xl flex flex-col items-center text-center gap-6">
+  <div class="glass-panel rounded-xl p-12 max-w-xl flex flex-col items-center text-center gap-6">
     <div class="w-20 h-20 rounded-full bg-[#71ffe8]/15 border-2 border-[#71ffe8]/40 flex items-center justify-center">
       <span class="material-symbols-outlined text-[#71ffe8] text-4xl"
             style="font-variation-settings:'FILL' 1;">verified</span>
     </div>
     <div>
       <h2 class="text-2xl font-black font-['Space_Grotesk'] text-white uppercase tracking-tight mb-2">
-        Tjedan završen!
+        Week Complete!
       </h2>
       <p class="text-slate-400 text-sm leading-relaxed">
-        Sve sesije ovog tjedna su odradene. Odličan rad!<br>
-        Klikni na <strong class="text-[#71ffe8]">Tjedni feedback</strong> da predaš ocjenu tjedna i dobiješ novi plan.
+        All sessions this week are completed. Great job!<br>
+        Click on <strong class="text-[#71ffe8]">Weekly Feedback</strong> to submit your week rating and get a new plan.
       </p>
     </div>
     <div class="flex flex-col sm:flex-row gap-3 w-full">
@@ -59,7 +59,7 @@
                 font-black font-['Space_Grotesk'] text-xs uppercase tracking-widest
                 rounded-xl hover:scale-[1.02] transition-transform glow-primary">
         <span class="material-symbols-outlined text-base">chat_bubble</span>
-        Tjedni Feedback
+        Weekly Feedback
       </a>
       <a href="{% url 'core:home' %}"
          class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3
@@ -79,7 +79,7 @@
 
     {# Determine the colour accent for this card based on first exercise role #}
     {% with first_ex=session.exercises.all|first %}
-    <div class="hud-glass rounded-xl overflow-hidden flex flex-col
+    <div class="glass-panel rounded-xl overflow-hidden flex flex-col
       {% if first_ex.role == 'main_compound' %}border-l-4 border-l-[#71ffe8]
       {% else %}border-l-4 border-l-[#5f8cff]/60{% endif %}">
 
@@ -91,7 +91,7 @@
           </h3>
           <div class="flex items-center gap-2 mt-1">
             <span class="text-[10px] text-slate-500 uppercase tracking-[0.08em]">
-              {{ session.exercises.count }} vježbi
+              {{ session.exercises.count }} exercises
             </span>
             {% if session.split_type %}
             <span class="w-1 h-1 rounded-full bg-slate-600 inline-block"></span>
@@ -121,7 +121,7 @@
           {% endfor %}
           {% if session.exercises.count > 4 %}
           <li class="text-[11px] text-slate-500 pl-[18px]">
-            + {{ session.exercises.count|add:"-4" }} više...
+            + {{ session.exercises.count|add:"-4" }} more...
           </li>
           {% endif %}
         </ul>
@@ -133,13 +133,13 @@
         {% if session.last_log %}
         <p class="text-[11px] text-slate-500 mb-4 flex items-center gap-1.5">
           <span class="material-symbols-outlined text-sm">history</span>
-          Zadnji trening:
+          Last workout:
           <span class="text-slate-400">{{ session.last_log.started_at|date:"d.m.Y" }}</span>
         </p>
         {% else %}
         <p class="text-[11px] text-slate-600 mb-4 flex items-center gap-1.5">
           <span class="material-symbols-outlined text-sm">info</span>
-          Nikad ranije odrađen
+          Never done before
         </p>
         {% endif %}
 
@@ -151,7 +151,7 @@
                    font-black font-['Space_Grotesk'] text-xs uppercase tracking-widest rounded-xl
                    flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform glow-primary">
             <span class="material-symbols-outlined text-base">play_arrow</span>
-            Započni Trening
+            Start Workout
           </button>
         </form>
       </div>
@@ -161,7 +161,7 @@
 
     {% empty %}
     <div class="col-span-3 text-slate-500 text-sm py-12 text-center">
-      Nema sesija u ovom planu.
+      No sessions in this plan.
     </div>
     {% endfor %}
   </div>

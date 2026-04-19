@@ -1,86 +1,11 @@
-<!DOCTYPE html>
-<html lang="hr" class="dark">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FitOS | Statistika</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-  tailwind.config = {
-    darkMode: "class",
-    theme: {
-      extend: {
-        colors: {
-          "primary": "#71ffe8",
-          "primary-container": "#00e5cc",
-          "primary-fixed": "#41fce2",
-          "primary-fixed-dim": "#00dfc6",
-          "on-primary": "#003730",
-          "on-primary-fixed": "#00201b",
-          "on-primary-fixed-variant": "#005047",
-          "on-primary-container": "#006256",
-          "secondary": "#d3fbff",
-          "secondary-container": "#00eefc",
-          "secondary-fixed": "#7df4ff",
-          "secondary-fixed-dim": "#00dbe9",
-          "on-secondary": "#00363a",
-          "on-secondary-fixed": "#002022",
-          "on-secondary-fixed-variant": "#004f54",
-          "on-secondary-container": "#00686f",
-          "tertiary": "#ffe5bd",
-          "tertiary-container": "#ffc24d",
-          "tertiary-fixed": "#ffdea9",
-          "on-tertiary": "#422c00",
-          "on-tertiary-container": "#725000",
-          "background": "#0f131f",
-          "surface": "#0f131f",
-          "surface-dim": "#0f131f",
-          "surface-bright": "#353946",
-          "surface-container-lowest": "#0a0e1a",
-          "surface-container-low": "#171b28",
-          "surface-container": "#1b1f2c",
-          "surface-container-high": "#262a37",
-          "surface-container-highest": "#313442",
-          "surface-variant": "#313442",
-          "surface-tint": "#00dfc6",
-          "on-background": "#dfe2f3",
-          "on-surface": "#dfe2f3",
-          "on-surface-variant": "#b9cac5",
-          "inverse-surface": "#dfe2f3",
-          "inverse-on-surface": "#2c303d",
-          "inverse-primary": "#006b5e",
-          "outline": "#849490",
-          "outline-variant": "#3b4a46",
-          "error": "#ffb4ab",
-          "error-container": "#93000a",
-          "on-error": "#690005",
-          "on-error-container": "#ffdad6",
-        },
-        fontFamily: {
-          "headline": ["Space Grotesk"],
-          "body": ["Inter"],
-          "label": ["Inter"],
-        },
-        borderRadius: {
-          "DEFAULT": "0.25rem",
-          "lg": "0.5rem",
-          "xl": "0.75rem",
-          "full": "9999px",
-        },
-      },
-    },
-  }
-</script>
+{% extends "base_tw.html" %}
+
+{% block title %}Statistika{% endblock %}
+
+{% block sidebar_statistika %}text-[#71ffe8] bg-[#71ffe8]/10 border-r-2 border-[#71ffe8] font-bold{% endblock %}
+
+{% block extra_css %}
 <style>
-  body {
-    background-color: #0a0e1a;
-    color: #dfe2f3;
-    font-family: 'Inter', sans-serif;
-  }
-  .material-symbols-outlined {
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-  }
   .scific-grid {
     background-image: linear-gradient(rgba(113,255,232,0.03) 1px, transparent 1px),
                       linear-gradient(90deg, rgba(113,255,232,0.03) 1px, transparent 1px);
@@ -97,52 +22,9 @@
   ::-webkit-scrollbar-thumb { background: #1b1f2c; border-radius: 10px; }
   ::-webkit-scrollbar-thumb:hover { background: rgba(113,255,232,0.2); }
 </style>
-</head>
-<body class="bg-surface-container-lowest text-on-surface font-body scific-grid min-h-screen">
+{% endblock %}
 
-<!-- SideNavBar -->
-<aside class="w-[260px] h-screen fixed left-0 top-0 border-r border-[#00e5cc]/15 bg-[#0a0e1a] flex flex-col py-8 px-4 z-50 shadow-[0_0_24px_rgba(113,255,232,0.08)]">
-  <div class="mb-10 px-4">
-    <h1 class="text-2xl font-black tracking-tighter text-[#71ffe8] font-headline">FitOS</h1>
-    <p class="font-['Space_Grotesk'] uppercase tracking-widest text-[10px] text-slate-500 mt-1">AI COACH SYSTEM</p>
-  </div>
-  <nav class="flex-1 space-y-1">
-    <a href="{% url 'core:home' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-xs hover:bg-[#71ffe8]/5 hover:text-[#71ffe8] transition-all duration-300">
-      <span class="material-symbols-outlined">dashboard</span>
-      <span>Dashboard</span>
-    </a>
-    <a href="{% url 'plans:weekly_plan' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-xs hover:bg-[#71ffe8]/5 hover:text-[#71ffe8] transition-all duration-300">
-      <span class="material-symbols-outlined">calendar_month</span>
-      <span>Tjedni plan</span>
-    </a>
-    <a href="{% url 'logs:session_picker' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-xs hover:bg-[#71ffe8]/5 hover:text-[#71ffe8] transition-all duration-300">
-      <span class="material-symbols-outlined">fitness_center</span>
-      <span>Unesi trening</span>
-    </a>
-    <a href="{% url 'feedback:weekly' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-xs hover:bg-[#71ffe8]/5 hover:text-[#71ffe8] transition-all duration-300">
-      <span class="material-symbols-outlined">feedback</span>
-      <span>Tjedni feedback</span>
-    </a>
-    <!-- Active -->
-    <div class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#71ffe8] bg-[#71ffe8]/10 border-r-4 border-[#71ffe8] font-bold font-['Space_Grotesk'] uppercase tracking-widest text-xs">
-      <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">leaderboard</span>
-      <span>Statistika</span>
-    </div>
-  </nav>
-  <div class="mt-auto border-t border-outline-variant/20 pt-6 px-4 space-y-1">
-    <a href="#" class="flex items-center gap-3 text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-xs hover:text-[#71ffe8] transition-colors py-2">
-      <span class="material-symbols-outlined">settings</span>
-      <span>Postavke</span>
-    </a>
-    <a href="{% url 'users:logout' %}" class="flex items-center gap-3 text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-xs hover:text-[#71ffe8] transition-colors py-2">
-      <span class="material-symbols-outlined">logout</span>
-      <span>Odjava</span>
-    </a>
-  </div>
-</aside>
-
-<!-- Main Content Area -->
-<main class="ml-[260px] min-h-screen">
+{% block body %}
   <!-- TopAppBar -->
   <header class="fixed top-0 right-0 w-[calc(100%-260px)] h-16 bg-[#0a0e1a]/80 backdrop-blur-xl flex justify-between items-center px-8 z-40 border-b border-[#00e5cc]/10">
     <div class="flex items-center gap-4">
@@ -588,7 +470,4 @@
 
     </div>
   </div><!-- /canvas -->
-</main>
-
-</body>
-</html>
+{% endblock %}

@@ -1,5 +1,5 @@
 {% extends 'base_tw.html' %}
-{% block title %}Trening Završen — {{ log.planned_session.name|default:"Sažetak" }}{% endblock %}
+{% block title %}Workout Complete — {{ log.planned_session.name|default:"Summary" }}{% endblock %}
 
 {% block sidebar_logs %}text-[#71ffe8] border-r-2 border-[#71ffe8] bg-[#71ffe8]/5{% endblock %}
 
@@ -24,7 +24,7 @@
             style="font-variation-settings:'FILL' 1">check_circle</span>
     </div>
     <div>
-      <h1 class="text-3xl font-black font-['Space_Grotesk'] text-white tracking-tight">Trening Završen</h1>
+      <h1 class="text-3xl font-black font-['Space_Grotesk'] text-white tracking-tight">Workout Complete</h1>
       <p class="text-slate-500 text-sm mt-1">
         {{ log.planned_session.name|default:"" }}
         {% if log.ended_at %}
@@ -40,37 +40,37 @@
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-10">
 
     <!-- Duration -->
-    <div class="hud-glass rounded-xl p-7 text-center pop-in" style="animation-delay:0.05s">
-      <p class="text-[9px] font-bold font-['Space_Grotesk'] uppercase tracking-[0.2em] text-slate-500 mb-3">Trajanje</p>
+    <div class="glass-panel rounded-xl p-7 text-center pop-in" style="animation-delay:0.05s">
+      <p class="text-[9px] font-bold font-['Space_Grotesk'] uppercase tracking-[0.2em] text-slate-500 mb-3">Duration</p>
       <p class="text-4xl font-black font-['Space_Grotesk'] text-white mb-1" id="duration-display">--</p>
       <p class="text-xs text-slate-500" id="duration-sub">
-        {% if log.duration_seconds %}{{ log.duration_seconds }} sekundi{% else %}Nema podataka{% endif %}
+        {% if log.duration_seconds %}{{ log.duration_seconds }} seconds{% else %}No data{% endif %}
       </p>
     </div>
 
     <!-- Volume -->
-    <div class="hud-glass rounded-xl p-7 text-center pop-in" style="animation-delay:0.12s">
-      <p class="text-[9px] font-bold font-['Space_Grotesk'] uppercase tracking-[0.2em] text-slate-500 mb-3">Ukupni Volumen</p>
+    <div class="glass-panel rounded-xl p-7 text-center pop-in" style="animation-delay:0.12s">
+      <p class="text-[9px] font-bold font-['Space_Grotesk'] uppercase tracking-[0.2em] text-slate-500 mb-3">Total Volume</p>
       <p class="text-4xl font-black font-['Space_Grotesk'] text-[#71ffe8] mb-1">
         {{ log.total_volume_kg|default:"0" }}
       </p>
-      <p class="text-xs text-slate-500">kg ukupno</p>
+      <p class="text-xs text-slate-500">kg total</p>
     </div>
 
     <!-- Completed sets (counted by JS below) -->
-    <div class="hud-glass rounded-xl p-7 text-center pop-in" style="animation-delay:0.19s">
-      <p class="text-[9px] font-bold font-['Space_Grotesk'] uppercase tracking-[0.2em] text-slate-500 mb-3">Završeni Setovi</p>
+    <div class="glass-panel rounded-xl p-7 text-center pop-in" style="animation-delay:0.19s">
+      <p class="text-[9px] font-bold font-['Space_Grotesk'] uppercase tracking-[0.2em] text-slate-500 mb-3">Completed Sets</p>
       <p class="text-4xl font-black font-['Space_Grotesk'] text-[#5f8cff] mb-1" id="completed-sets-count">--</p>
-      <p class="text-xs text-slate-500">završenih setova</p>
+      <p class="text-xs text-slate-500">completed sets</p>
     </div>
 
   </div>
 
   <!-- Exercise breakdown table -->
-  <div class="hud-glass rounded-xl overflow-hidden mb-6 pop-in" style="animation-delay:0.26s">
+  <div class="glass-panel rounded-xl overflow-hidden mb-6 pop-in" style="animation-delay:0.26s">
     <div class="bg-[#262a37]/50 px-7 py-5 flex items-center justify-between">
-      <h2 class="text-sm font-bold font-['Space_Grotesk'] text-white uppercase tracking-wider">Pregled Vježbi</h2>
-      <span class="text-[10px] text-slate-500">{{ exercises|length }} vježbi</span>
+      <h2 class="text-sm font-bold font-['Space_Grotesk'] text-white uppercase tracking-wider">Exercise Review</h2>
+      <span class="text-[10px] text-slate-500">{{ exercises|length }} exercises</span>
     </div>
 
     <div class="p-6 space-y-6">
@@ -97,7 +97,7 @@
                 <th class="text-center py-2 px-3 font-bold uppercase tracking-widest text-[9px]">KG</th>
                 <th class="text-center py-2 px-3 font-bold uppercase tracking-widest text-[9px]">Reps</th>
                 <th class="text-center py-2 px-3 font-bold uppercase tracking-widest text-[9px]">RPE</th>
-                <th class="text-right  py-2 px-3 font-bold uppercase tracking-widest text-[9px]">Volumen</th>
+                <th class="text-right  py-2 px-3 font-bold uppercase tracking-widest text-[9px]">Volume</th>
               </tr>
             </thead>
             <tbody>
@@ -106,7 +106,7 @@
                 <td class="py-2.5 px-3 text-slate-500">
                   {{ s.set_number|stringformat:"02d" }}
                   {% if not s.completed %}
-                    <span class="ml-1 text-[8px] text-slate-600 uppercase">(nije završen)</span>
+                    <span class="ml-1 text-[8px] text-slate-600 uppercase">(not completed)</span>
                   {% endif %}
                 </td>
                 <td class="py-2.5 px-3 text-center font-bold text-white font-['Space_Grotesk']">
@@ -129,7 +129,7 @@
               </tr>
               {% empty %}
               <tr>
-                <td colspan="5" class="py-4 px-3 text-slate-600 text-center">Nema setova</td>
+                <td colspan="5" class="py-4 px-3 text-slate-600 text-center">No sets</td>
               </tr>
               {% endfor %}
             </tbody>
@@ -148,7 +148,7 @@
 
   <!-- Notes / impression -->
   {% if log.notes %}
-  <div class="hud-glass rounded-xl p-6 mb-6 pop-in" style="animation-delay:0.33s">
+  <div class="glass-panel rounded-xl p-6 mb-6 pop-in" style="animation-delay:0.33s">
     <div class="flex items-center gap-2 mb-4">
       <span class="material-symbols-outlined text-[#71ffe8] text-lg">sticky_note_2</span>
       <h3 class="text-[10px] font-bold font-['Space_Grotesk'] uppercase tracking-widest text-[#71ffe8]">Bilješka i Dojam</h3>
