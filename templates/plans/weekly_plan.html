@@ -88,6 +88,94 @@
   </div>
   {% endif %}
 
+  <!-- ── Test Parameters (always visible for testing) ─────────────── -->
+  {% if param_values %}
+  <details open class="glass-panel rounded-2xl overflow-hidden group">
+    <summary class="flex items-center justify-between px-8 py-5 cursor-pointer list-none hover:bg-[#71ffe8]/5 transition-all">
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-[#71ffe8] text-sm">tune</span>
+        <span class="font-headline uppercase text-xs tracking-widest text-slate-400 group-open:text-[#71ffe8] transition-colors">Test Parameters</span>
+        <span class="text-[10px] text-slate-600 font-label">Override intake without saving</span>
+      </div>
+      <span class="material-symbols-outlined text-slate-600 text-sm transition-transform group-open:rotate-180">expand_more</span>
+    </summary>
+    <div class="px-8 pb-8">
+      <form method="post" action="{% url 'plans:generate' %}" id="generate-form">
+        {% csrf_token %}
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+          <div>
+            <label class="text-slate-600 text-[10px] font-label uppercase tracking-widest block mb-2">Sex</label>
+            <select name="sex" class="w-full bg-surface-container-low border border-outline-variant/40 focus:border-[#71ffe8] rounded-lg px-3 py-2 text-xs text-slate-300 outline-none transition-colors">
+              {% for val, label in param_choices.sex %}
+                <option value="{{ val }}" {% if param_values.sex == val %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="text-slate-600 text-[10px] font-label uppercase tracking-widest block mb-2">Days / week</label>
+            <select name="days_per_week_available" class="w-full bg-surface-container-low border border-outline-variant/40 focus:border-[#71ffe8] rounded-lg px-3 py-2 text-xs text-slate-300 outline-none transition-colors">
+              {% for val, label in param_choices.days_per_week_available %}
+                <option value="{{ val }}" {% if param_values.days_per_week_available == val %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="text-slate-600 text-[10px] font-label uppercase tracking-widest block mb-2">Session duration</label>
+            <select name="max_session_minutes" class="w-full bg-surface-container-low border border-outline-variant/40 focus:border-[#71ffe8] rounded-lg px-3 py-2 text-xs text-slate-300 outline-none transition-colors">
+              {% for val, label in param_choices.max_session_minutes %}
+                <option value="{{ val }}" {% if param_values.max_session_minutes == val %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="text-slate-600 text-[10px] font-label uppercase tracking-widest block mb-2">Body Priority</label>
+            <select name="body_part_priority" class="w-full bg-surface-container-low border border-outline-variant/40 focus:border-[#71ffe8] rounded-lg px-3 py-2 text-xs text-slate-300 outline-none transition-colors">
+              {% for val, label in param_choices.body_part_priority %}
+                <option value="{{ val }}" {% if param_values.body_part_priority == val %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="text-slate-600 text-[10px] font-label uppercase tracking-widest block mb-2">Experience</label>
+            <select name="training_experience_level" class="w-full bg-surface-container-low border border-outline-variant/40 focus:border-[#71ffe8] rounded-lg px-3 py-2 text-xs text-slate-300 outline-none transition-colors">
+              {% for val, label in param_choices.training_experience_level %}
+                <option value="{{ val }}" {% if param_values.training_experience_level == val %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="flex justify-end">
+          <button type="button" id="gen-btn" onclick="generatePlan(this)"
+                  class="px-8 py-3 primary-gradient text-on-primary font-headline font-bold text-xs tracking-widest rounded-lg flex items-center gap-2 shadow-[0_0_15px_rgba(113,255,232,0.3)] hover:brightness-110 transition-all">
+            <span class="material-symbols-outlined text-sm">auto_awesome</span>
+            Generate New Plan
+          </button>
+        </div>
+      </form>
+      <script>
+      function generatePlan(btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="material-symbols-outlined spin text-sm">progress_activity</span> Generating...';
+        var form = btn.closest('form');
+        var data = new FormData(form);
+        fetch(form.action, {
+          method: 'POST',
+          body: data,
+          headers: {'X-Requested-With': 'XMLHttpRequest'},
+          redirect: 'follow'
+        }).then(function() {
+          window.location.replace('{% url "plans:weekly_plan" %}');
+        }).catch(function(err) {
+          btn.disabled = false;
+          btn.innerHTML = '<span class="material-symbols-outlined text-sm">auto_awesome</span> Generate New Plan';
+          alert('Error: ' + err);
+        });
+      }
+      </script>
+    </div>
+  </details>
+  {% endif %}
+
   {% if not plan %}
   <!-- ── No Plan State ──────────────────────────────────────────────── -->
   <div class="glass-panel p-16 rounded-3xl flex flex-col items-center justify-center text-center">
@@ -273,93 +361,6 @@
 
   {% endif %}{# end if plan #}
 
-  <!-- ── Test Parametri (collapsible) ────────────────────────────────── -->
-  {% if param_values %}
-  <details open class="glass-panel rounded-2xl overflow-hidden group">
-    <summary class="flex items-center justify-between px-8 py-5 cursor-pointer list-none hover:bg-[#71ffe8]/5 transition-all">
-      <div class="flex items-center gap-3">
-        <span class="material-symbols-outlined text-[#71ffe8] text-sm">tune</span>
-        <span class="font-headline uppercase text-xs tracking-widest text-slate-400 group-open:text-[#71ffe8] transition-colors">Test Parameters</span>
-        <span class="text-[10px] text-slate-600 font-label">Override intake without saving</span>
-      </div>
-      <span class="material-symbols-outlined text-slate-600 text-sm transition-transform group-open:rotate-180">expand_more</span>
-    </summary>
-    <div class="px-8 pb-8">
-      <form method="post" action="{% url 'plans:generate' %}" id="generate-form">
-        {% csrf_token %}
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
-          <div>
-            <label class="text-slate-600 text-[10px] font-label uppercase tracking-widest block mb-2">Sex</label>
-            <select name="sex" class="w-full bg-surface-container-low border border-outline-variant/40 focus:border-[#71ffe8] rounded-lg px-3 py-2 text-xs text-slate-300 outline-none transition-colors">
-              {% for val, label in param_choices.sex %}
-                <option value="{{ val }}" {% if param_values.sex == val %}selected{% endif %}>{{ label }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div>
-            <label class="text-slate-600 text-[10px] font-label uppercase tracking-widest block mb-2">Days / week</label>
-            <select name="days_per_week_available" class="w-full bg-surface-container-low border border-outline-variant/40 focus:border-[#71ffe8] rounded-lg px-3 py-2 text-xs text-slate-300 outline-none transition-colors">
-              {% for val, label in param_choices.days_per_week_available %}
-                <option value="{{ val }}" {% if param_values.days_per_week_available == val %}selected{% endif %}>{{ label }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div>
-            <label class="text-slate-600 text-[10px] font-label uppercase tracking-widest block mb-2">Session duration</label>
-            <select name="max_session_minutes" class="w-full bg-surface-container-low border border-outline-variant/40 focus:border-[#71ffe8] rounded-lg px-3 py-2 text-xs text-slate-300 outline-none transition-colors">
-              {% for val, label in param_choices.max_session_minutes %}
-                <option value="{{ val }}" {% if param_values.max_session_minutes == val %}selected{% endif %}>{{ label }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div>
-            <label class="text-slate-600 text-[10px] font-label uppercase tracking-widest block mb-2">Body Priority</label>
-            <select name="body_part_priority" class="w-full bg-surface-container-low border border-outline-variant/40 focus:border-[#71ffe8] rounded-lg px-3 py-2 text-xs text-slate-300 outline-none transition-colors">
-              {% for val, label in param_choices.body_part_priority %}
-                <option value="{{ val }}" {% if param_values.body_part_priority == val %}selected{% endif %}>{{ label }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div>
-            <label class="text-slate-600 text-[10px] font-label uppercase tracking-widest block mb-2">Experience</label>
-            <select name="training_experience_level" class="w-full bg-surface-container-low border border-outline-variant/40 focus:border-[#71ffe8] rounded-lg px-3 py-2 text-xs text-slate-300 outline-none transition-colors">
-              {% for val, label in param_choices.training_experience_level %}
-                <option value="{{ val }}" {% if param_values.training_experience_level == val %}selected{% endif %}>{{ label }}</option>
-              {% endfor %}
-            </select>
-          </div>
-        </div>
-        <div class="flex justify-end">
-          <button type="button" id="gen-btn" onclick="generatePlan(this)"
-                  class="px-8 py-3 primary-gradient text-on-primary font-headline font-bold text-xs tracking-widest rounded-lg flex items-center gap-2 shadow-[0_0_15px_rgba(113,255,232,0.3)] hover:brightness-110 transition-all">
-            <span class="material-symbols-outlined text-sm">auto_awesome</span>
-            Generate New Plan
-          </button>
-        </div>
-      </form>
-      <script>
-      function generatePlan(btn) {
-        btn.disabled = true;
-        btn.innerHTML = '<span class="material-symbols-outlined spin text-sm">progress_activity</span> Generiranje...';
-        var form = btn.closest('form');
-        var data = new FormData(form);
-        fetch(form.action, {
-          method: 'POST',
-          body: data,
-          headers: {'X-Requested-With': 'XMLHttpRequest'},
-          redirect: 'follow'
-        }).then(function() {
-          window.location.replace('{% url "plans:weekly_plan" %}');
-        }).catch(function(err) {
-          btn.disabled = false;
-          btn.innerHTML = '<span class="material-symbols-outlined text-sm">auto_awesome</span> Generiraj novi plan';
-          alert('Greška: ' + err);
-        });
-      }
-      </script>
-    </div>
-  </details>
-  {% endif %}
 
   <!-- ── Batch Compare (collapsible) ─────────────────────────────────── -->
   <details class="glass-panel rounded-2xl overflow-hidden group">
