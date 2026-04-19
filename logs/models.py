@@ -30,9 +30,9 @@ class TrainingLog(models.Model):
     @property
     def total_volume_kg(self):
         total = 0
-        for ex in self.logged_exercises.prefetch_related("sets").all():
-            for s in ex.sets.filter(completed=True):
-                if s.weight_kg and s.reps_done:
+        for ex in self.logged_exercises.all():
+            for s in ex.sets.all():
+                if s.completed and s.weight_kg and s.reps_done:
                     total += float(s.weight_kg) * s.reps_done
         return round(total, 1)
 

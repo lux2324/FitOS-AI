@@ -276,8 +276,8 @@ def substitute_exercise(request):
         pe = PlannedExercise.objects.select_related(
             "session__plan__user"
         ).get(pk=exercise_id)
-    except PlannedExercise.DoesNotExist:
-        return JsonResponse({"ok": False, "error": "Vježba nije pronađena."}, status=404)
+    except (PlannedExercise.DoesNotExist, ValueError, TypeError):
+        return JsonResponse({"ok": False, "error": "Exercise not found."}, status=404)
 
     if pe.session.plan.user != request.user:
         return JsonResponse({"ok": False, "error": "Nema pristupa."}, status=403)

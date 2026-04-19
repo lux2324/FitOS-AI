@@ -96,22 +96,20 @@ def home(request):
 
     # ------------------------------------------------------------------ #
     # Streak — consecutive days with at least one finished training
+    # Single query: fetch distinct training dates in last 60 days
     # ------------------------------------------------------------------ #
+    sixty_days_ago = now - timezone.timedelta(days=60)
+    training_dates = set(
+        TrainingLog.objects
+        .filter(user=request.user, is_finished=True, started_at__gte=sixty_days_ago)
+        .values_list('started_at__date', flat=True)
+        .distinct()
+    )
     streak = 0
     check_date = now.date()
-    while True:
-        has_log = TrainingLog.objects.filter(
-            user=request.user,
-            is_finished=True,
-            started_at__date=check_date,
-        ).exists()
-        if has_log:
-            streak += 1
-            check_date -= timezone.timedelta(days=1)
-        else:
-            break
-        if streak > 365:  # safety
-            break
+    while check_date in training_dates:
+        streak += 1
+        check_date -= timezone.timedelta(days=1)
 
     # ------------------------------------------------------------------ #
     # Progression queue — exercises with 3+ completed logs
@@ -161,24 +159,37 @@ def home(request):
     )
     recent_plans = list(reversed(recent_plans))  # oldest → newest
 
+    # Batch: collect all session IDs from recent plans, fetch logs once
+    all_plan_session_ids = {}
+    for p in recent_plans:
+        sids = [s.id for s in p.sessions.all()]  # uses prefetch
+        for sid in sids:
+            all_plan_session_ids[sid] = p.pk
+
+    all_logs = list(
+        TrainingLog.objects
+        .filter(
+            user=request.user,
+            is_finished=True,
+            planned_session_id__in=all_plan_session_ids.keys(),
+        )
+        .prefetch_related('logged_exercises__sets')
+    )
+
+    # Group volume by plan pk
+    plan_volumes = {}
+    for lg in all_logs:
+        ppk = all_plan_session_ids.get(lg.planned_session_id)
+        if ppk:
+            plan_volumes[ppk] = plan_volumes.get(ppk, 0) + lg.total_volume_kg
+
     volume_trend = []
     for p in recent_plans:
-        plan_session_ids = list(p.sessions.values_list('id', flat=True))
-        logs_for_plan = (
-            TrainingLog.objects
-            .filter(
-                user=request.user,
-                is_finished=True,
-                planned_session_id__in=plan_session_ids,
-            )
-            .prefetch_related('logged_exercises__sets')
-        )
-        plan_vol = sum(lg.total_volume_kg for lg in logs_for_plan)
-        # Only include weeks where at least one session was completed
+        plan_vol = plan_volumes.get(p.pk, 0)
         if plan_vol > 0:
             volume_trend.append({
                 'label': f"T{p.week_number}",
-                'volume': plan_vol,
+                'volume': round(plan_vol, 1),
             })
 
     max_vol = max((t['volume'] for t in volume_trend), default=1) or 1

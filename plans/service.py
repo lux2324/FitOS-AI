@@ -10,7 +10,6 @@ Pipeline:
   5. constraint check (role/category/dup)
   6. save WeeklyPlan + sessions + exercises (with first-plan rep rule)
 """
-from copy import copy
 from django.db import transaction
 
 from .plan_maker import (

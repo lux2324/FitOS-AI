@@ -207,8 +207,10 @@ def save_set(request, log_id):
     rpe_done = request.POST.get('rpe_done') or None
     completed = request.POST.get('completed', 'false').lower() == 'true'
 
+    # Validate exercise belongs to this log (prevents IDOR)
     logged_set, _ = LoggedSet.objects.get_or_create(
         logged_exercise_id=exercise_id,
+        logged_exercise__training_log=log,
         set_number=set_number,
     )
 

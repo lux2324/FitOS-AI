@@ -60,7 +60,7 @@ class PlannedExercise(models.Model):
     sets = models.PositiveIntegerField()
     reps_min = models.PositiveIntegerField()
     reps_max = models.PositiveIntegerField()
-    target_rpe = models.PositiveIntegerField()
+    target_rpe = models.DecimalField(max_digits=3, decimal_places=1)
     rest = models.CharField(max_length=20)
     weight_kg = models.FloatField(null=True, blank=True)  # null = establish_needed
 
