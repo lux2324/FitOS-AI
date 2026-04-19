@@ -24,29 +24,12 @@
 </style>
 {% endblock %}
 
+{% block header_left %}Statistički Centar — Zadnjih 30 dana{% endblock %}
+
 {% block body %}
-  <!-- TopAppBar -->
-  <header class="fixed top-0 right-0 w-[calc(100%-260px)] h-16 bg-[#0a0e1a]/80 backdrop-blur-xl flex justify-between items-center px-8 z-40 border-b border-[#00e5cc]/10">
-    <div class="flex items-center gap-4">
-      <h2 class="font-headline font-bold uppercase tracking-tighter text-xl text-primary neon-text-glow">STATISTIČKI CENTAR</h2>
-      <div class="h-4 w-px bg-outline-variant/30 mx-2"></div>
-      <div class="text-[10px] font-label text-on-surface-variant uppercase tracking-widest">Zadnjih 30 dana</div>
-    </div>
-    <div class="flex items-center gap-6">
-      <div class="flex items-center gap-4">
-        <div class="flex items-center gap-3 border-l border-outline-variant/20 pl-6">
-          <div class="text-right">
-            <p class="text-[10px] font-label tracking-widest text-on-surface-variant">KORISNIK</p>
-            <p class="text-xs font-bold text-on-surface">{{ request.user.get_username|upper }}</p>
-          </div>
-          <span class="material-symbols-outlined text-3xl text-primary" style="font-variation-settings:'FILL' 1;">account_circle</span>
-        </div>
-      </div>
-    </div>
-  </header>
 
   <!-- Scrollable Canvas -->
-  <div class="pt-24 pb-12 px-8 max-w-[1440px] mx-auto">
+  <div class="pb-12 px-8 max-w-[1440px] mx-auto">
 
     <!-- ── Filter Bar ─────────────────────────────────────────────────────── -->
     <form method="get" action="" class="mb-8 flex flex-wrap gap-4 items-end">
