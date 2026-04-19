@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="hr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FitOS | Statistika</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#00dfc6",
+                        "on-background": "#dfe2f3",
+                        "tertiary": "#ffe5bd",
+                        "surface-container-lowest": "#0a0e1a",
+                        "primary-fixed-dim": "#00dfc6",
+                        "secondary-container": "#00eefc",
+                        "primary": "#71ffe8",
+                        "on-tertiary-container": "#725000",
+                        "surface-container-high": "#262a37",
+                        "on-primary-container": "#006256",
+                        "outline": "#849490",
+                        "on-error": "#690005",
+                        "secondary-fixed-dim": "#00dbe9",
+                        "inverse-primary": "#006b5e",
+                        "on-secondary-container": "#00686f",
+                        "surface-container-highest": "#313442",
+                        "tertiary-fixed-dim": "#f9bc48",
+                        "on-secondary": "#00363a",
+                        "on-secondary-fixed-variant": "#004f54",
+                        "on-tertiary-fixed-variant": "#5e4100",
+                        "surface-dim": "#0f131f",
+                        "surface": "#0f131f",
+                        "surface-bright": "#353946",
+                        "error-container": "#93000a",
+                        "error": "#ffb4ab",
+                        "on-surface": "#dfe2f3",
+                        "on-tertiary-fixed": "#271900",
+                        "secondary": "#d3fbff",
+                        "on-secondary-fixed": "#002022",
+                        "surface-container-low": "#171b28",
+                        "on-tertiary": "#422c00",
+                        "tertiary-container": "#ffc24d",
+                        "on-primary-fixed": "#00201b",
+                        "tertiary-fixed": "#ffdea9",
+                        "surface-container": "#1b1f2c",
+                        "inverse-surface": "#dfe2f3",
+                        "secondary-fixed": "#7df4ff",
+                        "inverse-on-surface": "#2c303d",
+                        "on-surface-variant": "#b9cac5",
+                        "primary-fixed": "#41fce2",
+                        "background": "#0f131f",
+                        "primary-container": "#00e5cc",
+                        "on-error-container": "#ffdad6",
+                        "surface-variant": "#313442",
+                        "outline-variant": "#3b4a46",
+                        "on-primary-fixed-variant": "#005047",
+                        "on-primary": "#003730"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glow-border {
+            box-shadow: inset 0 0 0 1px rgba(113, 255, 232, 0.15);
+        }
+        .scific-grid {
+            background-image: linear-gradient(rgba(113, 255, 232, 0.03) 1px, transparent 1px), 
+                              linear-gradient(90deg, rgba(113, 255, 232, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .neon-text-glow {
+            text-shadow: 0 0 8px rgba(113, 255, 232, 0.6);
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0e1a; }
+        ::-webkit-scrollbar-thumb { background: #1b1f2c; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #71ffe833; }
+    </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface font-body selection:bg-primary selection:text-on-primary">
+<!-- SideNavBar -->
+<aside class="w-[260px] h-screen fixed left-0 top-0 border-r border-[#00e5cc]/15 bg-[#0a0e1a] flex flex-col py-8 px-4 z-50 shadow-[0_0_24px_rgba(113,255,232,0.08)]">
+<div class="mb-10 px-4">
+<h1 class="text-2xl font-black tracking-tighter italic text-[#71ffe8]">FitOS</h1>
+<p class="font-['Space_Grotesk'] uppercase tracking-widest text-[10px] text-slate-500 mt-1">AI COACH SYSTEM</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-sm hover:bg-[#71ffe8]/5 hover:text-[#71ffe8] transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-sm hover:bg-[#71ffe8]/5 hover:text-[#71ffe8] transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span>Tjedni plan</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-sm hover:bg-[#71ffe8]/5 hover:text-[#71ffe8] transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="fitness_center">fitness_center</span>
+<span>Unesi trening</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-sm hover:bg-[#71ffe8]/5 hover:text-[#71ffe8] transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span>Tjedni feedback</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-sm hover:bg-[#71ffe8]/5 hover:text-[#71ffe8] transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="compare_arrows">compare_arrows</span>
+<span>Plan diff</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#71ffe8] bg-[#71ffe8]/10 border-r-4 border-[#71ffe8] font-bold font-['Space_Grotesk'] uppercase tracking-widest text-sm transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard" style="font-variation-settings: 'FILL' 1;">leaderboard</span>
+<span>Statistika</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-outline-variant/20 pt-6 px-4">
+<a class="flex items-center gap-3 text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-sm hover:text-[#71ffe8] transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[260px] min-h-screen bg-surface-container-lowest scific-grid">
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-260px)] h-16 bg-[#0a0e1a]/80 backdrop-blur-xl flex justify-between items-center px-8 z-40 border-b border-[#00e5cc]/10">
+<div class="flex items-center gap-4">
+<h2 class="font-headline font-bold uppercase tracking-tighter text-xl text-primary neon-text-glow">STATISTIČKI CENTAR</h2>
+<div class="h-4 w-px bg-outline-variant/30 mx-2"></div>
+<div class="flex gap-2">
+<button class="px-3 py-1 text-[10px] font-label font-bold tracking-widest uppercase border border-primary/40 bg-primary/10 text-primary rounded-sm">Last 30 days</button>
+<button class="px-3 py-1 text-[10px] font-label font-medium tracking-widest uppercase border border-outline-variant text-on-surface-variant hover:border-primary/40 rounded-sm transition-colors">3 months</button>
+<button class="px-3 py-1 text-[10px] font-label font-medium tracking-widest uppercase border border-outline-variant text-on-surface-variant hover:border-primary/40 rounded-sm transition-colors">All time</button>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary/60 text-sm">search</span>
+<input class="bg-surface-container-low border-none border-b-2 border-outline-variant/30 focus:border-primary focus:ring-0 text-xs font-label tracking-widest w-64 pl-10 h-9 transition-all" placeholder="SEARCH DATA..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-slate-500 cursor-pointer hover:text-primary transition-colors" data-icon="notifications">notifications</span>
+<div class="flex items-center gap-3 border-l border-outline-variant/20 pl-6">
+<div class="text-right">
+<p class="text-[10px] font-label tracking-widest text-on-surface-variant">OPERATOR</p>
+<p class="text-xs font-bold text-on-surface">DOMAGOJ_R</p>
+</div>
+<span class="material-symbols-outlined text-3xl text-primary" data-icon="account_circle" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Scrollable Canvas -->
+<div class="pt-24 pb-12 px-8 max-w-[1440px] mx-auto">
+<!-- Hero Stats Bento Row -->
+<div class="grid grid-cols-12 gap-6 mb-8">
+<!-- Main Strength Chart -->
+<div class="col-span-8 bg-surface-container rounded-xl p-6 relative overflow-hidden glow-border group">
+<div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-primary to-primary-container opacity-50"></div>
+<div class="flex justify-between items-start mb-10">
+<div>
+<h3 class="font-headline text-2xl font-bold uppercase tracking-tight text-on-surface">Strength Evolution</h3>
+<p class="font-label text-xs tracking-widest text-on-surface-variant uppercase mt-1">Compound movement progress (1RM est.)</p>
+</div>
+<div class="flex gap-4 font-label text-[10px] uppercase tracking-tighter">
+<div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_#71ffe8]"></span> Squat</div>
+<div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_#d3fbff]"></span> Deadlift</div>
+<div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-secondary-container shadow-[0_0_8px_#00eefc]"></span> Bench</div>
+</div>
+</div>
+<!-- Line Chart Mockup -->
+<div class="h-64 flex items-end justify-between gap-1 relative">
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none" viewbox="0 0 800 200">
+<defs>
+<lineargradient id="lineGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#71ffe8" stop-opacity="0.3"></stop>
+<stop offset="100%" stop-color="#71ffe8" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<!-- Path 1 (Squat) -->
+<path class="drop-shadow-[0_0_8px_rgba(113,255,232,0.8)]" d="M0,180 L100,160 L200,170 L300,130 L400,140 L500,100 L600,90 L700,60 L800,50" fill="none" stroke="#71ffe8" stroke-linecap="round" stroke-width="3"></path>
+<!-- Path 2 (Deadlift) -->
+<path class="opacity-60" d="M0,190 L150,180 L300,160 L450,150 L600,110 L800,80" fill="none" stroke="#d3fbff" stroke-dasharray="4 4" stroke-width="2"></path>
+<!-- Y-Axis indicators -->
+<line stroke="#3b4a46" stroke-width="0.5" x1="0" x2="800" y1="180" y2="180"></line>
+<line stroke="#3b4a46" stroke-width="0.5" x1="0" x2="800" y1="120" y2="120"></line>
+<line stroke="#3b4a46" stroke-width="0.5" x1="0" x2="800" y1="60" y2="60"></line>
+</svg>
+<div class="absolute bottom-[-20px] w-full flex justify-between font-label text-[10px] text-slate-500 uppercase tracking-widest">
+<span>WK 01</span><span>WK 04</span><span>WK 08</span><span>WK 12</span><span>WK 16</span>
+</div>
+</div>
+</div>
+<!-- Weight Progress Module -->
+<div class="col-span-4 bg-surface-container rounded-xl p-6 glow-border flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline text-lg font-bold uppercase tracking-tight text-on-surface">Body Weight</h3>
+<span class="material-symbols-outlined text-primary" data-icon="monitor_weight">monitor_weight</span>
+</div>
+<div class="flex items-baseline gap-2 mb-2">
+<span class="text-4xl font-headline font-black text-primary italic">84.2</span>
+<span class="font-label text-sm text-on-surface-variant uppercase tracking-widest">KG</span>
+</div>
+<div class="flex items-center gap-2 text-error text-[10px] font-bold tracking-widest">
+<span class="material-symbols-outlined text-sm">trending_down</span>
+                            -1.4 KG FROM LAST MONTH
+                        </div>
+</div>
+<div class="h-32 mt-4 relative">
+<svg class="w-full h-full" viewbox="0 0 200 100">
+<path d="M0,80 C20,70 40,90 60,75 C80,60 100,65 120,40 C140,15 160,25 180,10 L200,5 L200,100 L0,100 Z" fill="url(#weightGrad)"></path>
+<path d="M0,80 C20,70 40,90 60,75 C80,60 100,65 120,40 C140,15 160,25 180,10 L200,5" fill="none" stroke="#00eefc" stroke-width="2"></path>
+<defs>
+<lineargradient id="weightGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#00eefc" stop-opacity="0.4"></stop>
+<stop offset="100%" stop-color="#00eefc" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+</svg>
+</div>
+</div>
+</div>
+<!-- Second Row Bento -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Muscle Group Volume -->
+<div class="col-span-5 bg-surface-container rounded-xl p-6 glow-border">
+<div class="flex justify-between items-start mb-8">
+<div>
+<h3 class="font-headline text-xl font-bold uppercase tracking-tight text-on-surface">Volume Load</h3>
+<p class="font-label text-[10px] tracking-widest text-on-surface-variant uppercase">By Muscle Group (Weekly Avg)</p>
+</div>
+<div class="bg-surface-container-high px-3 py-1 rounded text-[10px] font-bold text-primary border border-primary/20">TOTAL: 42.5k KG</div>
+</div>
+<div class="space-y-6">
+<div class="space-y-2">
+<div class="flex justify-between text-[10px] font-label font-bold uppercase tracking-widest">
+<span class="text-on-surface">Legs / Posterior</span>
+<span class="text-primary">82% CAPACITY</span>
+</div>
+<div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary/40 to-primary w-[82%] relative">
+<div class="absolute right-0 top-0 h-full w-1 bg-white shadow-[0_0_8px_#fff]"></div>
+</div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-[10px] font-label font-bold uppercase tracking-widest">
+<span class="text-on-surface">Back / Pulling</span>
+<span class="text-on-surface-variant">65% CAPACITY</span>
+</div>
+<div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-secondary/40 to-secondary w-[65%]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-[10px] font-label font-bold uppercase tracking-widest">
+<span class="text-on-surface">Chest / Pushing</span>
+<span class="text-on-surface-variant">48% CAPACITY</span>
+</div>
+<div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-secondary-container/40 to-secondary-container w-[48%]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-[10px] font-label font-bold uppercase tracking-widest">
+<span class="text-on-surface">Shoulders / Delts</span>
+<span class="text-on-surface-variant">32% CAPACITY</span>
+</div>
+<div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-outline/40 to-outline w-[32%]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Personal Records List -->
+<div class="col-span-7 bg-surface-container rounded-xl glow-border flex flex-col">
+<div class="p-6 border-b border-outline-variant/10 flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-primary/10 flex items-center justify-center border border-primary/30">
+<span class="material-symbols-outlined text-primary" data-icon="military_tech">military_tech</span>
+</div>
+<h3 class="font-headline text-xl font-bold uppercase tracking-tight text-on-surface">Personal Records</h3>
+</div>
+<button class="text-[10px] font-label font-bold text-primary tracking-widest uppercase hover:underline">View History</button>
+</div>
+<div class="flex-1 p-6 grid grid-cols-2 gap-4">
+<!-- PR Item -->
+<div class="bg-surface-container-low p-4 rounded-lg flex items-center gap-4 group hover:bg-surface-container-high transition-colors">
+<div class="w-12 h-12 rounded-full flex items-center justify-center bg-primary/5 border border-primary/20 group-hover:border-primary group-hover:shadow-[0_0_12px_rgba(113,255,232,0.3)] transition-all">
+<span class="material-symbols-outlined text-primary" data-icon="trophy" style="font-variation-settings: 'FILL' 1;">emoji_events</span>
+</div>
+<div>
+<p class="text-[10px] font-label text-on-surface-variant uppercase tracking-widest">Back Squat</p>
+<p class="text-xl font-headline font-bold text-on-surface">185.0 <span class="text-xs text-primary">KG</span></p>
+<p class="text-[9px] text-slate-500 uppercase tracking-tighter mt-1">BROKEN 3 DAYS AGO</p>
+</div>
+</div>
+<!-- PR Item -->
+<div class="bg-surface-container-low p-4 rounded-lg flex items-center gap-4 group hover:bg-surface-container-high transition-colors">
+<div class="w-12 h-12 rounded-full flex items-center justify-center bg-secondary/5 border border-secondary/20 group-hover:border-secondary transition-all">
+<span class="material-symbols-outlined text-secondary" data-icon="trophy" style="font-variation-settings: 'FILL' 1;">emoji_events</span>
+</div>
+<div>
+<p class="text-[10px] font-label text-on-surface-variant uppercase tracking-widest">Deadlift</p>
+<p class="text-xl font-headline font-bold text-on-surface">220.0 <span class="text-xs text-secondary">KG</span></p>
+<p class="text-[9px] text-slate-500 uppercase tracking-tighter mt-1">BROKEN 12 DAYS AGO</p>
+</div>
+</div>
+<!-- PR Item -->
+<div class="bg-surface-container-low p-4 rounded-lg flex items-center gap-4 group hover:bg-surface-container-high transition-colors">
+<div class="w-12 h-12 rounded-full flex items-center justify-center bg-secondary-container/5 border border-secondary-container/20 group-hover:border-secondary-container transition-all">
+<span class="material-symbols-outlined text-secondary-container" data-icon="trophy" style="font-variation-settings: 'FILL' 1;">emoji_events</span>
+</div>
+<div>
+<p class="text-[10px] font-label text-on-surface-variant uppercase tracking-widest">Bench Press</p>
+<p class="text-xl font-headline font-bold text-on-surface">125.0 <span class="text-xs text-secondary-container">KG</span></p>
+<p class="text-[9px] text-slate-500 uppercase tracking-tighter mt-1">BROKEN 1 MONTH AGO</p>
+</div>
+</div>
+<!-- PR Item -->
+<div class="bg-surface-container-low p-4 rounded-lg flex items-center gap-4 group hover:bg-surface-container-high transition-colors relative overflow-hidden">
+<div class="absolute top-0 right-0 p-1 bg-tertiary-container text-[8px] font-bold text-on-tertiary-container uppercase tracking-tighter rounded-bl-lg">Soon</div>
+<div class="w-12 h-12 rounded-full flex items-center justify-center bg-outline/5 border border-outline/20">
+<span class="material-symbols-outlined text-outline/40" data-icon="trophy">emoji_events</span>
+</div>
+<div>
+<p class="text-[10px] font-label text-outline uppercase tracking-widest">Overhead Press</p>
+<p class="text-xl font-headline font-bold text-outline">--.- <span class="text-xs uppercase">KG</span></p>
+<p class="text-[9px] text-slate-500 uppercase tracking-tighter mt-1">NEXT TARGET: 85 KG</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Tactical Feed / Technical Logs -->
+<div class="mt-8 grid grid-cols-3 gap-6">
+<div class="bg-surface-container-low border border-outline-variant/10 rounded p-4">
+<div class="flex items-center gap-3 mb-4">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<h4 class="font-label text-[10px] font-black uppercase tracking-widest text-on-surface">Biometric Stream</h4>
+</div>
+<div class="space-y-3 font-mono text-[10px]">
+<div class="flex justify-between border-b border-outline-variant/5 pb-2">
+<span class="text-slate-500">AVG REST HEART RATE</span>
+<span class="text-on-surface">54 BPM</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant/5 pb-2">
+<span class="text-slate-500">SLEEP RECOVERY %</span>
+<span class="text-primary font-bold">92%</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant/5 pb-2">
+<span class="text-slate-500">VO2 MAX (EST)</span>
+<span class="text-on-surface">52.4 ml/kg/min</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low border border-outline-variant/10 rounded p-4">
+<div class="flex items-center gap-3 mb-4">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<h4 class="font-label text-[10px] font-black uppercase tracking-widest text-on-surface">AI Coach Insights</h4>
+</div>
+<p class="text-[11px] text-on-surface-variant leading-relaxed">
+<span class="text-primary font-bold">OPTIMIZATION:</span> Your squat volume has peaked. AI recommends a <span class="text-on-surface font-bold">Deload week</span> starting Monday to maximize CNS recovery before PR attempt.
+                    </p>
+</div>
+<div class="bg-primary/5 border border-primary/20 rounded p-4 flex flex-col justify-between">
+<div class="flex justify-between">
+<h4 class="font-label text-[10px] font-black uppercase tracking-widest text-primary">System Integrity</h4>
+<span class="material-symbols-outlined text-primary text-sm">shield</span>
+</div>
+<div class="mt-4 flex items-center justify-between">
+<div class="h-1 bg-surface-container-high flex-1 rounded-full overflow-hidden mr-4">
+<div class="h-full bg-primary w-[98%] shadow-[0_0_8px_#71ffe8]"></div>
+</div>
+<span class="font-headline font-bold text-primary italic text-lg">98.2%</span>
+</div>
+<p class="text-[9px] text-primary/60 uppercase tracking-widest mt-2">All biological parameters within nominal range.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual FAB (Hidden as per suppression logic for detail/dashboard page, but available if needed) -->
+<!-- <button class="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-on-primary shadow-[0_0_20px_rgba(113,255,232,0.4)] hover:scale-105 active:scale-95 transition-all z-50">
+        <span class="material-symbols-outlined" data-icon="add">add</span>
+    </button> -->
+</body></html>

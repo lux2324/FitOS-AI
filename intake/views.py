@@ -22,46 +22,23 @@ def _get_or_create_profile(user):
     return profile
 
 
-@login_required
-def step1(request):
-    profile = _get_or_create_profile(request.user)
-    form = IntakeStep1Form(instance=profile)
-
-    if request.method == 'POST':
-        form = IntakeStep1Form(request.POST, instance=profile)
-        if form.is_valid():
+def _make_step_view(step_num, form_class, next_url):
+    """Factory for simple intake steps that just save a form and redirect."""
+    @login_required
+    def view(request):
+        profile = _get_or_create_profile(request.user)
+        form = form_class(request.POST or None, instance=profile)
+        if request.method == 'POST' and form.is_valid():
             form.save()
-            return redirect('intake:step2')
-
-    return render(request, 'intake/step1.html', {'form': form, 'step': 1})
-
-
-@login_required
-def step2(request):
-    profile = _get_or_create_profile(request.user)
-    form = IntakeStep2Form(instance=profile)
-
-    if request.method == 'POST':
-        form = IntakeStep2Form(request.POST, instance=profile)
-        if form.is_valid():
-            form.save()
-            return redirect('intake:step3')
-
-    return render(request, 'intake/step2.html', {'form': form, 'step': 2})
+            return redirect(next_url)
+        return render(request, f'intake/step{step_num}.html', {'form': form, 'step': step_num})
+    view.__name__ = f'step{step_num}'
+    return view
 
 
-@login_required
-def step3(request):
-    profile = _get_or_create_profile(request.user)
-    form = IntakeStep3Form(instance=profile)
-
-    if request.method == 'POST':
-        form = IntakeStep3Form(request.POST, instance=profile)
-        if form.is_valid():
-            form.save()
-            return redirect('intake:step4')
-
-    return render(request, 'intake/step3.html', {'form': form, 'step': 3})
+step1 = _make_step_view(1, IntakeStep1Form, 'intake:step2')
+step2 = _make_step_view(2, IntakeStep2Form, 'intake:step3')
+step3 = _make_step_view(3, IntakeStep3Form, 'intake:step4')
 
 
 @login_required
@@ -74,8 +51,6 @@ def step4(request):
         if form.is_valid():
             profile = form.save(commit=False)
             profile.completed = True
-
-            # AI analysis of free-text fields
             analysis = analyze_intake_text(
                 training_story=profile.training_story,
                 limitations_story=profile.limitations_story,
@@ -86,7 +61,6 @@ def step4(request):
             return redirect('core:home')
 
     show_limitations = profile.injury_history != 'no' or profile.current_pain_flags != 'no'
-
     return render(request, 'intake/step4.html', {
         'form': form,
         'step': 4,

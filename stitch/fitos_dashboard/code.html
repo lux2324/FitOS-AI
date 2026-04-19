@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FitOS Dashboard | AI Coach</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error-container": "#ffdad6",
+                      "surface-container-low": "#171b28",
+                      "on-tertiary-fixed": "#271900",
+                      "on-tertiary-fixed-variant": "#5e4100",
+                      "surface-container-highest": "#313442",
+                      "primary-container": "#00e5cc",
+                      "on-surface": "#dfe2f3",
+                      "on-primary-container": "#006256",
+                      "primary-fixed-dim": "#00dfc6",
+                      "on-primary-fixed-variant": "#005047",
+                      "on-background": "#dfe2f3",
+                      "surface-tint": "#00dfc6",
+                      "surface-dim": "#0f131f",
+                      "on-surface-variant": "#b9cac5",
+                      "surface-container-lowest": "#0a0e1a",
+                      "secondary-container": "#00eefc",
+                      "error": "#ffb4ab",
+                      "tertiary-fixed-dim": "#f9bc48",
+                      "outline": "#849490",
+                      "on-secondary-container": "#00686f",
+                      "tertiary-fixed": "#ffdea9",
+                      "on-primary": "#003730",
+                      "inverse-surface": "#dfe2f3",
+                      "surface": "#0f131f",
+                      "surface-container": "#1b1f2c",
+                      "surface-bright": "#353946",
+                      "tertiary": "#ffe5bd",
+                      "on-tertiary-container": "#725000",
+                      "surface-variant": "#313442",
+                      "on-secondary-fixed": "#002022",
+                      "inverse-primary": "#006b5e",
+                      "on-error": "#690005",
+                      "secondary": "#d3fbff",
+                      "outline-variant": "#3b4a46",
+                      "secondary-fixed-dim": "#00dbe9",
+                      "on-tertiary": "#422c00",
+                      "on-secondary": "#00363a",
+                      "surface-container-high": "#262a37",
+                      "on-primary-fixed": "#00201b",
+                      "on-secondary-fixed-variant": "#004f54",
+                      "secondary-fixed": "#7df4ff",
+                      "background": "#0f131f",
+                      "inverse-on-surface": "#2c303d",
+                      "primary": "#71ffe8",
+                      "primary-fixed": "#41fce2",
+                      "tertiary-container": "#ffc24d",
+                      "error-container": "#93000a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "fontFamily": {
+                      "headline": ["Space Grotesk"],
+                      "body": ["Inter"],
+                      "label": ["Inter"]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0a0e1a;
+            background-image: radial-gradient(circle at 2px 2px, rgba(113, 255, 232, 0.03) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(27, 31, 44, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(113, 255, 232, 0.1);
+        }
+        .primary-gradient {
+            background: linear-gradient(135deg, #71ffe8 0%, #00e5cc 100%);
+        }
+        .glow-shadow-sm {
+            box-shadow: 0 0 12px rgba(113, 255, 232, 0.15);
+        }
+    </style>
+</head>
+<body class="font-body text-on-surface">
+<!-- SideNavBar -->
+<aside class="w-[260px] h-screen fixed left-0 top-0 border-r border-[#00e5cc]/15 bg-[#0a0e1a] shadow-[0_0_24px_rgba(113,255,232,0.08)] flex flex-col h-full py-8 px-4 z-50">
+<div class="mb-12 px-4">
+<h1 class="text-2xl font-black tracking-tighter italic text-[#71ffe8]">FitOS</h1>
+<p class="font-['Space_Grotesk'] uppercase tracking-widest text-[10px] text-slate-500 mt-1">AI COACH</p>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-[#71ffe8] bg-[#71ffe8]/10 border-r-4 border-[#71ffe8] font-bold font-['Space_Grotesk'] uppercase tracking-widest text-sm scale-98 active:brightness-125" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-sm hover:bg-[#71ffe8]/5 hover:text-[#71ffe8]" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+                Tjedni plan
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-sm hover:bg-[#71ffe8]/5 hover:text-[#71ffe8]" href="#">
+<span class="material-symbols-outlined" data-icon="fitness_center">fitness_center</span>
+                Unesi trening
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-sm hover:bg-[#71ffe8]/5 hover:text-[#71ffe8]" href="#">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+                Tjedni feedback
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-sm hover:bg-[#71ffe8]/5 hover:text-[#71ffe8]" href="#">
+<span class="material-symbols-outlined" data-icon="compare_arrows">compare_arrows</span>
+                Plan diff
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-sm hover:bg-[#71ffe8]/5 hover:text-[#71ffe8]" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+                Statistika
+            </a>
+</nav>
+<div class="mt-auto pt-8 border-t border-[#00e5cc]/10">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-sm hover:bg-[#71ffe8]/5 hover:text-[#71ffe8]" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                Settings
+            </a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-[260px] min-h-screen pb-20">
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-260px)] h-16 bg-[#0a0e1a]/80 backdrop-blur-xl border-b border-[#00e5cc]/10 flex justify-between items-center px-8 z-40">
+<div class="flex items-center gap-4">
+<span class="text-slate-500 font-label uppercase text-[10px] tracking-[0.2em]">System Status: Optimal</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group">
+<span class="material-symbols-outlined text-slate-500 hover:text-[#71ffe8] cursor-pointer transition-colors" data-icon="notifications">notifications</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-[#71ffe8] rounded-full shadow-[0_0_8px_#71ffe8]"></span>
+</div>
+<div class="w-8 h-8 rounded-full border border-[#71ffe8]/30 overflow-hidden cursor-pointer active:opacity-70">
+<img class="w-full h-full object-cover" data-alt="portrait of a focused professional athlete in a dark techwear outfit high contrast studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpyj9ns8LCe81Vf_9THRhMFtgvz9JOVLihS9eAJs2y3tj4g4xI89_C9NHdIgTvD6nDE9br8ahvaqQNKkHBLH3aUxr27ePBCUHrpPJzF1CbuerZMqIpIpJ3J4PcXPF3U2gcsn456pVE5iSB7kgIX3dqfvh0WtQiorI_YWjsDxVrxZAp9tXMvkIN3wXwZTe9qsY_d5g0QQme4B2VkZJPN8X3-4CB8j5RPXilv1pVZAxW6sX0aSyavy7HG7zdhEUpLQseZ58rF11-5w"/>
+</div>
+</div>
+</header>
+<!-- Canvas Container -->
+<div class="mt-16 p-8 space-y-8">
+<!-- Page Header -->
+<div class="flex justify-between items-end">
+<div>
+<h2 class="text-5xl font-headline font-black uppercase tracking-tight text-[#71ffe8]">DASHBOARD</h2>
+<p class="text-slate-400 font-medium mt-1">Tjedan 18 — Upper/Lower split</p>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-2 rounded-md border border-[#71ffe8] text-[#71ffe8] font-headline uppercase tracking-widest text-sm hover:bg-[#71ffe8]/10 transition-all">
+                        Unesi trening
+                    </button>
+<button class="px-6 py-2 rounded-md primary-gradient text-on-primary font-headline font-bold uppercase tracking-widest text-sm shadow-[0_0_15px_rgba(113,255,232,0.3)] hover:brightness-110 active:scale-95 transition-all">
+                        Tjedni feedback
+                    </button>
+</div>
+</div>
+<!-- KPI Row -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="glass-panel p-6 rounded-xl">
+<p class="font-label uppercase text-[10px] tracking-[0.2em] text-slate-500 mb-2">Tjedan</p>
+<p class="text-3xl font-headline font-bold text-white">18</p>
+</div>
+<div class="glass-panel p-6 rounded-xl relative overflow-hidden">
+<p class="font-label uppercase text-[10px] tracking-[0.2em] text-slate-500 mb-2">Tjedni volumen</p>
+<div class="flex items-baseline gap-2">
+<p class="text-3xl font-headline font-bold text-white">25,545 <span class="text-sm font-normal text-slate-500">kg</span></p>
+<span class="text-[10px] font-bold text-[#71ffe8] bg-[#71ffe8]/10 px-2 py-0.5 rounded border border-[#71ffe8]/20">-4.7%</span>
+</div>
+<div class="absolute bottom-0 left-0 h-1 bg-[#71ffe8]/20 w-full">
+<div class="h-full bg-[#71ffe8] w-2/3 shadow-[0_0_10px_#71ffe8]"></div>
+</div>
+</div>
+<div class="glass-panel p-6 rounded-xl">
+<p class="font-label uppercase text-[10px] tracking-[0.2em] text-slate-500 mb-2">Masa</p>
+<div class="flex items-baseline gap-2">
+<p class="text-3xl font-headline font-bold text-white">82.3 <span class="text-sm font-normal text-slate-500">kg</span></p>
+<span class="text-[10px] font-bold text-[#71ffe8] bg-[#71ffe8]/10 px-2 py-0.5 rounded border border-[#71ffe8]/20">+0.4</span>
+</div>
+</div>
+<div class="glass-panel p-6 rounded-xl">
+<p class="font-label uppercase text-[10px] tracking-[0.2em] text-slate-500 mb-2">Progresija</p>
+<p class="text-3xl font-headline font-bold text-white">11<span class="text-slate-500 text-xl">/18</span></p>
+</div>
+</div>
+<!-- Middle Section (3 Columns) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- LEFT: Readiness -->
+<div class="lg:col-span-3 glass-panel p-8 rounded-2xl flex flex-col items-center justify-center text-center">
+<h3 class="font-label uppercase text-[10px] tracking-[0.2em] text-slate-500 mb-8 self-start">Readiness Score</h3>
+<div class="relative w-48 h-48 flex items-center justify-center mb-6">
+<!-- Circular Gauge -->
+<svg class="w-full h-full -rotate-90">
+<circle class="text-surface-variant/30" cx="96" cy="96" fill="transparent" r="88" stroke="currentColor" stroke-width="4"></circle>
+<circle class="drop-shadow-[0_0_12px_#71ffe8]" cx="96" cy="96" fill="transparent" r="88" stroke="url(#gradient)" stroke-dasharray="552.92" stroke-dashoffset="55" stroke-linecap="round" stroke-width="8"></circle>
+<defs>
+<lineargradient id="gradient" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#71ffe8"></stop>
+<stop offset="100%" stop-color="#00eefc"></stop>
+</lineargradient>
+</defs>
+</svg>
+<div class="absolute text-center">
+<span class="text-5xl font-headline font-black text-white">89.5</span>
+<span class="block text-xs text-slate-500 uppercase font-label">/100</span>
+</div>
+<!-- Glow Point -->
+<div class="absolute top-[8px] right-[40px] w-2 h-2 bg-white rounded-full shadow-[0_0_10px_white]"></div>
+</div>
+<div class="bg-[#71ffe8]/10 text-[#71ffe8] px-4 py-1 rounded-full text-xs font-black tracking-widest border border-[#71ffe8]/30 mb-4 uppercase">
+                        STRONG
+                    </div>
+<p class="text-slate-400 text-xs font-medium italic">
+                        Rep queue: unlimited • Load queue: 3-4
+                    </p>
+</div>
+<!-- CENTER: Progression Queue -->
+<div class="lg:col-span-5 glass-panel p-8 rounded-2xl">
+<h3 class="font-label uppercase text-[10px] tracking-[0.2em] text-slate-500 mb-6">Progression Queue</h3>
+<div class="space-y-4">
+<!-- Queue Items -->
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-high/50 border-l-2 border-[#71ffe8]">
+<div>
+<p class="text-sm font-headline font-bold text-white uppercase">Bench Press</p>
+<p class="text-[10px] text-slate-500">100kg x 5 @ RPE 8.5</p>
+</div>
+<span class="px-2 py-1 rounded bg-[#71ffe8]/10 text-[#71ffe8] text-[10px] font-bold border border-[#71ffe8]/20">LOAD +2.5</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-high/30">
+<div>
+<p class="text-sm font-headline font-bold text-white uppercase">Squat (High Bar)</p>
+<p class="text-[10px] text-slate-500">140kg x 3 @ RPE 9</p>
+</div>
+<span class="px-2 py-1 rounded bg-[#71ffe8]/10 text-[#71ffe8] text-[10px] font-bold border border-[#71ffe8]/20">REP +1</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-high/30">
+<div>
+<p class="text-sm font-headline font-bold text-white uppercase">Weighted Pullups</p>
+<p class="text-[10px] text-slate-500">20kg x 8 @ RPE 8</p>
+</div>
+<span class="px-2 py-1 rounded bg-slate-800 text-slate-400 text-[10px] font-bold">HOLD</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-high/30">
+<div>
+<p class="text-sm font-headline font-bold text-white uppercase">RDL</p>
+<p class="text-[10px] text-slate-500">120kg x 10 @ RPE 7</p>
+</div>
+<span class="px-2 py-1 rounded bg-secondary-container/10 text-secondary-container text-[10px] font-bold border border-secondary-container/20">LOAD +5.0</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-high/30">
+<div>
+<p class="text-sm font-headline font-bold text-white uppercase">Overhead Press</p>
+<p class="text-[10px] text-slate-500">65kg x 5 @ RPE 9</p>
+</div>
+<span class="px-2 py-1 rounded bg-[#71ffe8]/10 text-[#71ffe8] text-[10px] font-bold border border-[#71ffe8]/20">REP +1</span>
+</div>
+</div>
+</div>
+<!-- RIGHT: Volume Trend -->
+<div class="lg:col-span-4 glass-panel p-8 rounded-2xl flex flex-col">
+<h3 class="font-label uppercase text-[10px] tracking-[0.2em] text-slate-500 mb-10">Volume Trend (KCAL/T)</h3>
+<div class="flex-1 flex items-end justify-between gap-2">
+<div class="flex-1 group flex flex-col items-center gap-2">
+<div class="w-full bg-[#71ffe8]/20 rounded-t-sm h-[40%] group-hover:bg-[#71ffe8]/40 transition-all"></div>
+<span class="text-[8px] text-slate-600 font-label">T11</span>
+</div>
+<div class="flex-1 group flex flex-col items-center gap-2">
+<div class="w-full bg-[#71ffe8]/20 rounded-t-sm h-[55%] group-hover:bg-[#71ffe8]/40 transition-all"></div>
+<span class="text-[8px] text-slate-600 font-label">T12</span>
+</div>
+<div class="flex-1 group flex flex-col items-center gap-2">
+<div class="w-full bg-[#71ffe8]/20 rounded-t-sm h-[50%] group-hover:bg-[#71ffe8]/40 transition-all"></div>
+<span class="text-[8px] text-slate-600 font-label">T13</span>
+</div>
+<div class="flex-1 group flex flex-col items-center gap-2">
+<div class="w-full bg-[#71ffe8]/20 rounded-t-sm h-[65%] group-hover:bg-[#71ffe8]/40 transition-all"></div>
+<span class="text-[8px] text-slate-600 font-label">T14</span>
+</div>
+<div class="flex-1 group flex flex-col items-center gap-2">
+<div class="w-full bg-[#71ffe8]/20 rounded-t-sm h-[80%] group-hover:bg-[#71ffe8]/40 transition-all"></div>
+<span class="text-[8px] text-slate-600 font-label">T15</span>
+</div>
+<div class="flex-1 group flex flex-col items-center gap-2">
+<div class="w-full bg-[#71ffe8]/20 rounded-t-sm h-[75%] group-hover:bg-[#71ffe8]/40 transition-all"></div>
+<span class="text-[8px] text-slate-600 font-label">T16</span>
+</div>
+<div class="flex-1 group flex flex-col items-center gap-2">
+<div class="w-full bg-[#71ffe8]/20 rounded-t-sm h-[85%] group-hover:bg-[#71ffe8]/40 transition-all"></div>
+<span class="text-[8px] text-slate-600 font-label">T17</span>
+</div>
+<div class="flex-1 group flex flex-col items-center gap-2">
+<div class="w-full bg-[#71ffe8] rounded-t-sm h-[95%] shadow-[0_0_15px_rgba(113,255,232,0.5)]"></div>
+<span class="text-[8px] text-[#71ffe8] font-black font-label">T18</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Section: Session Card -->
+<section class="glass-panel p-8 rounded-2xl">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h3 class="text-2xl font-headline font-black text-white uppercase tracking-tight">DANASNJA SESIJA — UPPER 1</h3>
+<p class="text-slate-500 text-xs font-label uppercase tracking-widest mt-1">Status: Ready to initiate</p>
+</div>
+<button class="flex items-center gap-2 px-8 py-3 rounded-md primary-gradient text-on-primary font-headline font-bold uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(113,255,232,0.4)] hover:scale-105 transition-all">
+<span class="material-symbols-outlined text-lg" data-icon="play_arrow" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                        Zapocni trening
+                    </button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="border-b border-outline-variant/30">
+<th class="pb-4 font-label uppercase text-[10px] tracking-[0.2em] text-slate-500">Vjezba</th>
+<th class="pb-4 font-label uppercase text-[10px] tracking-[0.2em] text-slate-500">Setovi</th>
+<th class="pb-4 font-label uppercase text-[10px] tracking-[0.2em] text-slate-500">Kilaza</th>
+<th class="pb-4 font-label uppercase text-[10px] tracking-[0.2em] text-slate-500">Ponavljanja</th>
+<th class="pb-4 font-label uppercase text-[10px] tracking-[0.2em] text-slate-500">RPE</th>
+<th class="pb-4 font-label uppercase text-[10px] tracking-[0.2em] text-slate-500 text-right">Odmor</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="group hover:bg-[#71ffe8]/5 transition-colors">
+<td class="py-5">
+<div class="flex items-center gap-3">
+<span class="w-2 h-2 rounded-full bg-[#71ffe8] shadow-[0_0_8px_#71ffe8]"></span>
+<span class="font-headline font-bold uppercase text-white">Competition Bench Press</span>
+</div>
+</td>
+<td class="py-5 font-headline text-white">3</td>
+<td class="py-5 font-headline text-white">100 kg</td>
+<td class="py-5 font-headline text-white">5</td>
+<td class="py-5 font-headline text-white">8.5</td>
+<td class="py-5 text-right text-slate-400 text-sm">180s</td>
+</tr>
+<tr class="group hover:bg-[#71ffe8]/5 transition-colors">
+<td class="py-5">
+<div class="flex items-center gap-3">
+<span class="w-2 h-2 rounded-full bg-[#71ffe8] shadow-[0_0_8px_#71ffe8]"></span>
+<span class="font-headline font-bold uppercase text-white">Weighted Pull-ups</span>
+</div>
+</td>
+<td class="py-5 font-headline text-white">3</td>
+<td class="py-5 font-headline text-white">+20 kg</td>
+<td class="py-5 font-headline text-white">8</td>
+<td class="py-5 font-headline text-white">8</td>
+<td class="py-5 text-right text-slate-400 text-sm">120s</td>
+</tr>
+<tr class="group hover:bg-[#71ffe8]/5 transition-colors">
+<td class="py-5">
+<div class="flex items-center gap-3">
+<span class="w-2 h-2 rounded-full bg-secondary-container shadow-[0_0_8px_#00eefc]"></span>
+<span class="font-headline font-bold uppercase text-white">Incline DB Press</span>
+</div>
+</td>
+<td class="py-5 font-headline text-white">3</td>
+<td class="py-5 font-headline text-white">35 kg</td>
+<td class="py-5 font-headline text-white">10-12</td>
+<td class="py-5 font-headline text-white">8</td>
+<td class="py-5 text-right text-slate-400 text-sm">90s</td>
+</tr>
+<tr class="group hover:bg-[#71ffe8]/5 transition-colors">
+<td class="py-5">
+<div class="flex items-center gap-3">
+<span class="w-2 h-2 rounded-full bg-secondary-container shadow-[0_0_8px_#00eefc]"></span>
+<span class="font-headline font-bold uppercase text-white">Chest Supported Row</span>
+</div>
+</td>
+<td class="py-5 font-headline text-white">3</td>
+<td class="py-5 font-headline text-white">60 kg</td>
+<td class="py-5 font-headline text-white">12</td>
+<td class="py-5 font-headline text-white">8.5</td>
+<td class="py-5 text-right text-slate-400 text-sm">90s</td>
+</tr>
+<tr class="group hover:bg-[#71ffe8]/5 transition-colors">
+<td class="py-5">
+<div class="flex items-center gap-3">
+<span class="w-2 h-2 rounded-full bg-slate-500 shadow-[0_0_8px_gray]"></span>
+<span class="font-headline font-bold uppercase text-white">Lateral Raises</span>
+</div>
+</td>
+<td class="py-5 font-headline text-white">4</td>
+<td class="py-5 font-headline text-white">12.5 kg</td>
+<td class="py-5 font-headline text-white">15-20</td>
+<td class="py-5 font-headline text-white">9</td>
+<td class="py-5 text-right text-slate-400 text-sm">60s</td>
+</tr>
+<tr class="group hover:bg-[#71ffe8]/5 transition-colors">
+<td class="py-5">
+<div class="flex items-center gap-3">
+<span class="w-2 h-2 rounded-full bg-slate-500 shadow-[0_0_8px_gray]"></span>
+<span class="font-headline font-bold uppercase text-white">Tricep Extensions</span>
+</div>
+</td>
+<td class="py-5 font-headline text-white">3</td>
+<td class="py-5 font-headline text-white">25 kg</td>
+<td class="py-5 font-headline text-white">15</td>
+<td class="py-5 font-headline text-white">10</td>
+<td class="py-5 text-right text-slate-400 text-sm">60s</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</main>
+<!-- Visual Polish: HUD Scanlines Overlay -->
+<div class="fixed inset-0 pointer-events-none opacity-[0.03] z-[100]" style="background: repeating-linear-gradient(0deg, #71ffe8, #71ffe8 1px, transparent 1px, transparent 4px);"></div>
+</body></html>

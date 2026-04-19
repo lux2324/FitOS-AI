@@ -1,5 +1,5 @@
 import json
-from openai import OpenAI
+import httpx
 from django.conf import settings
 
 
@@ -65,18 +65,25 @@ def analyze_intake_text(training_story: str, limitations_story: str, extra_notes
         }
 
     try:
-        client = OpenAI(api_key=settings.OPENAI_API_KEY)
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": ANALYSIS_PROMPT},
-                {"role": "user", "content": combined},
-            ],
-            temperature=0.2,
-            max_tokens=600,
+        resp = httpx.post(
+            "https://api.openai.com/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {settings.OPENAI_API_KEY}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": "gpt-4o-mini",
+                "messages": [
+                    {"role": "system", "content": ANALYSIS_PROMPT},
+                    {"role": "user", "content": combined},
+                ],
+                "temperature": 0.2,
+                "max_tokens": 600,
+            },
+            timeout=30.0,
         )
-        raw = response.choices[0].message.content.strip()
-        # Strip markdown fences if present
+        resp.raise_for_status()
+        raw = resp.json()["choices"][0]["message"]["content"].strip()
         if raw.startswith("```"):
             raw = raw.split("\n", 1)[1]
             raw = raw.rsplit("```", 1)[0]

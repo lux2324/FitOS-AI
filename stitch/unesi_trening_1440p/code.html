@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="hr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FitOS - Unesi trening</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "on-primary-container": "#006256",
+                "inverse-primary": "#006b5e",
+                "tertiary-fixed-dim": "#f9bc48",
+                "on-background": "#dfe2f3",
+                "surface": "#0f131f",
+                "surface-container": "#1b1f2c",
+                "secondary": "#d3fbff",
+                "tertiary": "#ffe5bd",
+                "on-tertiary-container": "#725000",
+                "secondary-fixed": "#7df4ff",
+                "on-secondary": "#00363a",
+                "surface-variant": "#313442",
+                "on-surface-variant": "#b9cac5",
+                "on-error": "#690005",
+                "inverse-surface": "#dfe2f3",
+                "surface-container-high": "#262a37",
+                "primary-container": "#00e5cc",
+                "on-secondary-fixed-variant": "#004f54",
+                "tertiary-container": "#ffc24d",
+                "on-secondary-fixed": "#002022",
+                "surface-tint": "#00dfc6",
+                "primary-fixed": "#41fce2",
+                "on-primary": "#003730",
+                "secondary-container": "#00eefc",
+                "inverse-on-surface": "#2c303d",
+                "on-surface": "#dfe2f3",
+                "on-secondary-container": "#00686f",
+                "background": "#0f131f",
+                "surface-bright": "#353946",
+                "secondary-fixed-dim": "#00dbe9",
+                "primary": "#71ffe8",
+                "surface-container-lowest": "#0a0e1a",
+                "on-tertiary": "#422c00",
+                "on-primary-fixed-variant": "#005047",
+                "on-primary-fixed": "#00201b",
+                "surface-container-low": "#171b28",
+                "error": "#ffb4ab",
+                "surface-container-highest": "#313442",
+                "on-error-container": "#ffdad6",
+                "error-container": "#93000a",
+                "on-tertiary-fixed": "#271900",
+                "on-tertiary-fixed-variant": "#5e4100",
+                "tertiary-fixed": "#ffdea9",
+                "outline": "#849490",
+                "primary-fixed-dim": "#00dfc6",
+                "surface-dim": "#0f131f",
+                "outline-variant": "#3b4a46"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+            },
+            "fontFamily": {
+                "headline": ["Space Grotesk"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0a0e1a;
+            color: #dfe2f3;
+            font-family: 'Inter', sans-serif;
+            background-image: 
+                radial-gradient(circle at 2px 2px, rgba(113, 255, 232, 0.03) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hud-glass {
+            background: rgba(27, 31, 44, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(113, 255, 232, 0.1);
+        }
+        .glow-primary {
+            box-shadow: 0 0 15px rgba(113, 255, 232, 0.3);
+        }
+        .ghost-border {
+            outline: 1px solid rgba(132, 148, 144, 0.2);
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+<!-- SideNavBar -->
+<aside class="w-[260px] h-full fixed left-0 top-0 bg-[#0a0e1a] border-r border-[#71ffe8]/15 flex flex-col py-8 px-6 shadow-[4px_0_24px_rgba(113,255,232,0.08)] z-50">
+<div class="mb-12">
+<h1 class="text-2xl font-bold tracking-tighter text-[#00e5cc] font-['Space_Grotesk']">FitOS</h1>
+<p class="font-['Space_Grotesk'] uppercase tracking-widest text-[10px] text-slate-500">AI Gym Coach</p>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-4 py-3 px-4 rounded-lg text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10 transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-4 py-3 px-4 rounded-lg text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10 transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+                Tjedni plan
+            </a>
+<a class="flex items-center gap-4 py-3 px-4 rounded-lg text-[#71ffe8] border-r-2 border-[#71ffe8] bg-[#71ffe8]/5 transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs" href="#">
+<span class="material-symbols-outlined">add_box</span>
+                Unesi trening
+            </a>
+<a class="flex items-center gap-4 py-3 px-4 rounded-lg text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10 transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs" href="#">
+<span class="material-symbols-outlined">feedback</span>
+                Tjedni feedback
+            </a>
+<a class="flex items-center gap-4 py-3 px-4 rounded-lg text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10 transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs" href="#">
+<span class="material-symbols-outlined">compare_arrows</span>
+                Plan diff
+            </a>
+<a class="flex items-center gap-4 py-3 px-4 rounded-lg text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10 transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+                Statistika
+            </a>
+</nav>
+<div class="pt-8 mt-auto space-y-2 border-t border-[#71ffe8]/10">
+<a class="flex items-center gap-4 py-3 px-4 rounded-lg text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10 transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Postavke
+            </a>
+<a class="flex items-center gap-4 py-3 px-4 rounded-lg text-slate-500 hover:text-[#d3fbff] hover:bg-[#71ffe8]/10 transition-all duration-300 font-['Space_Grotesk'] uppercase tracking-widest text-xs" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Odjava
+            </a>
+</div>
+</aside>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-260px)] h-20 bg-[#0a0e1a]/80 backdrop-blur-xl border-b border-[#71ffe8]/10 flex justify-between items-center px-12 z-40">
+<div class="flex items-center gap-8">
+<div class="relative w-96">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full py-2 pl-12 pr-4 text-xs font-['Space_Grotesk'] tracking-widest focus:ring-1 focus:ring-primary-container" placeholder="TRAŽI VJEŽBU..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-slate-400 hover:text-[#71ffe8] transition-colors"><span class="material-symbols-outlined">notifications</span></button>
+<button class="text-[#71ffe8] animate-pulse"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span></button>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="text-[10px] font-['Space_Grotesk'] text-slate-500 uppercase tracking-widest">Athlete</p>
+<p class="text-xs font-bold text-[#71ffe8] uppercase tracking-tighter">Marko Horvat</p>
+</div>
+<img class="w-10 h-10 rounded-full border border-primary-container/30 object-cover" data-alt="close-up portrait of a determined male athlete in a dark gym environment with dramatic rim lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDv8m27Zqeu3MDK6gc2F3-O2w5f61IcSuklHXTSKX8xFf1rw8KjIF5gOSZkVTZW4KNZr9ekSlDkWwpdJ4aDoFkefWSwpXyf-6lHjTy3vTKDK6YfXtKh8wPKF5wm5WvRRmc6S44ub7AELofWE3gLg833lP88SFu_yyMpeG9oLhL2gnkDdQPQk3Eh6d-gnvmyuMXe4kgO2y7cd1OTGpDAe-5lAGpkrC87rXFxkS6ec3VA7pqPbCoP_Xt8WvqM6Myqhi9_GVE47dGF0A"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-[260px] pt-28 px-12 pb-12 max-w-[1800px] mx-auto">
+<!-- Large Active Timer HUD -->
+<section class="mb-12 grid grid-cols-12 gap-8 items-end">
+<div class="col-span-8">
+<div class="hud-glass rounded-xl p-8 flex items-center justify-between overflow-hidden relative">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary-container to-transparent opacity-50"></div>
+<div>
+<span class="text-[10px] font-['Space_Grotesk'] text-slate-400 tracking-[0.3em] uppercase block mb-2">Vrijeme treninga</span>
+<h2 class="text-8xl font-black font-['Space_Grotesk'] text-[#71ffe8] tracking-tighter leading-none">00:42:15</h2>
+</div>
+<div class="flex gap-4">
+<div class="text-right">
+<span class="text-[10px] font-['Space_Grotesk'] text-slate-500 tracking-widest uppercase block">KCAL</span>
+<span class="text-3xl font-bold font-['Space_Grotesk'] text-white">482</span>
+</div>
+<div class="h-12 w-[1px] bg-outline-variant/30"></div>
+<div class="text-right">
+<span class="text-[10px] font-['Space_Grotesk'] text-slate-500 tracking-widest uppercase block">BPM</span>
+<span class="text-3xl font-bold font-['Space_Grotesk'] text-[#ff5f5f] flex items-center gap-2">
+<span class="material-symbols-outlined text-sm animate-pulse">favorite</span> 142
+                            </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Rest Timer Module -->
+<div class="col-span-4">
+<div class="hud-glass rounded-xl p-8 border-primary/20 bg-primary/5">
+<div class="flex justify-between items-center mb-4">
+<span class="text-[10px] font-['Space_Grotesk'] text-primary tracking-[0.2em] uppercase font-bold">Odmor preostalo</span>
+<span class="material-symbols-outlined text-primary text-sm">timer</span>
+</div>
+<div class="flex items-center justify-center gap-6 mb-4">
+<span class="text-6xl font-black font-['Space_Grotesk'] text-white">00:54</span>
+</div>
+<div class="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary glow-primary w-[60%] rounded-full relative">
+<div class="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full"></div>
+</div>
+</div>
+<div class="mt-4 flex justify-between">
+<button class="text-[10px] font-bold uppercase tracking-widest text-primary hover:text-white transition-colors">+15S</button>
+<button class="text-[10px] font-bold uppercase tracking-widest text-primary hover:text-white transition-colors">SKIP</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Exercises List (Bento Grid Style) -->
+<div class="grid grid-cols-12 gap-8">
+<div class="col-span-8 space-y-8">
+<!-- Exercise Card 1 -->
+<div class="hud-glass rounded-xl overflow-hidden border-l-4 border-l-primary-container">
+<div class="bg-surface-container-high/50 px-8 py-5 flex justify-between items-center">
+<div class="flex items-center gap-4">
+<span class="text-2xl font-black font-['Space_Grotesk'] text-primary/30">01</span>
+<div>
+<h3 class="text-xl font-bold font-['Space_Grotesk'] text-white tracking-tight uppercase">Potisak s klupe (Bench Press)</h3>
+<p class="text-[10px] font-['Inter'] text-slate-500 uppercase tracking-[0.1em]">Target: Prsa, Triceps, Prednje rame</p>
+</div>
+</div>
+<button class="text-slate-500 hover:text-white"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+<div class="p-8">
+<div class="grid grid-cols-12 gap-4 mb-4 items-center px-4">
+<div class="col-span-1 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Set</div>
+<div class="col-span-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Prethodno</div>
+<div class="col-span-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center">Težina (KG)</div>
+<div class="col-span-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center">Ponavljanja</div>
+<div class="col-span-2 text-right text-[10px] font-bold text-slate-500 uppercase tracking-widest">Status</div>
+</div>
+<!-- Set 1 -->
+<div class="grid grid-cols-12 gap-4 items-center bg-surface-container-low/30 rounded-lg p-4 mb-2 hover:bg-surface-container-low/50 transition-colors">
+<div class="col-span-1 text-sm font-bold text-primary">1</div>
+<div class="col-span-3 text-xs text-slate-500">80kg × 8</div>
+<div class="col-span-3 px-4">
+<input class="w-full bg-surface-container text-center border-none border-b-2 border-outline-variant focus:border-primary focus:ring-0 text-white font-['Space_Grotesk'] font-bold rounded-sm" type="number" value="82.5"/>
+</div>
+<div class="col-span-3 px-4">
+<input class="w-full bg-surface-container text-center border-none border-b-2 border-outline-variant focus:border-primary focus:ring-0 text-white font-['Space_Grotesk'] font-bold rounded-sm" type="number" value="8"/>
+</div>
+<div class="col-span-2 flex justify-end">
+<button class="w-8 h-8 rounded-md bg-primary/20 border border-primary text-primary flex items-center justify-center glow-primary">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">check</span>
+</button>
+</div>
+</div>
+<!-- Set 2 -->
+<div class="grid grid-cols-12 gap-4 items-center bg-surface-container-low/30 rounded-lg p-4 mb-2 hover:bg-surface-container-low/50 transition-colors">
+<div class="col-span-1 text-sm font-bold text-primary">2</div>
+<div class="col-span-3 text-xs text-slate-500">80kg × 8</div>
+<div class="col-span-3 px-4">
+<input class="w-full bg-surface-container text-center border-none border-b-2 border-outline-variant focus:border-primary focus:ring-0 text-white font-['Space_Grotesk'] font-bold rounded-sm" placeholder="82.5" type="number"/>
+</div>
+<div class="col-span-3 px-4">
+<input class="w-full bg-surface-container text-center border-none border-b-2 border-outline-variant focus:border-primary focus:ring-0 text-white font-['Space_Grotesk'] font-bold rounded-sm" placeholder="8" type="number"/>
+</div>
+<div class="col-span-2 flex justify-end">
+<button class="w-8 h-8 rounded-md border border-outline-variant text-slate-500 hover:border-primary transition-all flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">check</span>
+</button>
+</div>
+</div>
+<button class="w-full mt-4 py-2 border border-dashed border-outline-variant rounded-lg text-slate-500 hover:text-primary hover:border-primary transition-all text-[10px] font-bold uppercase tracking-widest">+ Dodaj set</button>
+</div>
+</div>
+<!-- Exercise Card 2 -->
+<div class="hud-glass rounded-xl overflow-hidden border-l-4 border-l-primary-container/40 opacity-80">
+<div class="bg-surface-container-high/50 px-8 py-5 flex justify-between items-center">
+<div class="flex items-center gap-4">
+<span class="text-2xl font-black font-['Space_Grotesk'] text-primary/30">02</span>
+<div>
+<h3 class="text-xl font-bold font-['Space_Grotesk'] text-white tracking-tight uppercase">Zgibovi (Pull-ups)</h3>
+<p class="text-[10px] font-['Inter'] text-slate-500 uppercase tracking-[0.1em]">Target: Leđa, Biceps</p>
+</div>
+</div>
+<button class="text-slate-500 hover:text-white"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+<div class="p-8 italic text-slate-500 text-sm">Waiting for initiation...</div>
+</div>
+</div>
+<!-- Right Sidebar Panel -->
+<div class="col-span-4 space-y-8">
+<!-- RPE Selection -->
+<div class="hud-glass rounded-xl p-8">
+<h4 class="text-xs font-bold font-['Space_Grotesk'] text-primary tracking-[0.2em] uppercase mb-6">Subjektivni napor (RPE)</h4>
+<div class="flex justify-between mb-2 text-[10px] font-bold text-slate-500">
+<span>LAKO</span>
+<span>MAKSIMALNO</span>
+</div>
+<input class="w-full h-1 bg-surface-variant rounded-lg appearance-none cursor-pointer accent-primary mb-4" max="10" min="1" step="0.5" type="range" value="8.5"/>
+<div class="flex items-center justify-between">
+<span class="text-5xl font-black font-['Space_Grotesk'] text-white">8.5</span>
+<div class="text-right">
+<p class="text-[10px] text-primary-container font-bold uppercase tracking-widest">Jako teško</p>
+<p class="text-[10px] text-slate-500 uppercase">Zadržana 1 repeticija u rezervi</p>
+</div>
+</div>
+</div>
+<!-- Session Notes -->
+<div class="hud-glass rounded-xl p-8">
+<h4 class="text-xs font-bold font-['Space_Grotesk'] text-primary tracking-[0.2em] uppercase mb-4">Bilješke</h4>
+<textarea class="w-full bg-surface-container-low border-none rounded-xl text-sm p-4 text-white focus:ring-1 focus:ring-primary h-32 resize-none placeholder-slate-600" placeholder="Kako se osjećaš danas? Imaš li kakve bolove?"></textarea>
+</div>
+<!-- Today's Stats Bento -->
+<div class="grid grid-cols-2 gap-4">
+<div class="hud-glass rounded-xl p-6">
+<span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Ukupno setova</span>
+<p class="text-3xl font-black text-white font-['Space_Grotesk']">12</p>
+</div>
+<div class="hud-glass rounded-xl p-6">
+<span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Ukupan volumen</span>
+<p class="text-3xl font-black text-white font-['Space_Grotesk']">8.4<span class="text-sm font-normal text-slate-500">T</span></p>
+</div>
+</div>
+<!-- Finish Workout Button -->
+<button class="w-full py-6 bg-gradient-to-r from-primary to-primary-container rounded-xl text-on-primary font-black font-['Space_Grotesk'] uppercase tracking-[0.3em] glow-primary hover:scale-[1.02] transition-transform flex items-center justify-center gap-4">
+<span class="material-symbols-outlined">check_circle</span>
+                    ZAVRŠI TRENING
+                </button>
+<button class="w-full py-4 border border-error/30 text-error/60 font-bold uppercase tracking-widest text-[10px] hover:bg-error/5 transition-all rounded-xl">
+                    Prekini trening
+                </button>
+</div>
+</div>
+</main>
+<!-- Visual Artifacts (Hud Lines) -->
+<div class="fixed top-0 left-0 w-full h-full pointer-events-none z-[-1] opacity-10">
+<div class="absolute top-1/2 left-0 w-64 h-[1px] bg-primary"></div>
+<div class="absolute top-1/2 right-0 w-64 h-[1px] bg-primary"></div>
+<div class="absolute bottom-0 left-[260px] right-0 h-32 bg-gradient-to-t from-primary/10 to-transparent"></div>
+</div>
+</body></html>

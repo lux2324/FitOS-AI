@@ -6,6 +6,7 @@ from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.utils import timezone
 
+from core.utils import clamp_int
 from logs.models import TrainingLog
 from plans.models import WeeklyPlan
 from .models import WeeklyFeedback
@@ -16,13 +17,11 @@ from .models import WeeklyFeedback
 # ---------------------------------------------------------------------------
 
 def _current_week_start() -> date:
-    """Return this week's Monday (ISO week start)."""
     today = date.today()
     return today - timedelta(days=today.weekday())
 
 
 def _last_week_stats(user):
-    """Stats for finished logs in the last 7 days."""
     cutoff = timezone.now() - timedelta(days=7)
     logs = TrainingLog.objects.filter(
         user=user,
@@ -64,12 +63,7 @@ def _last_week_stats(user):
 def _build_feedback_context(request, existing, week_start):
     last_week = _last_week_stats(request.user)
 
-    # Recovery gauge: sleep_quality 1-5 → 0–100 %
-    if existing:
-        recovery_pct = int(((existing.sleep_quality - 1) / 4) * 100)
-    else:
-        recovery_pct = 75
-    # SVG circle: circumference = 2π×58 ≈ 364.4
+    recovery_pct = int(((existing.sleep_quality - 1) / 4) * 100) if existing else 75
     recovery_offset = round(364.4 * (1 - recovery_pct / 100))
 
     latest_plan = WeeklyPlan.objects.filter(user=request.user).first()
@@ -92,32 +86,18 @@ def _build_feedback_context(request, existing, week_start):
 @login_required
 def weekly_feedback(request):
     week_start = _current_week_start()
-    existing = WeeklyFeedback.objects.filter(
-        user=request.user, week_start=week_start
-    ).first()
+    existing = WeeklyFeedback.objects.filter(user=request.user, week_start=week_start).first()
 
     if request.method == 'POST':
-        try:
-            sleep_quality = max(1, min(5, int(request.POST.get('sleep_quality', 3))))
-        except (ValueError, TypeError):
-            sleep_quality = 3
-
-        try:
-            stress_level = max(1, min(5, int(request.POST.get('stress_level', 3))))
-        except (ValueError, TypeError):
-            stress_level = 3
-
-        try:
-            doms_level = max(1, min(5, int(request.POST.get('doms_level', 1))))
-        except (ValueError, TypeError):
-            doms_level = 1
-
+        sleep_quality = clamp_int(request.POST.get('sleep_quality', 3), 1, 5, 3)
+        stress_level  = clamp_int(request.POST.get('stress_level',  3), 1, 5, 3)
+        doms_level    = clamp_int(request.POST.get('doms_level',    1), 1, 5, 1)
         training_notes = request.POST.get('training_notes', '').strip()
 
         if existing:
             existing.sleep_quality = sleep_quality
-            existing.stress_level = stress_level
-            existing.doms_level = doms_level
+            existing.stress_level  = stress_level
+            existing.doms_level    = doms_level
             existing.training_notes = training_notes
             existing.save(update_fields=['sleep_quality', 'stress_level', 'doms_level', 'training_notes'])
             messages.success(request, 'Feedback uspješno ažuriran!')
@@ -141,17 +121,12 @@ def weekly_feedback(request):
 
 @login_required
 def feedback_form(request):
-    """Alias — delegates to weekly_feedback."""
     return weekly_feedback(request)
 
 
 @login_required
 @require_POST
 def generate_next_week(request):
-    """
-    Trigger generation of the next week's plan using plans.service.
-    Falls back to redirect if profile or generation fails.
-    """
     from django.http import JsonResponse
 
     try:

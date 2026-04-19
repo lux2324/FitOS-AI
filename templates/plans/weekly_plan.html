@@ -43,11 +43,20 @@
           Log workout
         </a>
       {% endif %}
-      <button onclick="document.getElementById('quick-generate-form').submit()"
+      {% if param_values %}
+      <button type="button" id="header-gen-btn"
+              onclick="generatePlan(document.getElementById('gen-btn'), this)"
               class="px-6 py-3 primary-gradient text-on-primary font-headline font-bold text-xs tracking-widest rounded-lg flex items-center gap-2 shadow-[0_0_15px_rgba(113,255,232,0.3)] hover:brightness-110 transition-all">
         <span class="material-symbols-outlined text-sm">auto_awesome</span>
         Generate New Plan
       </button>
+      {% else %}
+      <button type="submit" form="quick-generate-form"
+              class="px-6 py-3 primary-gradient text-on-primary font-headline font-bold text-xs tracking-widest rounded-lg flex items-center gap-2 shadow-[0_0_15px_rgba(113,255,232,0.3)] hover:brightness-110 transition-all">
+        <span class="material-symbols-outlined text-sm">auto_awesome</span>
+        Generate New Plan
+      </button>
+      {% endif %}
     </div>
   </div>
 
@@ -131,9 +140,43 @@
         </div>
       </form>
       <script>
-      function generatePlan(btn) {
-        btn.disabled = true;
-        btn.innerHTML = '<span class="material-symbols-outlined spin text-sm">progress_activity</span> Generating...';
+      var GENERATE_DURATION_MS = 13000;
+
+      function showGeneratingOverlay() {
+        var overlay = document.getElementById('generating-overlay');
+        var bar     = document.getElementById('generating-bar');
+        var elapsed = document.getElementById('generating-elapsed');
+        overlay.style.display = 'flex';
+
+        // Animate bar from 0 → 90% over GENERATE_DURATION_MS (never hits 100 until done)
+        var start = Date.now();
+        bar.style.transition = 'none';
+        bar.style.width = '0%';
+        requestAnimationFrame(function() {
+          bar.style.transition = 'width ' + GENERATE_DURATION_MS + 'ms cubic-bezier(0.4,0,0.2,1)';
+          bar.style.width = '90%';
+        });
+
+        // Elapsed counter
+        var tick = setInterval(function() {
+          var s = Math.floor((Date.now() - start) / 1000);
+          if (elapsed) elapsed.textContent = s + 's';
+        }, 1000);
+
+        return function done() {
+          clearInterval(tick);
+          bar.style.transition = 'width 0.3s ease';
+          bar.style.width = '100%';
+        };
+      }
+
+      function generatePlan(btn, displayBtn) {
+        var show = displayBtn || btn;
+        show.disabled = true;
+        show.innerHTML = '<span class="material-symbols-outlined spin text-sm">progress_activity</span> Generating...';
+
+        var finishOverlay = showGeneratingOverlay();
+
         var form = btn.closest('form');
         var data = new FormData(form);
         fetch(form.action, {
@@ -142,14 +185,38 @@
           headers: {'X-Requested-With': 'XMLHttpRequest'},
           redirect: 'follow'
         }).then(function() {
-          window.location.replace('{% url "plans:weekly_plan" %}');
+          finishOverlay();
+          setTimeout(function() {
+            window.location.replace('{% url "plans:weekly_plan" %}');
+          }, 300);
         }).catch(function(err) {
-          btn.disabled = false;
-          btn.innerHTML = '<span class="material-symbols-outlined text-sm">auto_awesome</span> Generate New Plan';
+          finishOverlay();
+          show.disabled = false;
+          show.innerHTML = '<span class="material-symbols-outlined text-sm">auto_awesome</span> Generate New Plan';
+          document.getElementById('generating-overlay').style.display = 'none';
           alert('Error: ' + err);
         });
       }
       </script>
+
+      <!-- Generating overlay -->
+      <div id="generating-overlay" style="display:none"
+           class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0a0e1a]/90 backdrop-blur-sm">
+        <div class="glass-panel rounded-2xl p-12 flex flex-col items-center gap-6 w-full max-w-md mx-4">
+          <span class="material-symbols-outlined text-5xl text-[#71ffe8] spin">auto_awesome</span>
+          <div class="text-center">
+            <p class="font-headline uppercase tracking-widest text-xs text-[#71ffe8] mb-2">Generating Plan</p>
+            <p class="text-slate-400 text-sm">AI is building your weekly program...</p>
+          </div>
+          <!-- Progress bar -->
+          <div class="w-full bg-[#1b1f2c] rounded-full h-1.5 overflow-hidden">
+            <div id="generating-bar" class="h-full bg-[#71ffe8] rounded-full" style="width:0%"></div>
+          </div>
+          <p class="text-slate-600 text-xs font-label">
+            <span id="generating-elapsed">0</span>s elapsed
+          </p>
+        </div>
+      </div>
     </div>
   </details>
   {% endif %}

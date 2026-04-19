@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db.models import Count
 
+from core.decorators import intake_required
 from plans.models import WeeklyPlan
 from logs.models import TrainingLog, LoggedExercise
 from logs.views import plan_is_complete
@@ -51,11 +51,8 @@ def _readiness_label(score):
         return 'ODMORI SE'
 
 
-@login_required
+@intake_required
 def home(request):
-    if not hasattr(request.user, 'intake_profile') or not request.user.intake_profile.completed:
-        return redirect('intake:step1')
-
     # ------------------------------------------------------------------ #
     # Active plan (latest for user)
     # ------------------------------------------------------------------ #

@@ -7,3 +7,12 @@ media/
 .env
 *.log
 .DS_Store
+
+# Editor / IDE
+.claude/
+.vscode/
+.idea/
+
+# Temp / debug dumps
+_*.txt
+*.tmp

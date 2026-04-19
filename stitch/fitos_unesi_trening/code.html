@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="hr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FitOS - Unesi trening</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#00dfc6",
+                    "on-background": "#dfe2f3",
+                    "tertiary": "#ffe5bd",
+                    "surface-container-lowest": "#0a0e1a",
+                    "primary-fixed-dim": "#00dfc6",
+                    "secondary-container": "#00eefc",
+                    "primary": "#71ffe8",
+                    "on-tertiary-container": "#725000",
+                    "surface-container-high": "#262a37",
+                    "on-primary-container": "#006256",
+                    "outline": "#849490",
+                    "on-error": "#690005",
+                    "secondary-fixed-dim": "#00dbe9",
+                    "inverse-primary": "#006b5e",
+                    "on-secondary-container": "#00686f",
+                    "surface-container-highest": "#313442",
+                    "tertiary-fixed-dim": "#f9bc48",
+                    "on-secondary": "#00363a",
+                    "on-secondary-fixed-variant": "#004f54",
+                    "on-tertiary-fixed-variant": "#5e4100",
+                    "surface-dim": "#0f131f",
+                    "surface": "#0f131f",
+                    "surface-bright": "#353946",
+                    "error-container": "#93000a",
+                    "error": "#ffb4ab",
+                    "on-surface": "#dfe2f3",
+                    "on-tertiary-fixed": "#271900",
+                    "secondary": "#d3fbff",
+                    "on-secondary-fixed": "#002022",
+                    "surface-container-low": "#171b28",
+                    "on-tertiary": "#422c00",
+                    "tertiary-container": "#ffc24d",
+                    "on-primary-fixed": "#00201b",
+                    "tertiary-fixed": "#ffdea9",
+                    "surface-container": "#1b1f2c",
+                    "inverse-surface": "#dfe2f3",
+                    "secondary-fixed": "#7df4ff",
+                    "inverse-on-surface": "#2c303d",
+                    "on-surface-variant": "#b9cac5",
+                    "primary-fixed": "#41fce2",
+                    "background": "#0f131f",
+                    "primary-container": "#00e5cc",
+                    "on-error-container": "#ffdad6",
+                    "surface-variant": "#313442",
+                    "outline-variant": "#3b4a46",
+                    "on-primary-fixed-variant": "#005047",
+                    "on-primary": "#003730"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .grid-overlay {
+            background-image: 
+                linear-gradient(rgba(113, 255, 232, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(113, 255, 232, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .glass-panel {
+            backdrop-filter: blur(12px);
+            background: rgba(27, 31, 44, 0.7);
+        }
+    </style>
+</head>
+<body class="bg-surface-container-lowest font-body text-on-surface antialiased overflow-x-hidden">
+<div class="fixed inset-0 grid-overlay pointer-events-none"></div>
+<!-- SideNavBar -->
+<nav class="w-[260px] h-screen fixed left-0 top-0 border-r border-[#00e5cc]/15 bg-[#0a0e1a] shadow-[0_0_24px_rgba(113,255,232,0.08)] flex flex-col h-full py-8 px-4 z-50">
+<div class="mb-12 px-4">
+<h1 class="text-2xl font-black tracking-tighter italic text-[#71ffe8] font-headline">FitOS</h1>
+<p class="font-['Space_Grotesk'] uppercase tracking-widest text-[10px] text-primary/60">AI COACH</p>
+</div>
+<div class="flex-1 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-sm hover:bg-[#71ffe8]/5 hover:text-[#71ffe8] transition-all duration-300 group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-sm hover:bg-[#71ffe8]/5 hover:text-[#71ffe8] transition-all duration-300 group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">calendar_month</span>
+                Tjedni plan
+            </a>
+<!-- Active State -->
+<a class="flex items-center gap-3 px-4 py-3 text-[#71ffe8] bg-[#71ffe8]/10 border-r-4 border-[#71ffe8] font-bold font-['Space_Grotesk'] uppercase tracking-widest text-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">fitness_center</span>
+                Unesi trening
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-sm hover:bg-[#71ffe8]/5 hover:text-[#71ffe8] transition-all duration-300 group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">chat_bubble</span>
+                Tjedni feedback
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-sm hover:bg-[#71ffe8]/5 hover:text-[#71ffe8] transition-all duration-300 group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">compare_arrows</span>
+                Plan diff
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-sm hover:bg-[#71ffe8]/5 hover:text-[#71ffe8] transition-all duration-300 group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">leaderboard</span>
+                Statistika
+            </a>
+</div>
+<div class="mt-auto border-t border-outline-variant/20 pt-6">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 font-medium font-['Space_Grotesk'] uppercase tracking-widest text-sm hover:bg-[#71ffe8]/5 hover:text-[#71ffe8] transition-all duration-300 group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">settings</span>
+                Settings
+            </a>
+</div>
+</nav>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-260px)] h-16 bg-[#0a0e1a]/80 backdrop-blur-xl flex justify-between items-center px-8 z-40 border-b border-[#00e5cc]/10">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+<h2 class="font-headline uppercase tracking-tighter text-xl text-[#71ffe8]">Session Logging: Upper 1</h2>
+</div>
+<div class="flex items-center gap-6">
+<div class="bg-surface-container-high px-4 py-1.5 rounded-full border border-outline-variant/30 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label text-xs uppercase tracking-widest text-on-surface-variant">Live Session Tracking</span>
+</div>
+<div class="flex items-center gap-4 text-primary">
+<span class="material-symbols-outlined cursor-pointer active:opacity-70">notifications</span>
+<span class="material-symbols-outlined cursor-pointer active:opacity-70">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[260px] pt-24 px-8 pb-12 min-h-screen">
+<!-- HUD Stats Bar -->
+<div class="grid grid-cols-4 gap-6 mb-8">
+<div class="bg-surface-container border border-outline-variant/20 p-4 rounded-xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-2 opacity-20">
+<span class="material-symbols-outlined text-4xl">timer</span>
+</div>
+<p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Duration</p>
+<p class="font-headline text-3xl font-bold text-primary">00:42:15</p>
+<div class="mt-2 h-1 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary w-2/3 shadow-[0_0_10px_#71ffe8]"></div>
+</div>
+</div>
+<div class="bg-surface-container border border-outline-variant/20 p-4 rounded-xl relative overflow-hidden">
+<p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Total Volume</p>
+<p class="font-headline text-3xl font-bold text-primary">4,820 <span class="text-sm font-normal text-on-surface-variant uppercase">kg</span></p>
+<p class="text-[10px] text-primary/60 mt-1">+12% from last week</p>
+</div>
+<div class="bg-surface-container border border-outline-variant/20 p-4 rounded-xl relative overflow-hidden">
+<p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Heart Rate</p>
+<div class="flex items-baseline gap-2">
+<p class="font-headline text-3xl font-bold text-error">142</p>
+<span class="text-xs uppercase text-error/60 font-label tracking-tighter">BPM</span>
+</div>
+<div class="mt-2 flex gap-1 items-end h-6">
+<div class="w-1 bg-error/20 h-2"></div>
+<div class="w-1 bg-error/40 h-4"></div>
+<div class="w-1 bg-error/60 h-3"></div>
+<div class="w-1 bg-error/80 h-5"></div>
+<div class="w-1 bg-error h-4"></div>
+</div>
+</div>
+<!-- Rest Timer Widget -->
+<div class="bg-surface-container-high border-2 border-primary/30 p-4 rounded-xl shadow-[0_0_20px_rgba(113,255,232,0.15)] flex items-center justify-between">
+<div>
+<p class="font-label text-[10px] uppercase tracking-widest text-primary mb-1">Rest Timer</p>
+<p class="font-headline text-3xl font-bold text-primary tabular-nums">01:14</p>
+</div>
+<button class="w-12 h-12 rounded-full border border-primary text-primary flex items-center justify-center hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined">refresh</span>
+</button>
+</div>
+</div>
+<!-- Session Content Grid -->
+<div class="grid grid-cols-12 gap-8 items-start">
+<!-- Left Column: Exercises -->
+<div class="col-span-8 space-y-8">
+<!-- Exercise Card 1 -->
+<section class="bg-surface-container border border-outline-variant/20 rounded-xl overflow-hidden shadow-xl">
+<div class="p-6 border-b border-outline-variant/10 flex justify-between items-center bg-surface-container-low">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg overflow-hidden border border-outline-variant/30">
+<img class="w-full h-full object-cover" data-alt="Close-up of industrial gym equipment and heavy weights with dramatic dark lighting and cyan accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_J-_y4ysai9gtXdFGa9hi-dsKRf1XdWAs6z-bu13--vv820ZoRgtQGRDGWw5EpCXnHN2h6eV0_7MfQJSlljf55hrrXWFCE-0wUpDn30PsoCXmivEkJlac2rXO2QgUqI7flLRGPa94c9iiSb9FFqlhgTi03qEApfkzGOy6G6KFF71vxRTlU_j_CA-GXAThiuPIelFhA4BX96SuBK3kqlbwSaBg3jufy8uHeneftxYbla3NB4OIUb_sEWdvuwTHxHolKkvTg50ODg"/>
+</div>
+<div>
+<h3 class="font-headline text-lg font-bold tracking-tight text-on-surface uppercase">Barbell Bench Press</h3>
+<p class="text-xs text-on-surface-variant font-label tracking-widest uppercase">Target: Pectorals, Triceps</p>
+</div>
+</div>
+<div class="flex gap-4 items-center">
+<span class="text-[10px] font-label uppercase text-on-surface-variant">Last Session: 85kg x 8</span>
+<button class="text-primary hover:text-primary-fixed-dim transition-colors">
+<span class="material-symbols-outlined">history</span>
+</button>
+</div>
+</div>
+<div class="p-6">
+<table class="w-full">
+<thead>
+<tr class="text-left font-label text-[10px] text-on-surface-variant uppercase tracking-[0.2em]">
+<th class="pb-4 w-16">Set</th>
+<th class="pb-4">Weight (kg)</th>
+<th class="pb-4">Reps</th>
+<th class="pb-4">RPE</th>
+<th class="pb-4 w-12 text-center">Status</th>
+</tr>
+</thead>
+<tbody class="space-y-4">
+<tr class="group">
+<td class="py-3 font-headline font-bold text-on-surface-variant">01</td>
+<td class="py-3">
+<input class="bg-transparent border-b-2 border-outline-variant focus:border-primary outline-none py-1 w-20 font-headline text-lg text-primary transition-all" type="text" value="80"/>
+</td>
+<td class="py-3">
+<input class="bg-transparent border-b-2 border-outline-variant focus:border-primary outline-none py-1 w-20 font-headline text-lg text-primary transition-all" type="text" value="8"/>
+</td>
+<td class="py-3">
+<select class="bg-transparent border-b-2 border-outline-variant focus:border-primary outline-none py-1 w-20 font-headline text-lg text-primary appearance-none cursor-pointer">
+<option class="bg-surface-container" value="8">8</option>
+<option class="bg-surface-container" value="8.5">8.5</option>
+<option class="bg-surface-container" value="9">9</option>
+</select>
+</td>
+<td class="py-3 text-center">
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary border border-primary/40 cursor-pointer hover:bg-primary hover:text-on-primary transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</td>
+</tr>
+<tr class="group border-t border-outline-variant/10">
+<td class="py-3 font-headline font-bold text-on-surface-variant">02</td>
+<td class="py-3">
+<input class="bg-transparent border-b-2 border-outline-variant focus:border-primary outline-none py-1 w-20 font-headline text-lg text-on-surface transition-all" placeholder="--" type="text"/>
+</td>
+<td class="py-3">
+<input class="bg-transparent border-b-2 border-outline-variant focus:border-primary outline-none py-1 w-20 font-headline text-lg text-on-surface transition-all" placeholder="--" type="text"/>
+</td>
+<td class="py-3">
+<input class="bg-transparent border-b-2 border-outline-variant focus:border-primary outline-none py-1 w-20 font-headline text-lg text-on-surface transition-all" placeholder="--" type="text"/>
+</td>
+<td class="py-3 text-center">
+<div class="w-8 h-8 rounded-full bg-surface-variant border border-outline-variant/30 flex items-center justify-center text-on-surface-variant/40 cursor-pointer hover:bg-primary/10 transition-all">
+<span class="material-symbols-outlined">add</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<button class="mt-4 flex items-center gap-2 text-xs font-label uppercase tracking-widest text-primary/60 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm">add_circle</span>
+                            Add Set
+                        </button>
+</div>
+</section>
+<!-- Exercise Card 2 -->
+<section class="bg-surface-container border border-outline-variant/20 rounded-xl overflow-hidden shadow-xl opacity-80">
+<div class="p-6 border-b border-outline-variant/10 flex justify-between items-center bg-surface-container-low">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg overflow-hidden border border-outline-variant/30">
+<img class="w-full h-full object-cover" data-alt="Athletic person's hands gripping a pull-up bar in a dark warehouse gym with atmospheric backlighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaQX18h8paaWr1htV-TOjOHEIEe52LX4Bv1OQ6bU1nJaWKXRDjQped8i_tj4yOBWXMj7YWksa4AeFEmV5fNtSYGJ20OIHx3Bm-IE8YmPD_CcVZG6oTzGk6KyFJbUVPf4TLe-Oi4xBkCv5RWlyYE6NNsungc3WcriRw7jtHv6QWdpDJKS0Aqlwg2_Cgfy-FLx8u61MIWIYXLyHegcr3HBemCLBGSeq-nVgJfRrN_9ku8cIcrhRO8qgfPiI51xhvJuMl2l5MNuxrcg"/>
+</div>
+<div>
+<h3 class="font-headline text-lg font-bold tracking-tight text-on-surface uppercase">Weighted Pull-ups</h3>
+<p class="text-xs text-on-surface-variant font-label tracking-widest uppercase">Target: Lats, Biceps</p>
+</div>
+</div>
+<div class="flex gap-4 items-center">
+<span class="text-[10px] font-label uppercase text-on-surface-variant">Last Session: 15kg x 10</span>
+<span class="material-symbols-outlined text-on-surface-variant/40">lock</span>
+</div>
+</div>
+<div class="p-8 text-center border-t border-outline-variant/5 bg-surface-container/50">
+<p class="font-label text-xs text-on-surface-variant/60 uppercase tracking-widest">Awaiting completion of previous exercise</p>
+</div>
+</section>
+</div>
+<!-- Right Column: HUD Panels -->
+<div class="col-span-4 sticky top-24 space-y-8">
+<!-- Training Notes -->
+<div class="bg-surface-container border border-outline-variant/20 rounded-xl p-6">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary text-sm">edit_note</span>
+<h4 class="font-headline text-sm font-bold uppercase tracking-wider">Coach's Directives</h4>
+</div>
+<div class="bg-surface-container-low p-4 rounded border-l-2 border-primary italic text-sm text-on-surface-variant">
+                        "Focus on the eccentric phase for Bench Press today. Control the bar for a full 3 seconds on the way down. Keep elbows tucked at 45 degrees."
+                    </div>
+<textarea class="w-full bg-surface-container-highest/30 border border-outline-variant/30 rounded mt-4 p-3 text-sm text-on-surface placeholder:text-on-surface-variant/40 outline-none focus:border-primary/50 transition-colors h-24 resize-none" placeholder="Add session notes here..."></textarea>
+</div>
+<!-- Biometric Volume Projection -->
+<div class="bg-surface-container border border-outline-variant/20 rounded-xl p-6 overflow-hidden relative">
+<h4 class="font-headline text-sm font-bold uppercase tracking-wider mb-6 flex items-center justify-between">
+                        Volume Projection
+                        <span class="text-[10px] text-primary bg-primary/10 px-2 py-0.5 rounded">CALCULATING...</span>
+</h4>
+<div class="flex items-center justify-center py-4">
+<!-- Custom SVG Progress Arc -->
+<div class="relative w-40 h-40">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-variant/30" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" stroke-width="8"></circle>
+<circle cx="80" cy="80" fill="transparent" r="70" stroke="url(#primaryGradient)" stroke-dasharray="439.8" stroke-dashoffset="132" stroke-linecap="round" stroke-width="8"></circle>
+<defs>
+<lineargradient id="primaryGradient" x1="0%" x2="100%" y1="0%" y2="0%">
+<stop offset="0%" stop-color="#71ffe8"></stop>
+<stop offset="100%" stop-color="#00dfc6"></stop>
+</lineargradient>
+</defs>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<p class="text-4xl font-headline font-black text-primary">70%</p>
+<p class="text-[10px] font-label text-on-surface-variant uppercase tracking-widest">Complete</p>
+</div>
+</div>
+</div>
+<div class="space-y-3 mt-6">
+<div class="flex justify-between text-xs font-label">
+<span class="text-on-surface-variant uppercase">Projected Load</span>
+<span class="text-on-surface">6,400 KG</span>
+</div>
+<div class="flex justify-between text-xs font-label">
+<span class="text-on-surface-variant uppercase">Current Load</span>
+<span class="text-primary font-bold">4,820 KG</span>
+</div>
+</div>
+</div>
+<!-- Action Button -->
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary font-headline font-black uppercase tracking-widest py-5 rounded-xl shadow-[0_0_30px_rgba(113,255,232,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">flag</span>
+                    Finish Session
+                </button>
+<button class="w-full border border-outline-variant text-on-surface-variant font-headline font-bold uppercase tracking-widest py-4 rounded-xl hover:bg-surface-variant/20 transition-all">
+                    Discard Session
+                </button>
+</div>
+</div>
+</main>
+<!-- Floating UI Decorations -->
+<div class="fixed bottom-8 left-[280px] pointer-events-none opacity-20">
+<p class="font-['Space_Grotesk'] text-[60px] font-black leading-none tracking-tighter uppercase select-none">PERFORMANCE<br/>INTERFACE</p>
+</div>
+</body></html>

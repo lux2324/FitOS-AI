@@ -8,13 +8,14 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 
+from core.decorators import intake_required
 from intake.models import IntakeProfile
 from intake.muscle_index import EXERCISE_MUSCLE_INDEX, MUSCLE_GROUPS
 from .models import WeeklyPlan, PlannedExercise
 from .service import generate_plan_for, OVERRIDABLE_FIELDS
 from .plan_maker import UNDER_TOL, OVER_TOL, _LENIENT_OVER
 from .plan_ai import _call_openai
-from .exercise_pool import filter_pool, by_role, by_category
+from .exercise_pool import filter_pool
 from .rep_ranges import get_prescription
 
 
@@ -95,14 +96,11 @@ def _param_context(profile, plan=None):
     }
 
 
-@login_required
+@intake_required
 @never_cache
 def weekly_plan(request):
     """Show the user's most recent weekly plan + parameter editor."""
-    profile = getattr(request.user, "intake_profile", None)
-    if not profile or not profile.completed:
-        return redirect("intake:step1")
-
+    profile = request.user.intake_profile
     plan = (
         WeeklyPlan.objects.filter(user=request.user)
         .prefetch_related("sessions__exercises")
@@ -135,13 +133,10 @@ def _collect_overrides(request) -> dict:
     return out
 
 
-@login_required
+@intake_required
 @require_POST
 def generate(request):
-    profile = getattr(request.user, "intake_profile", None)
-    if not profile or not profile.completed:
-        return redirect("intake:step1")
-
+    profile = request.user.intake_profile
     overrides = _collect_overrides(request)
 
     try:
@@ -156,13 +151,11 @@ def generate(request):
     return redirect("plans:weekly_plan")
 
 
-@login_required
+@intake_required
 @require_POST
 def batch_generate(request):
     """Generate plans for all combinations of selected parameters in parallel."""
-    profile = getattr(request.user, "intake_profile", None)
-    if not profile or not profile.completed:
-        return redirect("intake:step1")
+    profile = request.user.intake_profile
 
     # Collect which params to vary — checkboxes name="vary_<field>"
     # and the values to try for each

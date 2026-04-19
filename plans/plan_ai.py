@@ -11,7 +11,7 @@ Sex-aware prompts: male and female get separate system prompts so the AI
 isn't confused by rules that don't apply to the plan it's building.
 """
 import json
-from openai import OpenAI
+import httpx
 from django.conf import settings
 
 
@@ -215,20 +215,27 @@ def _fix_json(raw: str) -> str:
 
 def _call_openai(system: str, user: str, max_tokens: int = 2000,
                  retries: int = 2) -> dict:
-    client = OpenAI(api_key=settings.OPENAI_API_KEY)
-
     for attempt in range(retries + 1):
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": system},
-                {"role": "user", "content": user},
-            ],
-            temperature=0.4,
-            max_tokens=max_tokens,
-            response_format={"type": "json_object"},
+        resp = httpx.post(
+            "https://api.openai.com/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {settings.OPENAI_API_KEY}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": "gpt-4o-mini",
+                "messages": [
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+                "temperature": 0.4,
+                "max_tokens": max_tokens,
+                "response_format": {"type": "json_object"},
+            },
+            timeout=30.0,
         )
-        raw = response.choices[0].message.content.strip()
+        resp.raise_for_status()
+        raw = resp.json()["choices"][0]["message"]["content"].strip()
         try:
             return json.loads(raw)
         except json.JSONDecodeError:
@@ -245,19 +252,10 @@ def _call_openai(system: str, user: str, max_tokens: int = 2000,
 # ---------------------------------------------------------------------------
 
 def _compact_pool(pool: list[dict]) -> list[dict]:
-    out = []
-    for ex in pool:
-        out.append({
-            "name": ex["name"],
-            "role": ex["role"],
-            "category": ex["movement_category"],
-            "primary": ex.get("primary_muscles", []),
-            "secondary": ex.get("secondary_muscles", []),
-            "fatigue": ex.get("fatigue_cost", "medium"),
-            "freq": ex.get("log_frequency", 0),
-            "preferred": ex.get("preferred", False),
-        })
-    return out
+    return [
+        {"n": ex["name"], "r": ex["role"], "c": ex["movement_category"]}
+        for ex in pool
+    ]
 
 
 def _compact_skeleton(skeleton: dict) -> dict:
@@ -296,7 +294,7 @@ def _pick_prompts(skeleton: dict) -> tuple[str, str]:
 def draft_plan(skeleton: dict) -> dict:
     system_prompt, _ = _pick_prompts(skeleton)
     user_payload = json.dumps(_compact_skeleton(skeleton), ensure_ascii=False)
-    return _call_openai(system_prompt, user_payload, max_tokens=2500)
+    return _call_openai(system_prompt, user_payload, max_tokens=1200, retries=1)
 
 
 def _compact_skeleton_for_refine(skeleton: dict, validation_report: dict) -> dict:
@@ -330,8 +328,8 @@ def _compact_skeleton_for_refine(skeleton: dict, validation_report: dict) -> dic
 def refine_plan(skeleton: dict, draft: dict, validation_report: dict) -> dict:
     """
     Refine the draft plan based on the validation report.
-    Returns refined plan dict, or the original draft if refinement fails
-    (e.g. truncated JSON due to large payload).
+    Returns refined plan dict, or the original draft if payload is too large
+    or refinement fails.
     """
     _, refinement_prompt = _pick_prompts(skeleton)
     slim_skeleton = _compact_skeleton_for_refine(skeleton, validation_report)
@@ -340,19 +338,26 @@ def refine_plan(skeleton: dict, draft: dict, validation_report: dict) -> dict:
             "skeleton": slim_skeleton,
             "draft": draft,
             "validation": {
-                "summary": validation_report.get("summary"),
                 "under": validation_report["issues"]["under"],
                 "over": validation_report["issues"]["over"],
             },
         },
         ensure_ascii=False,
     )
+
+    # Skip if payload too large — refine would truncate and waste ~30s
+    if len(user_payload) > 5000:
+        import logging
+        logging.getLogger(__name__).info(
+            "refine_plan skipped (payload %d chars) — using draft.", len(user_payload)
+        )
+        return draft
+
     try:
-        return _call_openai(refinement_prompt, user_payload, max_tokens=3000)
+        return _call_openai(refinement_prompt, user_payload, max_tokens=1500, retries=0)
     except (json.JSONDecodeError, Exception):
         import logging
         logging.getLogger(__name__).warning(
-            "refine_plan failed (payload too large or JSON truncated) — "
-            "using draft as final plan."
+            "refine_plan failed — using draft as final plan."
         )
         return draft

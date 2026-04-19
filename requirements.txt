@@ -1,0 +1,4 @@
+Django>=5.2,<6.0
+httpx>=0.28,<1.0
+PyYAML>=6.0
+python-dotenv>=1.0
