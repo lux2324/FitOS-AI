@@ -81,7 +81,18 @@ def home(request):
         .order_by('started_at')
     )
 
-    kpi_sessions = weekly_logs.count()
+    # Count only sessions from the current plan that have been finished
+    if current_plan:
+        kpi_sessions = (
+            TrainingLog.objects
+            .filter(user=request.user, is_finished=True,
+                    planned_session__plan=current_plan)
+            .values('planned_session')
+            .distinct()
+            .count()
+        )
+    else:
+        kpi_sessions = 0
 
     # Weekly volume
     weekly_volume = 0
@@ -109,14 +120,14 @@ def home(request):
         check_date -= timezone.timedelta(days=1)
 
     # ------------------------------------------------------------------ #
-    # Progression queue — exercises with 3+ completed logs
+    # Progression queue — exercises with 1+ completed log
     # ------------------------------------------------------------------ #
     exercise_counts = (
         LoggedExercise.objects
         .filter(training_log__user=request.user, training_log__is_finished=True)
         .values('name')
         .annotate(log_count=Count('id'))
-        .filter(log_count__gte=3)
+        .filter(log_count__gte=1)
         .order_by('-log_count')[:8]
     )
     progression_queue = list(exercise_counts)

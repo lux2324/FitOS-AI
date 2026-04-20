@@ -12,6 +12,7 @@ class TrainingLog(models.Model):
     started_at = models.DateTimeField(auto_now_add=True)
     ended_at = models.DateTimeField(null=True, blank=True)
     notes = models.TextField(blank=True)
+    fatigue = models.PositiveSmallIntegerField(null=True, blank=True)  # 1–5
     is_finished = models.BooleanField(default=False)
 
     class Meta:

@@ -79,8 +79,9 @@
 
     {# Determine the colour accent for this card based on first exercise role #}
     {% with first_ex=session.exercises.all|first %}
-    <div class="glass-panel rounded-xl overflow-hidden flex flex-col
-      {% if first_ex.role == 'main_compound' %}border-l-4 border-l-[#71ffe8]
+    <div class="glass-panel rounded-xl overflow-hidden flex flex-col relative
+      {% if session.done_this_week %}border-l-4 border-l-[#71ffe8]/40 opacity-70
+      {% elif first_ex.role == 'main_compound' %}border-l-4 border-l-[#71ffe8]
       {% else %}border-l-4 border-l-[#5f8cff]/60{% endif %}">
 
       <!-- Card header -->
@@ -89,8 +90,14 @@
           <h3 class="text-base font-bold font-['Space_Grotesk'] text-white uppercase tracking-tight">
             {{ session.name }}
           </h3>
+          {% if session.done_this_week %}
+          <div class="absolute top-4 right-4 flex items-center gap-1.5 bg-[#71ffe8]/15 border border-[#71ffe8]/30 px-3 py-1.5 rounded-full">
+            <span class="material-symbols-outlined text-[#71ffe8] text-base" style="font-variation-settings:'FILL' 1">check_circle</span>
+            <span class="text-[11px] font-bold uppercase tracking-widest text-[#71ffe8]">Done</span>
+          </div>
+          {% endif %}
           <div class="flex items-center gap-2 mt-1">
-            <span class="text-[10px] text-slate-500 uppercase tracking-[0.08em]">
+            <span class="text-sm font-bold text-slate-300 uppercase tracking-[0.08em]">
               {{ session.exercises.count }} exercises
             </span>
             {% if session.split_type %}
@@ -99,17 +106,12 @@
             {% endif %}
           </div>
         </div>
-        <div class="w-10 h-10 rounded-full bg-[#71ffe8]/10 border border-[#71ffe8]/25
-                    flex items-center justify-center flex-shrink-0">
-          <span class="material-symbols-outlined text-[#71ffe8] text-lg">fitness_center</span>
-        </div>
       </div>
 
       <!-- Exercise preview list (show up to 4) -->
       <div class="px-6 py-4 flex-1">
         <ul class="space-y-2">
           {% for ex in session.exercises.all %}
-            {% if forloop.counter <= 4 %}
             <li class="flex items-center gap-3 text-sm text-[#dfe2f3]">
               <span class="w-1.5 h-1.5 rounded-full flex-shrink-0
                 {% if ex.role == 'main_compound' %}bg-[#71ffe8]
@@ -117,13 +119,7 @@
                 {% else %}bg-slate-600{% endif %}"></span>
               <span class="truncate">{{ ex.name }}</span>
             </li>
-            {% endif %}
           {% endfor %}
-          {% if session.exercises.count > 4 %}
-          <li class="text-[11px] text-slate-500 pl-[18px]">
-            + {{ session.exercises.count|add:"-4" }} more...
-          </li>
-          {% endif %}
         </ul>
       </div>
 
@@ -146,6 +142,15 @@
         <!-- Start button -->
         <form method="post" action="{% url 'logs:start_session' session.id %}">
           {% csrf_token %}
+          {% if session.done_this_week %}
+          <button type="submit"
+            class="w-full py-3 border border-white/10 text-slate-500
+                   font-black font-['Space_Grotesk'] text-xs uppercase tracking-widest rounded-xl
+                   flex items-center justify-center gap-2 hover:border-white/20 hover:text-slate-400 transition-colors">
+            <span class="material-symbols-outlined text-base">replay</span>
+            Repeat Workout
+          </button>
+          {% else %}
           <button type="submit"
             class="w-full py-3 bg-gradient-to-r from-[#71ffe8] to-[#00e5cc] text-[#003730]
                    font-black font-['Space_Grotesk'] text-xs uppercase tracking-widest rounded-xl
@@ -153,6 +158,7 @@
             <span class="material-symbols-outlined text-base">play_arrow</span>
             Start Workout
           </button>
+          {% endif %}
         </form>
       </div>
 

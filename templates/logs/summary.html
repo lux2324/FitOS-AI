@@ -90,7 +90,7 @@
         <!-- Sets table -->
         {% if ex.sets.all %}
         <div class="overflow-x-auto">
-          <table class="w-full text-xs">
+          <table class="w-full text-xs font-['Space_Grotesk']">
             <thead>
               <tr class="text-slate-500 border-b border-white/5">
                 <th class="text-left   py-2 px-3 font-bold uppercase tracking-widest text-[9px]">Set</th>
@@ -103,22 +103,22 @@
             <tbody>
               {% for s in ex.sets.all %}
               <tr class="border-t border-white/[0.03] {% if not s.completed %}opacity-40{% endif %}">
-                <td class="py-2.5 px-3 text-slate-500">
+                <td class="py-2.5 px-3 font-bold text-white">
                   {{ s.set_number|stringformat:"02d" }}
                   {% if not s.completed %}
                     <span class="ml-1 text-[8px] text-slate-600 uppercase">(not completed)</span>
                   {% endif %}
                 </td>
-                <td class="py-2.5 px-3 text-center font-bold text-white font-['Space_Grotesk']">
+                <td class="py-2.5 px-3 text-center font-bold text-white">
                   {{ s.weight_kg|default:"--" }}
                 </td>
-                <td class="py-2.5 px-3 text-center font-bold text-white font-['Space_Grotesk']">
+                <td class="py-2.5 px-3 text-center font-bold text-white">
                   {{ s.reps_done|default:"--" }}
                 </td>
-                <td class="py-2.5 px-3 text-center text-slate-500">
+                <td class="py-2.5 px-3 text-center font-bold text-white">
                   {% if s.rpe_done %}{{ s.rpe_done }}{% else %}--{% endif %}
                 </td>
-                <td class="py-2.5 px-3 text-right font-bold font-['Space_Grotesk']
+                <td class="py-2.5 px-3 text-right font-bold
                            {% if s.completed and s.weight_kg and s.reps_done %}text-[#71ffe8]{% else %}text-slate-600{% endif %}">
                   {% if s.completed and s.weight_kg and s.reps_done %}
                     {{ s.weight_kg }} &times; {{ s.reps_done }} kg

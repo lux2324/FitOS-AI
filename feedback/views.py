@@ -17,7 +17,7 @@ from .models import WeeklyFeedback
 # ---------------------------------------------------------------------------
 
 def _current_week_start() -> date:
-    today = date.today()
+    today = timezone.localdate()
     return today - timedelta(days=today.weekday())
 
 
@@ -138,9 +138,9 @@ def generate_next_week(request):
     except IntakeProfile.DoesNotExist:
         msg = 'Nema intake profila. Popuni upitnik prvo.'
     except Exception as e:
-        import logging
-        logging.getLogger(__name__).warning("generate_next_week failed: %s", e)
-        msg = 'Greška pri generiranju plana. Pokušaj ručno iz Tjedni Plan sekcije.'
+        import logging, traceback
+        logging.getLogger(__name__).error("generate_next_week failed: %s\n%s", e, traceback.format_exc())
+        msg = f'Greška: {e}'
 
     is_ajax = (
         request.headers.get('X-Requested-With') == 'XMLHttpRequest'

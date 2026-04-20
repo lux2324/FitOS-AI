@@ -49,7 +49,7 @@
   </div>
 
   <!-- ── KPI Row ──────────────────────────────────────────────────────── -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
     <!-- Treninzi ovaj tjedan -->
     <div class="glass-panel p-8 rounded-2xl">
@@ -76,18 +76,9 @@
       </div>
     </div>
 
-    <!-- Streak dana -->
-    <div class="glass-panel p-8 rounded-2xl">
-      <p class="font-label uppercase text-xs tracking-[0.2em] text-slate-500 mb-3">Day streak</p>
-      <div class="flex items-baseline gap-2">
-        <p class="text-4xl font-headline font-bold text-white">{{ streak }}</p>
-        <span class="text-sm text-slate-500">day{{ streak|pluralize:"s" }}</span>
-      </div>
-    </div>
-
     <!-- Readiness kratki prikaz -->
     <div class="glass-panel p-8 rounded-2xl">
-      <p class="font-label uppercase text-xs tracking-[0.2em] text-slate-500 mb-3">Readiness</p>
+      <p class="font-label uppercase text-xs tracking-[0.2em] text-slate-500 mb-3">Readiness from previous week</p>
       {% if readiness_score is not None %}
         <p class="text-4xl font-headline font-bold text-white">
           {{ readiness_score }}<span class="text-slate-500 text-2xl">/100</span>
@@ -171,7 +162,7 @@
     </div>
 
     <!-- CENTER: Progression Queue -->
-    <div class="lg:col-span-5 glass-panel p-10 rounded-3xl">
+    <div class="lg:col-span-9 glass-panel p-10 rounded-3xl">
       <h3 class="font-label uppercase text-xs tracking-[0.2em] text-slate-500 mb-8">Progression Queue</h3>
 
       {% if progression_queue %}
@@ -214,55 +205,8 @@
       {% else %}
         <div class="flex flex-col items-center justify-center h-48 text-center">
           <span class="material-symbols-outlined text-4xl text-slate-700 mb-4">queue</span>
-          <p class="text-slate-500 text-sm">Complete 3+ workouts for the same exercises<br>to unlock the progression queue</p>
+          <p class="text-slate-500 text-sm">Complete your first workout<br>to see the progression queue</p>
         </div>
-      {% endif %}
-    </div>
-
-    <!-- RIGHT: Volume Trend Bars -->
-    <div class="lg:col-span-4 glass-panel p-10 rounded-3xl flex flex-col">
-      <div class="flex items-center justify-between mb-10">
-        <h3 class="font-label uppercase text-xs tracking-[0.2em] text-slate-500">Volume Trend (kg/T)</h3>
-        {% if consistency_pct is not None %}
-          <span class="px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase
-            {% if consistency_pct >= 80 %}bg-[#71ffe8]/10 text-[#71ffe8] border border-[#71ffe8]/30
-            {% elif consistency_pct >= 50 %}bg-amber-500/10 text-amber-400 border border-amber-500/30
-            {% else %}bg-red-500/10 text-red-400 border border-red-500/30{% endif %}">
-            Consistency: {{ consistency_pct }}%
-          </span>
-        {% endif %}
-      </div>
-
-      {% if volume_trend %}
-        <div class="flex-1 flex items-end justify-between gap-3 px-2" style="min-height:200px;">
-          {% for bar in volume_trend %}
-          <div class="flex-1 group flex flex-col items-center gap-3">
-            {% if forloop.last %}
-              <div class="w-full bg-[#71ffe8] rounded-t-sm shadow-[0_0_20px_rgba(113,255,232,0.5)] transition-all"
-                   style="height:{% if bar.pct > 0 %}{{ bar.pct }}%{% else %}4px{% endif %}"></div>
-              <span class="text-[10px] text-[#71ffe8] font-black font-label">{{ bar.label }}</span>
-            {% else %}
-              <div class="w-full bg-[#71ffe8]/20 rounded-t-sm group-hover:bg-[#71ffe8]/40 transition-all"
-                   style="height:{% if bar.pct > 0 %}{{ bar.pct }}%{% else %}4px{% endif %}"></div>
-              <span class="text-[10px] text-slate-600 font-label">{{ bar.label }}</span>
-            {% endif %}
-          </div>
-          {% endfor %}
-        </div>
-      {% else %}
-        <!-- Fallback: current-week day bars -->
-        <div class="flex-1 flex items-end justify-between gap-3 px-2" style="min-height:200px;">
-          {% for day_num, day_vol in volume_by_day.items %}
-          <div class="flex-1 group flex flex-col items-center gap-3">
-            <div class="w-full {% if day_vol > 0 %}bg-[#71ffe8]/50 group-hover:bg-[#71ffe8]/70{% else %}bg-[#71ffe8]/10{% endif %} rounded-t-sm transition-all"
-                 style="height:{% if day_vol > 0 %}60%{% else %}6px{% endif %}"></div>
-            <span class="text-[10px] text-slate-600 font-label">
-              {% if day_num == 0 %}M{% elif day_num == 1 %}T{% elif day_num == 2 %}W{% elif day_num == 3 %}T{% elif day_num == 4 %}F{% elif day_num == 5 %}S{% else %}S{% endif %}
-            </span>
-          </div>
-          {% endfor %}
-        </div>
-        <p class="text-center text-xs text-slate-700 mt-4 italic">Trends available after more weeks</p>
       {% endif %}
     </div>
 
@@ -346,7 +290,7 @@
 
     {% elif plan_complete or current_plan and not todays_session %}
       <!-- Plan exists but all sessions done or week expired -->
-      <div class="flex flex-col items-center justify-center py-16 text-center">
+      <div class="flex flex-col items-center justify-center pt-12 pb-8 text-center">
         <span class="material-symbols-outlined text-5xl text-[#71ffe8] mb-6"
               style="font-variation-settings:'FILL' 1;">verified</span>
         <h3 class="text-2xl font-headline font-black text-white uppercase tracking-tight mb-3">Week complete!</h3>
@@ -367,6 +311,38 @@
           </form>
         </div>
       </div>
+
+      <!-- Volume Trend chart below week-complete CTA -->
+      {% if volume_trend %}
+      <div class="mt-8 border-t border-white/5 pt-8">
+        <div class="flex items-center justify-between mb-6">
+          <h4 class="font-label uppercase text-xs tracking-[0.2em] text-slate-500">Volume Trend (kg/week)</h4>
+          {% if consistency_pct is not None %}
+            <span class="px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase
+              {% if consistency_pct >= 80 %}bg-[#71ffe8]/10 text-[#71ffe8] border border-[#71ffe8]/30
+              {% elif consistency_pct >= 50 %}bg-amber-500/10 text-amber-400 border border-amber-500/30
+              {% else %}bg-red-500/10 text-red-400 border border-red-500/30{% endif %}">
+              Consistency: {{ consistency_pct }}%
+            </span>
+          {% endif %}
+        </div>
+        <div class="flex items-end justify-between gap-3 px-2" style="height:140px;">
+          {% for bar in volume_trend %}
+          <div class="flex-1 flex flex-col items-center gap-2">
+            {% if forloop.last %}
+              <div class="w-full bg-[#71ffe8] rounded-t shadow-[0_0_12px_rgba(113,255,232,0.4)]"
+                   style="height:{% if bar.pct > 0 %}{{ bar.pct }}%{% else %}3px{% endif %}"></div>
+              <span class="text-[9px] text-[#71ffe8] font-black font-label">{{ bar.label }}</span>
+            {% else %}
+              <div class="w-full bg-[#71ffe8]/20 rounded-t hover:bg-[#71ffe8]/40 transition-all"
+                   style="height:{% if bar.pct > 0 %}{{ bar.pct }}%{% else %}3px{% endif %}"></div>
+              <span class="text-[9px] text-slate-600 font-label">{{ bar.label }}</span>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
 
     {% else %}
       <!-- No plan yet -->

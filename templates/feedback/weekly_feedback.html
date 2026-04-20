@@ -28,6 +28,7 @@
   ::-webkit-scrollbar-track { background: #0a0e1a; }
   ::-webkit-scrollbar-thumb { background: #1b1f2c; border-radius: 10px; }
   ::-webkit-scrollbar-thumb:hover { background: rgba(113,255,232,0.2); }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 {% endblock %}
 
@@ -309,14 +310,53 @@
 
         <!-- Generate next week CTA -->
         {% if existing %}
-        <form method="post" action="{% url 'feedback:generate_next_week' %}">
+        <form method="post" action="{% url 'feedback:generate_next_week' %}" id="next-week-form">
           {% csrf_token %}
-          <button type="submit"
+          <button type="submit" id="next-week-btn"
             class="w-full bg-gradient-to-br from-primary to-primary-container py-6 rounded-xl flex flex-col items-center justify-center gap-1 hover:shadow-[0_0_30px_rgba(113,255,232,0.3)] transition-all transform hover:-translate-y-1">
-            <span class="font-headline font-extrabold text-on-primary uppercase tracking-[0.2em] text-lg">Accept plan for next week</span>
-            <span class="text-[10px] text-on-primary/60 font-label tracking-widest uppercase">GENERATING NEW SCHEDULE...</span>
+            <span id="next-week-label" class="font-headline font-extrabold text-on-primary uppercase tracking-[0.2em] text-lg">Accept plan for next week</span>
+            <span id="next-week-sub" class="text-[10px] text-on-primary/60 font-label tracking-widest uppercase">Generating new schedule...</span>
           </button>
         </form>
+        <script>
+          document.getElementById('next-week-form').addEventListener('submit', function () {
+            var btn = document.getElementById('next-week-btn');
+            btn.disabled = true;
+
+            var overlay = document.getElementById('nw-overlay');
+            var bar     = document.getElementById('nw-bar');
+            var elapsed = document.getElementById('nw-elapsed');
+            overlay.style.display = 'flex';
+
+            bar.style.transition = 'none';
+            bar.style.width = '0%';
+            requestAnimationFrame(function () {
+              bar.style.transition = 'width 13000ms cubic-bezier(0.4,0,0.2,1)';
+              bar.style.width = '90%';
+            });
+
+            var start = Date.now();
+            setInterval(function () {
+              elapsed.textContent = Math.floor((Date.now() - start) / 1000) + 's';
+            }, 1000);
+          });
+        </script>
+
+        <!-- Generating overlay -->
+        <div id="nw-overlay" style="display:none"
+             class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0a0e1a]/90 backdrop-blur-sm">
+          <div class="glass-panel rounded-2xl p-12 flex flex-col items-center gap-6 w-full max-w-md mx-4">
+            <span class="material-symbols-outlined text-5xl text-[#71ffe8]" style="animation:spin 1.2s linear infinite">auto_awesome</span>
+            <div class="text-center">
+              <p class="font-['Space_Grotesk'] uppercase tracking-widest text-xs text-[#71ffe8] mb-2">Generating Plan</p>
+              <p class="text-slate-400 text-sm">AI is building your next weekly program...</p>
+            </div>
+            <div class="w-full bg-[#1b1f2c] rounded-full h-1.5 overflow-hidden">
+              <div id="nw-bar" class="h-full bg-[#71ffe8] rounded-full" style="width:0%"></div>
+            </div>
+            <p class="text-slate-600 text-xs"><span id="nw-elapsed">0</span>s elapsed</p>
+          </div>
+        </div>
         {% else %}
         <div class="w-full bg-surface-container-high/50 border border-outline-variant/20 py-6 rounded-xl flex flex-col items-center justify-center gap-1 cursor-not-allowed opacity-50">
           <span class="font-headline font-extrabold text-on-surface-variant uppercase tracking-[0.2em] text-lg">Accept plan for next week</span>

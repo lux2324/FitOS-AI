@@ -11,6 +11,7 @@ Pipeline:
   6. save WeeklyPlan + sessions + exercises (with first-plan rep rule)
 """
 from django.db import transaction
+from logs.models import TrainingLog
 
 from .plan_maker import (
     build_skeleton, compute_actual_volume,
@@ -20,6 +21,93 @@ from .plan_ai import draft_plan, refine_plan
 from .rep_ranges import get_prescription
 from .exercise_pool import BY_NAME
 from .models import WeeklyPlan, PlannedSession, PlannedExercise
+
+
+def _get_last_week_actuals(user) -> dict:
+    """
+    Returns {exercise_name: {avg_rpe, avg_weight, sets_done, avg_reps}}
+    from the most recent finished TrainingLog for each exercise (last 10 logs).
+    """
+    result = {}
+    logs = (
+        TrainingLog.objects
+        .filter(user=user, is_finished=True)
+        .prefetch_related("logged_exercises__sets")
+        .order_by("-started_at")[:10]
+    )
+    for tlog in logs:
+        for lex in tlog.logged_exercises.all():
+            if lex.name in result:
+                continue
+            completed = [
+                s for s in lex.sets.all()
+                if s.weight_kg and s.reps_done
+            ]
+            if not completed:
+                continue
+            result[lex.name] = {
+                "avg_rpe": round(
+                    sum(float(s.rpe_done or 0) for s in completed) / len(completed), 1
+                ),
+                "avg_weight": round(
+                    sum(float(s.weight_kg) for s in completed) / len(completed), 1
+                ),
+                "sets_done": len(completed),
+                "avg_reps": round(
+                    sum(s.reps_done for s in completed) / len(completed), 1
+                ),
+            }
+    return result
+
+
+def _apply_progression(name: str, role: str, presc: dict, actuals: dict) -> tuple:
+    """
+    Returns (reps_min, reps_max, weight_kg) with a narrow target range.
+
+    When no actuals exist for this exercise, returns a narrow establishment
+    range (reps_min, reps_min+2) with no weight suggestion.
+
+    When actuals exist, always produces a narrow ±2 rep window based on
+    actual performance, with weight adjusted per progression rules:
+    - avg_rpe <= 7.0 AND hit ceiling  → rep +1 progression
+    - avg_rpe <= 7.5 AND hit ceiling  → weight +2.5kg (compounds) / +1kg (iso)
+    - avg_rpe >= 9.0                  → deload: step back 1 rep
+    - otherwise                       → consolidation: same weight, same target
+    """
+    reps_min = presc["reps_min"]
+    reps_max = presc["reps_max"]
+
+    data = actuals.get(name)
+    if not data:
+        # No history for this exercise → narrow establishment range
+        return reps_min, min(reps_min + 2, reps_max), None
+
+    avg_rpe = data["avg_rpe"]
+    avg_reps = data["avg_reps"]
+    avg_weight = data["avg_weight"]
+    target = round(avg_reps)
+
+    if avg_rpe <= 7.0 and avg_reps >= reps_max:
+        # Very easy + hit ceiling → rep progression
+        new_min = min(target, reps_max)
+        new_max = min(new_min + 2, reps_max + 2)
+        return new_min, new_max, avg_weight
+    elif avg_rpe <= 7.5 and avg_reps >= reps_max:
+        # Moderate + hit ceiling → weight bump, reset to bottom of range
+        bump = 2.5 if role != "isolation" else 1.0
+        new_min = max(reps_min, target - 1)
+        new_max = new_min + 2
+        return new_min, new_max, round(avg_weight + bump, 1)
+    elif avg_rpe >= 9.0:
+        # Too hard → step back
+        new_min = max(reps_min, target - 1)
+        new_max = max(new_min + 1, target)
+        return new_min, new_max, avg_weight
+    else:
+        # Consolidation → narrow target around actual performance
+        new_min = max(reps_min, target - 1)
+        new_max = min(reps_max, new_min + 2)
+        return new_min, new_max, avg_weight
 
 
 def _sanitize_sessions(sessions: list[dict], filtered_pool: list[dict],
@@ -215,9 +303,10 @@ def generate_plan_for(profile, overrides: dict | None = None) -> WeeklyPlan:
     proxy = _ProfileProxy(profile, overrides) if overrides else profile
 
     skeleton = build_skeleton(proxy)
+    actuals = _get_last_week_actuals(profile.user)
 
     # --- AI #1: draft ----------------------------------------------------
-    draft = draft_plan(skeleton)
+    draft = draft_plan(skeleton, actuals=actuals)
     draft_sessions = draft.get("sessions", [])
 
     actual_draft = compute_actual_volume(draft_sessions)
@@ -225,7 +314,7 @@ def generate_plan_for(profile, overrides: dict | None = None) -> WeeklyPlan:
 
     # --- AI #2: refine ---------------------------------------------------
     if report["needs_refinement"]:
-        refined = refine_plan(skeleton, draft, report)
+        refined = refine_plan(skeleton, draft, report, actuals=actuals)
         refined_sessions = refined.get("sessions", draft_sessions)
         actual_refined = compute_actual_volume(refined_sessions)
         final_report = validate_volume(actual_refined, skeleton["volume_targets"])
@@ -260,10 +349,7 @@ def generate_plan_for(profile, overrides: dict | None = None) -> WeeklyPlan:
     # --- Compute next week number for this user --------------------------
     last_plan = WeeklyPlan.objects.filter(user=profile.user).order_by("-week_number").first()
     next_week = (last_plan.week_number + 1) if last_plan else 1
-    # Narrow rep ranges (reps_min, reps_min + 2) while no training has been
-    # logged — user is in "establishment" phase, finding their working loads.
-    # TODO: once TrainingLog model exists, check if any logs exist instead.
-    is_first_plan = True
+    is_first_plan = not bool(actuals)
 
     # --- Persist ---------------------------------------------------------
     with transaction.atomic():
@@ -303,6 +389,9 @@ def generate_plan_for(profile, overrides: dict | None = None) -> WeeklyPlan:
                 )
                 # Hard rule: min 2 sets, max 3 sets, regardless of AI output.
                 sets_val = max(2, min(3, int(ex.get("sets", presc["sets"]) or presc["sets"])))
+                reps_min, reps_max, weight_kg = _apply_progression(
+                    ex.get("name", ""), role, presc, actuals
+                )
                 PlannedExercise.objects.create(
                     session=psession,
                     order=i,
@@ -310,11 +399,11 @@ def generate_plan_for(profile, overrides: dict | None = None) -> WeeklyPlan:
                     role=role,
                     movement_category=ex.get("movement_category", ""),
                     sets=sets_val,
-                    reps_min=presc["reps_min"],
-                    reps_max=presc["reps_max"],
+                    reps_min=reps_min,
+                    reps_max=reps_max,
                     target_rpe=presc["rpe"],
                     rest=presc["rest"],
-                    weight_kg=None,
+                    weight_kg=weight_kg,
                 )
 
     return plan

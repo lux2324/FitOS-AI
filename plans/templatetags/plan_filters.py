@@ -7,7 +7,7 @@ TIME_BASED = {"Plank"}
 
 @register.filter
 def format_reps(exercise):
-    """Format reps display: time-based exercises show M:SS or X, others show min-max."""
+    """Format reps display: established (weight_kg set) → Xkg×N, otherwise min-max range."""
     if exercise.name in TIME_BASED:
         secs = exercise.reps_min
         if secs == 0:
@@ -15,6 +15,10 @@ def format_reps(exercise):
         mins = secs // 60
         remainder = secs % 60
         return f"{mins}:{remainder:02d}"
+    if exercise.weight_kg:
+        w = float(exercise.weight_kg)
+        w_display = int(w) if w == int(w) else w
+        return f"{w_display}kg×{exercise.reps_min}"
     return f"{exercise.reps_min}-{exercise.reps_max}"
 
 

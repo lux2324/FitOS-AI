@@ -12,7 +12,7 @@ from core.decorators import intake_required
 from intake.models import IntakeProfile
 from intake.muscle_index import EXERCISE_MUSCLE_INDEX, MUSCLE_GROUPS
 from .models import WeeklyPlan, PlannedExercise
-from .service import generate_plan_for, OVERRIDABLE_FIELDS
+from .service import generate_plan_for, OVERRIDABLE_FIELDS, _get_last_week_actuals
 from .plan_maker import UNDER_TOL, OVER_TOL, _LENIENT_OVER
 from .plan_ai import _call_openai
 from .exercise_pool import filter_pool
@@ -108,11 +108,13 @@ def weekly_plan(request):
     )
 
     session_muscles = _session_muscle_maps(plan) if plan else {}
+    actuals = _get_last_week_actuals(request.user)
 
     ctx = {
         "plan": plan,
         "volume_rows": _volume_rows(plan),
         "session_muscles": session_muscles,
+        "actuals": actuals,
     }
     ctx.update(_param_context(profile, plan=plan))
     return render(request, "plans/weekly_plan.html", ctx)

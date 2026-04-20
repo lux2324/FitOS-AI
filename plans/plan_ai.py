@@ -77,7 +77,12 @@ Output STRICT JSON (no markdown, no commentary):
 }}
 
 The number of sessions and their order/name/template_key MUST match the
-skeleton. The number of exercises per session must equal the number of slots."""
+skeleton. The number of exercises per session must equal the number of slots.
+
+If the input includes a "last_week_performance" field, use it for CONTEXT ONLY.
+It shows what the user actually did last week (avg weight, reps, RPE per exercise).
+Use this to prefer exercises the user is already doing well — but do NOT change
+the JSON output format or the slot/role/category rules."""
 
 
 _SYSTEM_SEX_RULES = {
@@ -291,9 +296,12 @@ def _pick_prompts(skeleton: dict) -> tuple[str, str]:
     return system, refine
 
 
-def draft_plan(skeleton: dict) -> dict:
+def draft_plan(skeleton: dict, actuals: dict | None = None) -> dict:
     system_prompt, _ = _pick_prompts(skeleton)
-    user_payload = json.dumps(_compact_skeleton(skeleton), ensure_ascii=False)
+    payload = _compact_skeleton(skeleton)
+    if actuals:
+        payload["last_week_performance"] = actuals
+    user_payload = json.dumps(payload, ensure_ascii=False)
     return _call_openai(system_prompt, user_payload, max_tokens=1200, retries=1)
 
 
@@ -325,7 +333,8 @@ def _compact_skeleton_for_refine(skeleton: dict, validation_report: dict) -> dic
     return slim
 
 
-def refine_plan(skeleton: dict, draft: dict, validation_report: dict) -> dict:
+def refine_plan(skeleton: dict, draft: dict, validation_report: dict,
+                actuals: dict | None = None) -> dict:
     """
     Refine the draft plan based on the validation report.
     Returns refined plan dict, or the original draft if payload is too large
@@ -333,17 +342,17 @@ def refine_plan(skeleton: dict, draft: dict, validation_report: dict) -> dict:
     """
     _, refinement_prompt = _pick_prompts(skeleton)
     slim_skeleton = _compact_skeleton_for_refine(skeleton, validation_report)
-    user_payload = json.dumps(
-        {
-            "skeleton": slim_skeleton,
-            "draft": draft,
-            "validation": {
-                "under": validation_report["issues"]["under"],
-                "over": validation_report["issues"]["over"],
-            },
+    payload = {
+        "skeleton": slim_skeleton,
+        "draft": draft,
+        "validation": {
+            "under": validation_report["issues"]["under"],
+            "over": validation_report["issues"]["over"],
         },
-        ensure_ascii=False,
-    )
+    }
+    if actuals:
+        payload["last_week_performance"] = actuals
+    user_payload = json.dumps(payload, ensure_ascii=False)
 
     # Skip if payload too large — refine would truncate and waste ~30s
     if len(user_payload) > 5000:

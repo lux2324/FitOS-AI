@@ -59,6 +59,7 @@ def session_picker(request):
 
     complete = plan_is_complete(plan, request.user)
 
+    week_start = timezone.now() - timedelta(days=7)
     sessions = []
     if plan and not complete:
         for session in plan.sessions.all().order_by('order'):
@@ -71,6 +72,10 @@ def session_picker(request):
                 )
                 .order_by('-started_at')
                 .first()
+            )
+            session.done_this_week = (
+                session.last_log is not None and
+                session.last_log.started_at >= week_start
             )
             sessions.append(session)
 
@@ -88,6 +93,25 @@ def start_session(request, session_id):
 
     log = TrainingLog.objects.create(user=request.user, planned_session=session)
 
+    # Build prev-weight lookup (name → min weight) from the most recent finished log
+    prev_weights_by_name = {}
+    prev_log = (
+        TrainingLog.objects
+        .filter(user=request.user, is_finished=True)
+        .prefetch_related('logged_exercises__sets')
+        .order_by('-started_at')
+        .first()
+    )
+    prev_reps_by_name = {}
+    if prev_log:
+        for lex in prev_log.logged_exercises.all():
+            ws = [float(s.weight_kg) for s in lex.sets.all() if s.weight_kg]
+            if ws:
+                prev_weights_by_name[lex.name] = min(ws)
+            rs = [s.reps_done for s in lex.sets.all() if s.reps_done]
+            if rs:
+                prev_reps_by_name[lex.name] = min(rs)
+
     for ex in session.exercises.all().order_by('order'):
         logged_ex = LoggedExercise.objects.create(
             training_log=log,
@@ -95,12 +119,15 @@ def start_session(request, session_id):
             order=ex.order,
             name=ex.name,
         )
+        # Pre-fill weight: progression logic → previous session minimum
+        default_weight = ex.weight_kg if ex.weight_kg else prev_weights_by_name.get(ex.name)
+        default_reps = prev_reps_by_name.get(ex.name)
         for set_num in range(1, ex.sets + 1):
             LoggedSet.objects.create(
                 logged_exercise=logged_ex,
                 set_number=set_num,
-                weight_kg=None,
-                reps_done=None,
+                weight_kg=default_weight,
+                reps_done=default_reps,
                 completed=False,
             )
 
@@ -136,27 +163,33 @@ def log_session(request, log_id):
             ex.target = {'sets': 3, 'reps_min': 8, 'reps_max': 12, 'rpe': None}
 
         prev_lookup = {}
-        if pe:
-            prev_log = (
-                TrainingLog.objects
-                .filter(
-                    user=request.user,
-                    is_finished=True,
-                    logged_exercises__planned_exercise=pe,
-                )
-                .exclude(pk=log.pk)
-                .order_by('-started_at')
-                .first()
+        prev_log = (
+            TrainingLog.objects
+            .filter(
+                user=request.user,
+                is_finished=True,
+                logged_exercises__name=ex.name,
             )
-            if prev_log:
-                prev_logged_ex = prev_log.logged_exercises.filter(planned_exercise=pe).first()
-                if prev_logged_ex:
-                    for ps in prev_logged_ex.sets.order_by('set_number'):
-                        prev_lookup[ps.set_number] = ps
+            .exclude(pk=log.pk)
+            .order_by('-started_at')
+            .first()
+        )
+        if prev_log:
+            prev_logged_ex = prev_log.logged_exercises.filter(name=ex.name).first()
+            if prev_logged_ex:
+                for ps in prev_logged_ex.sets.order_by('set_number'):
+                    prev_lookup[ps.set_number] = ps
 
         ex.prev_sets = list(prev_lookup.values())
         for s in ex.sets.all():
             s.prev = prev_lookup.get(s.set_number)
+
+        # Default weight: from PlannedExercise progression or min prev weight
+        pe_weight = float(pe.weight_kg) if pe and pe.weight_kg else None
+        prev_weights = [float(ps.weight_kg) for ps in prev_lookup.values() if ps.weight_kg]
+        prev_reps = [ps.reps_done for ps in prev_lookup.values() if ps.reps_done]
+        ex.default_weight = pe_weight or (min(prev_weights) if prev_weights else None)
+        ex.default_reps = min(prev_reps) if prev_reps else None
 
         exercises.append(ex)
 
@@ -212,9 +245,16 @@ def finish_session(request, log_id):
     if notes:
         log.notes = notes
 
+    try:
+        fatigue = int(request.POST.get('fatigue', ''))
+        if 1 <= fatigue <= 5:
+            log.fatigue = fatigue
+    except (ValueError, TypeError):
+        pass
+
     log.ended_at = timezone.now()
     log.is_finished = True
-    log.save(update_fields=['ended_at', 'is_finished', 'notes'])
+    log.save(update_fields=['ended_at', 'is_finished', 'notes', 'fatigue'])
 
     return redirect('logs:summary', log_id=log.pk)
 
